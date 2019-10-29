@@ -99,15 +99,15 @@ https://www.statsmodels.org/stable/release/version0.9.html
   -  表输出到ascii，latex和html
   
 * 杂项模型
-* Sandbox: statsmodels contains a sandbox folder with code in various stages of
-  development and testing which is not considered "production ready".  This covers
-  among others
 
-  - Generalized method of moments (GMM) estimators
-  - Kernel regression
-  - Various extensions to scipy.stats.distributions
-  - Panel data models
-  - Information theoretic measures
+* 沙箱：statsmodels包含一个沙箱文件夹，其中包含处于开发和测试各个阶段的代码，
+  因此不被视为“生产就绪”。其中包括：
+
+  - 广义矩法（GMM）估计器
+  - 内核回归
+  - scipy.stats.distributions的各种扩展
+  - 面板数据模型
+  - 信息理论测度
 
 如何获得
 =============
