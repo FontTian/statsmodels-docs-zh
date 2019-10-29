@@ -22,16 +22,6 @@
 某些辅助功能仍未充分测试，某些边缘情况可能未正确考虑，并且许多统计模型都固有有数字问题的可能性。
 我们特别感谢您提供的有关此类问题的帮助和报告，以便我们可以不断改进现有模型。
 
-Most results have been verified with at least one other statistical package:
-R, Stata or SAS. The guiding principle for the initial rewrite and for
-continued development is that all numbers have to be verified. Some
-statistical methods are tested with Monte Carlo studies. While we strive to
-follow this test-driven approach, there is no guarantee that the code is
-bug-free and always works. Some auxiliary function are still insufficiently
-tested, some edge cases might not be correctly taken into account, and the
-possibility of numerical problems is inherent to many of the statistical
-models. We especially appreciate any help and reports for these kind of
-problems so we can keep improving the existing models.
 
 Code 稳定性
 ^^^^^^^^^^^^^^
@@ -40,14 +30,6 @@ Code 稳定性
 但在非常特殊的情况下，除所有特殊情况外，我们都有较长的弃用期，并且我们尝试将需要现有用户进行调整的更改保持在最低水平。
 对于较新的模型，我们可能会在获得更多经验并获得反馈时调整用户界面。这些更改将始终在文档中的发行说明中记录。
 
-The existing models are mostly settled in their user interface and we do not
-expect many large changes going forward. For the existing code, although
-there is no guarantee yet on API stability, we have long deprecation periods
-in all but very special cases, and we try to keep changes that require
-adjustments by existing users to a minimal level. For newer models we might
-adjust the user interface as we gain more experience and obtain feedback.
-These changes will always be noted in our release notes available in the
-documentation.
 
 Bugs 反馈
 ^^^^^^^^^^^^^^
