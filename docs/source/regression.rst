@@ -3,14 +3,9 @@
 
 .. _regression:
 
-Linear Regression
+线性回归
 =================
 
-Linear models with independently and identically distributed errors, and for
-errors with heteroscedasticity or autocorrelation. This module allows
-estimation by ordinary least squares (OLS), weighted least squares (WLS),
-generalized least squares (GLS), and feasible generalized least squares with
-autocorrelated AR(p) errors.
 线性模型具有独立且均匀分布的误差，以及具有异方差或自相关的误差。该模块允许通过普通最小二乘（OLS），加权最小二乘（WLS），广义最小二乘（GLS）和具有自相关AR（p）误差的可行广义最小二乘进行估计。
 
  有关命令和参数，请参考 `Module Reference`_ 。
@@ -45,7 +40,7 @@ autocorrelated AR(p) errors.
 
 统计模型可以表示为
 
- :math:`Y = X\beta + \mu`,  当 :math:`\mu\sim N\left(0,\Sigma\right).`
+ :math: `Y = X\beta + \mu` ,  当 :math:`\mu\sim N\left(0,\Sigma\right).`
 
 这取决于属性 :math:`\Sigma`, 目前我们拥有四个类:
 
