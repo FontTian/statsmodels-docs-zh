@@ -1,7 +1,7 @@
-# Minimal makefile for Sphinx documentation
+# 最简单的生成 Sphinx 文档
 #
 
-# You can set these variables from the command line.
+# 通过代码命令可以设置如下变量.
 SPHINXOPTS    =
 SPHINXBUILD   = sphinx-build
 SPHINXPROJ    = statsmodels
@@ -14,14 +14,14 @@ DATASETBUILD  = dataset_rst.py
 NOTEBOOKBUILD = nbgenerate.py
 FOLDTOC  = fold_toc.py
 
-# Internal variables.
+# 内部变量.
 PAPEROPT_a4     = -D latex_paper_size=a4
 PAPEROPT_letter = -D latex_paper_size=letter
 ALLSPHINXOPTS   = $(PAPEROPT_$(PAPER)) $(SPHINXOPTS)
 
 
-# Put it first so that "make" without argument is like "make help".
-help:
+# 首先，使用不带参数的 make，如：make help：
+
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(ALLSPHINXOPTS) $(O)
 
 .PHONY: help Makefile
@@ -38,7 +38,7 @@ notebooks:
 	$(TOOLSPATH)$(NOTEBOOKBUILD) --execute=True --allow_errors=True
 
 html:
-    # make directories for images
+    # 制作图形目录
 	@echo "Make static directory for images"
 	mkdir -p $(BUILDDIR)/html/_static
 	# generate the examples rst files
@@ -51,7 +51,7 @@ html:
 	@echo @$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(ALLSPHINXOPTS) $(O)
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(ALLSPHINXOPTS) $(O)
 
-# Catch-all target: route all unknown targets to Sphinx using the new
-# "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
-%: Makefile
+# Catch-all target: 使用新的命令将所有未知的目标到 Sphinx
+# "make mode" 选项.  $(O) 是r $(SPHINXOPTS)的快捷方式.
+%: 生成文件
 	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)" "$(BUILDDIR)" $(ALLSPHINXOPTS) $(O)
