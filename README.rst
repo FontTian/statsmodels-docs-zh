@@ -1,108 +1,104 @@
 |Travis Build Status| |Azure CI Build Status| |Appveyor Build Status| |Coveralls Coverage|
 
-About statsmodels
+关于统计模型
 =================
 
-statsmodels is a Python package that provides a complement to scipy for
-statistical computations including descriptive statistics and estimation
-and inference for statistical models.
+statsmodels是一个Python软件包，为scipy提供了补充，以进行统计计算，包括描述性统计以及统计模型的估计和推断。
 
-
-Documentation
+文献资料
 =============
 
-The documentation for the latest release is at
+最新版本的文档位于
 
 https://www.statsmodels.org/stable/
 
-The documentation for the development version is at
+开发版本的文档位于
 
 https://www.statsmodels.org/dev/
 
-Recent improvements are highlighted in the release notes
+最新的改进在发行说明中突出显示
 
 https://www.statsmodels.org/stable/release/version0.9.html
 
-Backups of documentation are available at https://statsmodels.github.io/stable/
-and https://statsmodels.github.io/dev/.
+可从https://statsmodels.github.io/stable/ 和https://statsmodels.github.io/dev/获得文档的备份。
 
 
 
-Main Features
+主要特点
 =============
 
-* Linear regression models:
+* 线性回归模型：
 
-  - Ordinary least squares
-  - Generalized least squares
-  - Weighted least squares
-  - Least squares with autoregressive errors
-  - Quantile regression
-  - Recursive least squares
+  - 普通最小二乘
+  - 广义最小二乘法
+  - 加权最小二乘
+  - 具有自回归误差的最小二乘
+  - 分位数回归
+  - 递归最小二乘
 
-* Mixed Linear Model with mixed effects and variance components
-* GLM: Generalized linear models with support for all of the one-parameter
-  exponential family distributions
-* Bayesian Mixed GLM for Binomial and Poisson
-* GEE: Generalized Estimating Equations for one-way clustered or longitudinal data
-* Discrete models:
+* 具有混合效应和方差成分的混合线性模型
+* GLM：支持所有一参数指数族分布的广义线性模型
+* 用于二项式和泊松的贝叶斯混合GLM
+* GEE：单向聚类或纵向数据的广义估计方程
+* 离散模型:
 
-  - Logit and Probit
-  - Multinomial logit (MNLogit)
-  - Poisson and Generalized Poisson regression
-  - Negative Binomial regression
-  - Zero-Inflated Count models
+  - Logit 和 Probit
+  - 多项式 logit (MNLogit)
+  - 泊松和广义泊松回归
+  - 负二项式回归
+  - 零充气计数模型
+  
+* RLM: 鲁棒的线性模型，支持多个M估计量。
+* 时间序列分析：时间序列分析模型
 
-* RLM: Robust linear models with support for several M-estimators.
-* Time Series Analysis: models for time series analysis
+  - 完整的StateSpace建模框架
+  
+    - 季节性ARIMA和ARIMAX模型
+    - VARMA和VARMAX模型
+    - 动态因子模型
+    - 未观察到的组件模型
 
-  - Complete StateSpace modeling framework
+  - 马尔可夫切换模型（MSAR），也称为隐马尔可夫模型（HMM）
+  - 单变量时间序列分析：AR，ARIMA
+  - 向量自回归模型，VAR和结构VAR
+  - 矢量纠错模型，VECM
+  - 指数平滑，Holt-Winters
+  - 时间序列的假设检验：单位根，协整和其他
+  - 用于时间序列分析的描述性统计数据和过程模型
+  
+* 生存分析:
 
-    - Seasonal ARIMA and ARIMAX models
-    - VARMA and VARMAX models
-    - Dynamic Factor models
-    - Unobserved Component models
+  - 比例风险回归（Cox模型）
+  - S存者功能估计（Kaplan-Meier）
+  - 累积入射函数估计
 
-  - Markov switching models (MSAR), also known as Hidden Markov Models (HMM)
-  - Univariate time series analysis: AR, ARIMA
-  - Vector autoregressive models, VAR and structural VAR
-  - Vector error correction modle, VECM
-  - exponential smoothing, Holt-Winters
-  - Hypothesis tests for time series: unit root, cointegration and others
-  - Descriptive statistics and process models for time series analysis
+* 多变量:
 
-* Survival analysis:
-
-  - Proportional hazards regression (Cox models)
-  - Survivor function estimation (Kaplan-Meier)
-  - Cumulative incidence function estimation
-
-* Multivariate:
-
-  - Principal Component Analysis with missing data
-  - Factor Analysis with rotation
+  - 主成分分析 with missing data
+  - 旋转因素分析
   - MANOVA
-  - Canonical Correlation
+  - 典型相关
 
-* Nonparametric statistics: Univariate and multivariate kernel density estimators
-* Datasets: Datasets used for examples and in testing
-* Statistics: a wide range of statistical tests
+* 非参数统计量：单变量和多变量内核密度估计量
+* 数据集：用于示例和测试的数据集
+* 统计：广泛的统计测试
 
-  - diagnostics and specification tests
-  - goodness-of-fit and normality tests
-  - functions for multiple testing
-  - various additional statistical tests
+  - 诊断和规格测试
+  - 拟合优度和正态性检验
+  - 多重测试功能
+  - 各种其他统计检验
+  
+* 使用MICE进行插补，阶数统计量回归和高斯插补
+* 调解分析
+* 图形包括用于视觉分析数据和模型结果的绘图功能
 
-* Imputation with MICE, regression on order statistic and Gaussian imputation
-* Mediation analysis
-* Graphics includes plot functions for visual analysis of data and model results
 
-* I/O
+* 输入/输出
 
-  - Tools for reading Stata .dta files, but pandas has a more recent version
-  - Table output to ascii, latex, and html
-
-* Miscellaneous models
+  - 用于读取Stata .dta文件的工具，但pandas具有较新的版本
+  -  表输出到ascii，latex和html
+  
+* 杂项模型
 * Sandbox: statsmodels contains a sandbox folder with code in various stages of
   development and testing which is not considered "production ready".  This covers
   among others
@@ -113,21 +109,21 @@ Main Features
   - Panel data models
   - Information theoretic measures
 
-How to get it
+如何获得
 =============
-The master branch on GitHub is the most up to date code
+GitHub上的master分支是最新的代码
 
 https://www.github.com/statsmodels/statsmodels
 
-Source download of release tags are available on GitHub
+发行标签的源代码下载可在GitHub上获得
 
 https://github.com/statsmodels/statsmodels/tags
 
-Binaries and source distributions are available from PyPi
+二进制文件和源代码发行版可从PyPi获得
 
 https://pypi.org/project/statsmodels/
 
-Binaries can be installed in Anaconda
+二进制文件可以安装在Anaconda中
 
 conda install statsmodels
 
@@ -135,29 +131,28 @@ conda install statsmodels
 Installing from sources
 =======================
 
-See INSTALL.txt for requirements or see the documentation
+有关要求，请参阅INSTALL.txt或请参阅文档
 
 https://statsmodels.github.io/dev/install.html
 
-License
+执照
 =======
 
 Modified BSD (3-clause)
 
-Discussion and Development
+讨论和发展
 ==========================
 
 Discussions take place on our mailing list.
 
 https://groups.google.com/group/pystatsmodels
 
-We are very interested in feedback about usability and suggestions for
-improvements.
+我们对有关可用性的反馈和改进建议非常感兴趣。
 
-Bug Reports
+Bug 报告
 ===========
 
-Bug reports can be submitted to the issue tracker at
+Bug 报告可以提交至问题跟踪器，网址为
 
 https://github.com/statsmodels/statsmodels/issues
 
