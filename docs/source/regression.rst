@@ -11,55 +11,53 @@ errors with heteroscedasticity or autocorrelation. This module allows
 estimation by ordinary least squares (OLS), weighted least squares (WLS),
 generalized least squares (GLS), and feasible generalized least squares with
 autocorrelated AR(p) errors.
+线性模型具有独立且均匀分布的误差，以及具有异方差或自相关的误差。该模块允许通过普通最小二乘（OLS），加权最小二乘（WLS），广义最小二乘（GLS）和具有自相关AR（p）误差的可行广义最小二乘进行估计。
 
-See `Module Reference`_ for commands and arguments.
+ 有关命令和参数，请参考 `Module Reference`_ 。
 
-Examples
+例子
 --------
 
 .. ipython:: python
 
-    # Load modules and data
+    # 加载模块和数据集
     import numpy as np
     import statsmodels.api as sm
     spector_data = sm.datasets.spector.load(as_pandas=False)
     spector_data.exog = sm.add_constant(spector_data.exog, prepend=False)
 
-    # Fit and summarize OLS model
+    # 训练并输出 OLS 模型
     mod = sm.OLS(spector_data.endog, spector_data.exog)
     res = mod.fit()
     print(res.summary())
 
-Detailed examples can be found here:
+更多详细的示例:
 
 
 * `OLS <examples/notebooks/generated/ols.html>`__
 * `WLS <examples/notebooks/generated/wls.html>`__
 * `GLS <examples/notebooks/generated/gls.html>`__
-* `Recursive LS <examples/notebooks/generated/recursive_ls.html>`__
+* `递归 LS <examples/notebooks/generated/recursive_ls.html>`__
 * `Rolling LS <examples/notebooks/generated/rolling_ls.html>`__
 
-Technical Documentation
+技术文档
 -----------------------
 
-The statistical model is assumed to be
+统计模型可以表示为
 
- :math:`Y = X\beta + \mu`,  where :math:`\mu\sim N\left(0,\Sigma\right).`
+ :math:`Y = X\beta + \mu`,  当 :math:`\mu\sim N\left(0,\Sigma\right).`
 
-Depending on the properties of :math:`\Sigma`, we have currently four classes available:
+这取决于属性 :math:`\Sigma`, 目前我们拥有四个类:
 
-* GLS : generalized least squares for arbitrary covariance :math:`\Sigma`
-* OLS : ordinary least squares for i.i.d. errors :math:`\Sigma=\textbf{I}`
-* WLS : weighted least squares for heteroskedastic errors :math:`\text{diag}\left  (\Sigma\right)`
-* GLSAR : feasible generalized least squares with autocorrelated AR(p) errors
+* GLS : 任意协方差的广义最小二乘 :math:`\Sigma`
+* OLS : i.i.d. 误差的普通最小二乘 :math:`\Sigma=\textbf{I}`
+* WLS : 异方误差的加权最小二乘 :math:`\text{diag}\left  (\Sigma\right)`
+* GLSAR : 具有自相关AR（p）误差的可行广义最小二乘
   :math:`\Sigma=\Sigma\left(\rho\right)`
 
-All regression models define the same methods and follow the same structure,
-and can be used in a similar fashion. Some of them contain additional model
-specific methods and attributes.
+所有回归模型都定义相同的方法和结构，并且可以以类似的方式来使用。其中模型也包含一些其他特定的方法和属性。
 
-GLS is the superclass of the other regression classes except for RecursiveLS,
-RollingWLS and RollingOLS.
+GLS 是除 RecursiveLS 以外的其他回归类的超类.
 
 .. Class hierachy: TODO
 
@@ -73,28 +71,27 @@ RollingWLS and RollingOLS.
 .. case the parameter estimates of the lag estimates are not reported, however
 .. additional statistics, for example aic, become available.
 
-References
+参考
 ^^^^^^^^^^
 
-General reference for regression models:
+回归模型的一般参考:
 
-* D.C. Montgomery and E.A. Peck. "Introduction to Linear Regression Analysis." 2nd. Ed., Wiley, 1992.
+* D.C. Montgomery 和 E.A. Peck. "线性回归分析简介." 第二版., Wiley, 1992.
 
-Econometrics references for regression models:
+回归模型的计量经济学参考:
 
-* R.Davidson and J.G. MacKinnon. "Econometric Theory and Methods," Oxford, 2004.
-* W.Green.  "Econometric Analysis," 5th ed., Pearson, 2003.
+* R.Davidson 和 J.G. MacKinnon. "计量经济学理论与方法," Oxford, 2004.
+* W.Green.  "计量经济学分析," 第五版., Pearson, 2003.
 
 .. toctree::
 ..   :maxdepth: 1
 ..
 ..   regression_techn1
 
-Attributes
+属性
 ^^^^^^^^^^
 
-The following is more verbose description of the attributes which is mostly
-common to all regression classes
+以下是所有回归类模型常见的、详细的属性描述:
 
 pinv_wexog : array
     The `p` x `n` Moore-Penrose pseudoinverse of the whitened design matrix.
@@ -126,13 +123,13 @@ wexog : array
 wendog : array
     The whitened response variable :math:`\Psi^{T}Y`.
 
-Module Reference
+模块参考
 ----------------
 
 .. module:: statsmodels.regression.linear_model
    :synopsis: Least squares linear models
 
-Model Classes
+模型类
 ^^^^^^^^^^^^^
 
 .. autosummary::
@@ -200,12 +197,10 @@ Model Classes
     SlicedAverageVarianceEstimation
 
 
-Results Classes
+结果类
 ^^^^^^^^^^^^^^^
 
-Fitting a linear regression model returns a results class. OLS has a
-specific results class with some additional methods compared to the
-results class of the other linear models.
+拟合线性回归模型将返回结果类。与其他线性模型的结果类相比，OLS具有特定的结果类和一些其他方法。
 
 .. currentmodule:: statsmodels.regression.linear_model
 
