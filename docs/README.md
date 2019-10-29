@@ -1,7 +1,7 @@
 # 文档的文档
 
 我们的文档使用了一系列的 sphinx 文档和jupyter notebooks。 Jupyter notebooks 
-应用于展示一个更长的、独立的示例。Sphinx文档也很不错，对于目录表和API文档更加合适。
+用于展示一个更长的、独立的示例。Sphinx文档也很不错，对于目录表和API文档更加合适。
 
 ## 建立过程
 
