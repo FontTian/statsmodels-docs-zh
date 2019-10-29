@@ -1,5 +1,6 @@
-# Documentation Documentation
+# 文档的文档
 
+我们的文档使用了一系列的 sphinx 文档和jupyter notebooks。 Jupyter notebooks 
 We use a combination of sphinx and Jupyter notebooks for the documentation.
 Jupyter notebooks should be used for longer, self-contained examples demonstrating
 a topic.
