@@ -10,7 +10,7 @@
 背景
 ----------
 
-统计模块最初由乔纳森·泰勒（Jonathan Taylor）编写了scipy.stats模块。一直以来，它是scipy的一部分，但后来被删除了。
+模块最初由乔纳森·泰勒（Jonathan Taylor）编写的scipy.stats。一直以来，它是scipy的一部分，但后来被删除了。
 在Google Summer of Code 2009期间，我们对其statsmodels进行了更正、测试、改进和发布，并将其作为新程序包发布。
 从那时起，statsmodels开发团队就继续添加新模型，绘图工具和统计方法。
 
@@ -47,7 +47,7 @@ statsmodels and its dependencies.
 经济支持
 -----------------
 
-我们感谢为开发statsmodels获得的财务支持：
+我们感谢为statsmodels的提供经济支持：
 
 * Google `www.google.com <https://www.google.com/>`_ : Google Summer of Code
   (GSOC) 2009-2017.
@@ -64,13 +64,12 @@ We also thank our continuous integration providers,
 unit testing, and `Codecov <https://codecov.io>`_ and `Coveralls <https://coveralls.io>`_ for
 code coverage.
 
-Brand Marks
+商标品牌
 -----------
 
-Please make use of the statsmodels logos when preparing demonstrations involving
-statsmodels code.
+在做关于 statsmodels 代码的演示时，请使用 statsmodels 的 loge
 
-Color
+彩色
 ^^^^^
 
 +----------------+---------------------+
@@ -81,7 +80,7 @@ Color
 | Logo Only      | |color-notext|      |
 +----------------+---------------------+
 
-Monochrome (Dark)
+单色 (Dark)
 ^^^^^^^^^^^^^^^^^
 
 +----------------+---------------------+
@@ -92,7 +91,7 @@ Monochrome (Dark)
 | Logo Only      | |dark-notext|       |
 +----------------+---------------------+
 
-Monochrome (Light)
+单色 (Light)
 ^^^^^^^^^^^^^^^^^^
 
 .. note::
