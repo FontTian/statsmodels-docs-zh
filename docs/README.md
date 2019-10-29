@@ -21,6 +21,6 @@
 2. notebooks
 3. sphinx
 
-# Notebook Builds
+# 构建 Notebook
 
-我们用 nbconvert 来执行 notebook，然后将它们转换为HTML。转由statsmodels/tools/nbgenerate.py 处理。默认的python内核（嵌入在笔记本中）为python3。您至少nbconvert==4.2.0需要指定一个非默认内核，该内核可以在Makefile中传递。
+我们用 nbconvert 工具来运行 notebook，然后将它们转换为HTML，交由statsmodels/tools/nbgenerate.py 处理。默认的python内核（嵌入在笔记本中）为python3。您至少nbconvert==4.2.0需要指定一个非默认内核，该内核可以在Makefile中传递。
