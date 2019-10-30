@@ -1,26 +1,20 @@
-API Reference
+API 参考
 =============
-The main statsmodels API is split into models:
+主要的statsmodels API分为以下模型:
 
-* ``statsmodels.api``: Cross-sectional models and methods. Canonically imported
-  using ``import statsmodels.api as sm``.
-* ``statsmodels.tsa.api``: Time-series models and methods. Canonically imported
-  using ``import statsmodels.tsa.api as tsa``.
-* ``statsmodels.formula.api``: A convenience interface for specifying models
-  using formula strings and DataFrames. This API directly exposes the ``from_formula``
-  class method of models that support the formula API. Canonically imported using
-  ``import statsmodels.formula.api as smf``
+* ``statsmodels.api``: 横截面模型和方法。使用规范地导入 ``import statsmodels.api as sm``.
+* ``statsmodels.tsa.api``: 时间序列模型和方法。使用规范地导入 ``import statsmodels.tsa.api as tsa``.
+* ``statsmodels.formula.api``: 一个方便的界面用于使用公式字符串和DataFrames指定模型。
+该API直接公开 ``from_formula`` 支持公式API的模型的类方法。规范地使用  ``import statsmodels.formula.api as smf``
 
-The API focuses on models and the most frequently used statistical test, and tools.
-`Import Paths and Structure`_ explains the design of the two API modules and how
-importing from the API differs from directly importing from the module where the
-model is defined. See the detailed topic pages in the :ref:`user-guide:User Guide` for a complete
-list of available models, statistics, and tools.
+.. autosummary::
+API专注于模型和最常用的统计测试以及工具。 `Import Paths and Structure`_ 介绍了两个API模块的设计，
+以及从API导入与直接从定义模型的模块直接导入有何不同。有关模型的使用，统计信息和工具的完整列表，请参见 :ref:`user-guide:User Guide` 中的详细主题页面。
 
 ``statsmodels.api``
 -------------------
 
-Regression
+回归
 ~~~~~~~~~~
 .. autosummary::
 
@@ -32,7 +26,7 @@ Regression
    ~statsmodels.regression.rolling.RollingOLS
    ~statsmodels.regression.rolling.RollingWLS
 
-Imputation
+插补
 ~~~~~~~~~~
 .. autosummary::
 
@@ -43,7 +37,7 @@ Imputation
    ~statsmodels.imputation.mice.MICE
    ~statsmodels.imputation.mice.MICEData
 
-Generalized Estimating Equations
+广义估计方程
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autosummary::
 
@@ -51,7 +45,7 @@ Generalized Estimating Equations
    ~statsmodels.genmod.generalized_estimating_equations.NominalGEE
    ~statsmodels.genmod.generalized_estimating_equations.OrdinalGEE
 
-Generalized Linear Models
+广义线性模型
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autosummary::
 
@@ -59,7 +53,7 @@ Generalized Linear Models
    ~statsmodels.gam.generalized_additive_model.GLMGam
    ~statsmodels.genmod.bayes_mixed_glm.PoissonBayesMixedGLM
 
-Discrete and Count Models
+离散和计数模型
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 .. autosummary::
 
@@ -74,14 +68,14 @@ Discrete and Count Models
    ~statsmodels.discrete.count_model.ZeroInflatedNegativeBinomialP
    ~statsmodels.discrete.count_model.ZeroInflatedPoisson
 
-Multivariate Models
+多元模型
 ~~~~~~~~~~~~~~~~~~~
 .. autosummary::
 
    ~statsmodels.multivariate.manova.MANOVA
    ~statsmodels.multivariate.pca.PCA
 
-Misc Models
+混合模型
 ~~~~~~~~~~~
 .. autosummary::
 
@@ -92,7 +86,7 @@ Misc Models
    ~statsmodels.duration.survfunc.SurvfuncRight
 
 
-Graphics
+绘图
 ~~~~~~~~
 .. autosummary::
 
@@ -101,7 +95,7 @@ Graphics
    ~statsmodels.graphics.gofplots.qqplot
    ~statsmodels.graphics.gofplots.qqplot_2samples
 
-Tools
+工具
 ~~~~~
 .. autosummary::
 
@@ -116,7 +110,7 @@ Tools
 ``statsmodels.tsa.api``
 -----------------------
 
-Statistics and Tests
+统计和检验
 ~~~~~~~~~~~~~~~~~~~~
 
 .. autosummary::
@@ -135,7 +129,7 @@ Statistics and Tests
    ~statsmodels.tsa.stattools.periodogram
    ~statsmodels.tsa.stattools.q_stat
 
-Univariate Time-Series Analysis
+单变量时间序列分析
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autosummary::
@@ -148,7 +142,7 @@ Univariate Time-Series Analysis
    ~statsmodels.tsa.arima_process.arma_generate_sample
    ~statsmodels.tsa.arima_process.ArmaProcess
 
-Exponential Smoothing
+指数平滑
 ~~~~~~~~~~~~~~~~~~~~~
 
 .. autosummary::
@@ -158,7 +152,7 @@ Exponential Smoothing
    ~statsmodels.tsa.holtwinters.SimpleExpSmoothing
 
 
-Multivariate Models
+多元模型
 ~~~~~~~~~~~~~~~~~~~
 
 .. autosummary::
@@ -170,7 +164,7 @@ Multivariate Models
    ~statsmodels.tsa.vector_ar.vecm.VECM
    ~statsmodels.tsa.statespace.structural.UnobservedComponents
 
-Filters and Decompositions
+过滤和分解
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autosummary::
@@ -181,7 +175,7 @@ Filters and Decompositions
    ~statsmodels.tsa.filters.cf_filter.cffilter
    ~statsmodels.tsa.filters.hp_filter.hpfilter
 
-Markov Regime Switching Models
+Markov Regime Switching 模型
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autosummary::
@@ -189,7 +183,7 @@ Markov Regime Switching Models
    ~statsmodels.tsa.regime_switching.markov_autoregression.MarkovAutoregression
    ~statsmodels.tsa.regime_switching.markov_regression.MarkovRegression
 
-Time-Series Tools
+时间序列工具
 ~~~~~~~~~~~~~~~~~
 
 .. autosummary::
@@ -200,7 +194,7 @@ Time-Series Tools
    ~statsmodels.tsa.tsatools.lagmat
    ~statsmodels.tsa.tsatools.lagmat2ds
 
-X12/X13 Interface
+X12/X13 接口
 ~~~~~~~~~~~~~~~~~
 
 .. autosummary::
@@ -211,11 +205,10 @@ X12/X13 Interface
 ``statsmodels.formula.api``
 ---------------------------
 
-Models
+模型
 ~~~~~~
 
-The function descriptions of the methods exposed in the formula API are generic.
-See the documentation for the parent model for details.
+公式API中公开的方法的功能描述是通用的。有关详细信息，请参见父模型的文档。
 
 .. autosummary::
    :toctree: generated/
@@ -242,34 +235,32 @@ See the documentation for the parent model for details.
 
 .. _importpaths:
 
-Import Paths and Structure
+导入路径和结构
 --------------------------
 
-We offer two ways of importing functions and classes from statsmodels:
+我们提供了两种从statsmodels导入函数和类的方法：
 
 1. `API import for interactive use`_
 
-   + Allows tab completion
+   + 允许制表符完成
 
 2. `Direct import for programs`_
 
-   + Avoids importing unnecessary modules and commands
+   + 避免导入不必要的模块和命令
 
-API Import for interactive use
+交互使用的API导入
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-For interactive use the recommended import is:
+对于交互式使用，建议的导入为:
 
 .. code-block:: python
 
     import statsmodels.api as sm
 
-Importing `statsmodels.api` will load most of the public parts of statsmodels.
-This makes most functions and classes conveniently available within one or two
-levels, without making the "sm" namespace too crowded.
+导入 `statsmodels.api` 将加载 statsmodels 大部分公共接口.
+这使大多数函数和类在一个或两个级别内方便地可用，而不会使 "sm" 名称空间过于拥挤。
 
-To see what functions and classes available, you can type the following (or use
-the namespace exploration features of IPython, Spyder, IDLE, etc.):
+要查看可用的函数和类，可以键入以下内容 (或使用IPython，Spyder，IDLE等的名称空间探索功能.):
 
 .. code-block:: python
 
@@ -293,27 +284,25 @@ the namespace exploration features of IPython, Spyder, IDLE, etc.):
     'pacf', 'pacf_ols', 'pacf_yw', 'periodogram', 'q_stat', 'stattools',
     'tsatools', 'var']
 
-Notes
+注意
 ^^^^^
 
-The `api` modules may not include all the public functionality of statsmodels. If
-you find something that should be added to the api, please file an issue on
-github or report it to the mailing list.
+The `api` 模块可能不包括statsmodels的所有公共功能。如果您发现应该添加到api的内容，
+请在github上提交问题或将其报告给邮件列表。
 
-The subpackages of statsmodels include `api.py` modules that are mainly
-intended to collect the imports needed for those subpackages. The `subpackage/api.py`
-files are imported into statsmodels api, for example ::
+statsmodels的子包包括 `api.py` 模块，这些模块主要用于收集这些子包所需的导入。
+例如，将 `subpackage/api.py`
+文件导入到 statsmodels.api 中 ::
 
      from .nonparametric import api as nonparametric
 
-Users do not need to load the `subpackage/api.py` modules directly.
+用户不需要直接加载 `subpackage/api.py` 模块。
 
-Direct import for programs
+直接导入程序
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-``statsmodels`` submodules are arranged by topic (e.g. `discrete` for discrete
-choice models, or `tsa` for time series analysis). Our directory tree (stripped
-down) looks something like this::
+``statsmodels`` 子模块按主题排列 (例如，离散选择模型为离散，时间序列分析为 `tsa` ). 
+我们的目录树（向下剥离）如下所示：：
 
     statsmodels/
         __init__.py
@@ -348,29 +337,27 @@ down) looks something like this::
             decorators.py
             tests/
 
-The submodules that can be import heavy contain an empty `__init__.py`, except
-for some testing code for running tests for the submodules. The intention is to
-change all directories to have an `api.py` and empty `__init__.py` in the next
-release.
+除了一些用于运行子模块测试的测试代码外，可以大量导入的子模块包含空的 `__init__.py`, 
+目的是将所有目录更改为在下一发行版中具有 `api.py` 和空的  `__init__.py` 
 
-Import examples
+导入示例
 ^^^^^^^^^^^^^^^
 
-Functions and classes::
+函数和类::
 
     from statsmodels.regression.linear_model import OLS, WLS
     from statsmodels.tools.tools import rank, add_constant
 
-Modules ::
+模块 ::
 
     from statsmodels.datasets import macrodata
     import statsmodels.stats import diagnostic
 
-Modules with aliases ::
+具有别名的模块 ::
 
     import statsmodels.regression.linear_model as lm
     import statsmodels.stats.diagnostic as smsdia
     import statsmodels.stats.outliers_influence as oi
 
-We do not have currently a convention for aliases of submodules.
+我们目前尚无子模块别名的约定。
 

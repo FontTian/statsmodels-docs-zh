@@ -34,7 +34,7 @@
 `GEE的维基笔记 <https://github.com/statsmodels/statsmodels/wiki/Examples#generalized-estimating-equations-gee>`_
 
 
-参考
+参考文献
 ^^^^^^^^^^
 
 * KY Liang 和 S Zeger. “使用广义线性模型进行纵向数据分析”. Biometrika (1986) 73 (1): 13-22.

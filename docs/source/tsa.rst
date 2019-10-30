@@ -7,61 +7,44 @@
 .. _tsa:
 
 
-Time Series analysis :mod:`tsa`
+时间序列分析 :mod:`tsa`
 ===============================
 
-:mod:`statsmodels.tsa` contains model classes and functions that are useful
-for time series analysis. Basic models include univariate autoregressive models (AR),
-vector autoregressive models (VAR) and univariate autoregressive moving average models
-(ARMA). Non-linear models include Markov switching dynamic regression and
-autoregression. It also includes descriptive statistics for time series, for example autocorrelation, partial
-autocorrelation function and periodogram, as well as the corresponding theoretical properties
-of ARMA or related processes. It also includes methods to work with autoregressive and
-moving average lag-polynomials.
-Additionally, related statistical tests and some useful helper functions are available.
+:mod:`statsmodels.tsa` 包含对时间序列分析有用的模型类和函数。基本模型包括单变量自回归模型（AR），
+矢量自回归模型（VAR）和单变量自回归移动平均模型（ARMA）。非线性模型包括马尔可夫切换动态回归和自回归。
+它还包括时间序列的描述性统计数据，例如自相关，部分自相关函数和周期图，以及ARMA或相关过程的相应理论属性。
+它还包括使用自回归和移动平均滞后多项式的方法。此外，还提供相关的统计测试和一些有用的辅助功能。
 
-Estimation is either done by exact or conditional Maximum Likelihood or conditional
-least-squares, either using Kalman Filter or direct filters.
+使用卡尔曼滤波或直接滤波，通过精确的或有条件的最大似然或有条件的最小二乘来进行估计。
 
-Currently, functions and classes have to be imported from the corresponding module, but
-the main classes will be made available in the statsmodels.tsa namespace. The module
-structure is within statsmodels.tsa is
+当前，必须从相应的模块导入函数和类，但是主要类将在statsmodels.tsa命名空间中提供。
+模块结构在statsmodels.tsa中
 
-- stattools : empirical properties and tests, acf, pacf, granger-causality,
-  adf unit root test, kpss test, bds test, ljung-box test and others.
-- ar_model : univariate autoregressive process, estimation with conditional
-  and exact maximum likelihood and conditional least-squares
-- arima_model : univariate ARMA process, estimation with conditional
-  and exact maximum likelihood and conditional least-squares
-- statespace : Comprehensive statespace model specification and estimation. See
-  the :ref:`statespace documentation <statespace>`.
-- vector_ar, var : vector autoregressive process (VAR) and vector error correction
-  models, estimation, impulse response analysis, forecast error variance decompositions,
-  and data visualization tools. See the :ref:`vector_ar documentation <var>`.
-- kalmanf : estimation classes for ARMA and other models with exact MLE using
-  Kalman Filter
-- arma_process : properties of arma processes with given parameters, this
-  includes tools to convert between ARMA, MA and AR representation as well as
-  acf, pacf, spectral density, impulse response function and similar
-- sandbox.tsa.fftarma : similar to arma_process but working in frequency domain
-- tsatools : additional helper functions, to create arrays of lagged variables,
-  construct regressors for trend, detrend and similar.
-- filters : helper function for filtering time series
-- regime_switching : Markov switching dynamic regression and autoregression models
+- stattools : 经验特性和检验, acf, pacf, granger-causality,
+  adf 单位根检验, kpss 检验, bds 检验, ljung-box 检验等.
+- ar_model : 单变量自回归过程，具有条件和精确的最大似然以及条件最小二乘的估计。
+- arima_model : 单变量ARMA过程，具有条件和精确最大似然以及条件最小二乘的估计。
+- statespace : 全面的状态空间模型规范和估计。请参阅状态 :ref:`statespace documentation <statespace>`.
+- vector_ar, var : 矢量自回归过程（VAR）和矢量误差校正模型，估计，脉冲响应分析，预测误差方差分解和
+数据可视化工具。请参阅 :ref:`vector_ar documentation <var>`.
+- kalmanf : 使用卡尔曼滤波的ARMA和其他具有精确MLE的模型的估计类
+- arma_process : 具有给定参数的arma进程的属性，包括用于在ARMA，MA和AR表示以及acf，pacf，频谱密度，
+脉冲响应函数等之间进行转换的工具
+- sandbox.tsa.fftarma : 与arma_process类似，但在频域中工作
+- tsatools : 附加的辅助函数，用于创建滞后变量的数组，构造趋势，下降趋势等的回归变量。
+- filters : 用于过滤时间序列的辅助功能
+- regime_switching : 马尔可夫转换的动态回归和自回归模型
 
-Some additional functions that are also useful for time series analysis are in
-other parts of statsmodels, for example additional statistical tests.
+statsmodel的其他部分还包含一些对时间序列分析有用的其他功能，例如其他统计测试。
 
-Some related functions are also available in matplotlib, nitime, and
-scikits.talkbox. Those functions are designed more for the use in signal
-processing where longer time series are available and work more often in the
-frequency domain.
+matplotlib，nitime和scikits.talkbox中也提供了一些相关功能。这些功能更多地设计用于信号处理，
+在这些信号处理中可获得更长的时间序列，并且在频域中工作更多。
 
 
 .. currentmodule:: statsmodels.tsa
 
 
-Descriptive Statistics and Tests
+描述性统计和检验
 """"""""""""""""""""""""""""""""
 
 .. autosummary::
@@ -91,13 +74,12 @@ Descriptive Statistics and Tests
    x13.x13_arima_select_order
    x13.x13_arima_analysis
 
-Estimation
+估计
 """"""""""
 
-The following are the main estimation classes, which can be accessed through
-statsmodels.tsa.api and their result classes
+以下是主要的估算类，可以通过statsmodels.tsa.api及其结果类进行访问
 
-Univariate Autoregressive Processes (AR)
+单变量自回归过程 (AR)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. currentmodule:: statsmodels.tsa
@@ -109,13 +91,12 @@ Univariate Autoregressive Processes (AR)
    ar_model.ARResults
 
 
-Autoregressive Moving-Average Processes (ARMA) and Kalman Filter
+自回归移动平均过程（ARMA）和卡尔曼滤波
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. currentmodule:: statsmodels.tsa
 
-The basic ARIMA model and results classes that should be the starting point for
-for most users are:
+对于大多数用户而言，应作为起点的基本ARIMA模型和结果类是:
 
 .. autosummary::
    :toctree: generated/
@@ -125,9 +106,8 @@ for most users are:
    arima_model.ARIMA
    arima_model.ARIMAResults
 
-Some advanced underlying low-level classes and functions that can be used to
-compute the log-likelihood function for ARMA-type models include (note that
-these are rarely needed by end-users):
+可用于计算ARMA类型模型的对数似然函数的一些高级基础底层类和函数包括
+（请注意，最终用户很少需要这些）:
 
 .. autosummary::
    :toctree: generated/
@@ -140,7 +120,7 @@ these are rarely needed by end-users):
    innovations.arma_innovations.arma_scoreobs
 
 
-Exponential Smoothing
+指数平滑
 ~~~~~~~~~~~~~~~~~~~~~
 
 .. currentmodule:: statsmodels.tsa
@@ -154,11 +134,10 @@ Exponential Smoothing
    holtwinters.HoltWintersResults
 
 
-ARMA Process
+ARMA 程序
 """"""""""""
 
-The following are tools to work with the theoretical properties of an ARMA
-process for given lag-polynomials.
+以下是用于给定滞后多项式的ARMA程序的理论属性的工具.
 
 .. autosummary::
    :toctree: generated/
@@ -189,7 +168,7 @@ process for given lag-polynomials.
 
 .. currentmodule:: statsmodels.tsa
 
-Statespace Models
+Statespace 模型
 """""""""""""""""
 See the :ref:`statespace documentation. <statespace>`
 
@@ -198,23 +177,23 @@ Vector ARs and Vector Error Correction Models
 """""""""""""""""""""""""""""""""""""""""""""
 See the :ref:`vector_ar documentation. <var>`
 
-Regime switching models
+Regime switching 模型
 """""""""""""""""""""""
 
 .. currentmodule:: statsmodels.tsa.regime_switching.markov_regression
 .. autosummary::
    :toctree: generated/
 
-   MarkovRegression
+   马尔可夫回归
 
 .. currentmodule:: statsmodels.tsa.regime_switching.markov_autoregression
 .. autosummary::
    :toctree: generated/
 
-   MarkovAutoregression
+   马尔可夫自回归
 
 
-Time Series Filters
+时间序列过滤器
 """""""""""""""""""
 
 .. currentmodule:: statsmodels.tsa.filters.bk_filter
@@ -250,11 +229,11 @@ Time Series Filters
 .. autosummary::
    :toctree: generated/
 
-   seasonal_decompose
+   季节性分解
    STL
    DecomposeResult
 
-TSA Tools
+TSA 工具
 """""""""
 
 .. currentmodule:: statsmodels.tsa.tsatools
@@ -268,7 +247,7 @@ TSA Tools
    lagmat
    lagmat2ds
 
-VARMA Process
+VARMA 流程
 """""""""""""
 
 .. currentmodule:: statsmodels.tsa.varma_process
@@ -277,7 +256,7 @@ VARMA Process
 
    VarmaPoly
 
-Interpolation
+插补
 """""""""""""
 
 .. currentmodule:: statsmodels.tsa.interp.denton

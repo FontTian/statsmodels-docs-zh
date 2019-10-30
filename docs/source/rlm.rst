@@ -3,34 +3,34 @@
 
 .. _rlm:
 
-Robust Linear Models
+稳健的线性模型
 ====================
 
-Robust linear models with support for the M-estimators listed under `Norms`_.
+稳健的线性模型支持 `范数`_.下列的 M 估计。 
 
-See `Module Reference`_ for commands and arguments.
+有关命令和参数，请参见 `Module Reference`_ 
 
-Examples
+例子
 --------
 
 .. ipython:: python
 
-    # Load modules and data
+    # 加载模块和数据
     import statsmodels.api as sm
     data = sm.datasets.stackloss.load(as_pandas=False)
     data.exog = sm.add_constant(data.exog)
 
-    # Fit model and print summary
+    # 训练模型并输出 summary
     rlm_model = sm.RLM(data.endog, data.exog, M=sm.robust.norms.HuberT())
     rlm_results = rlm_model.fit()
     print(rlm_results.params)
 
-Detailed examples can be found here:
+更多详细的示例:
 
 * `Robust Models 1 <examples/notebooks/generated/robust_models_0.html>`__
 * `Robust Models 2 <examples/notebooks/generated/robust_models_1.html>`__
 
-Technical Documentation
+技术文档
 -----------------------
 
 .. toctree::
@@ -38,19 +38,19 @@ Technical Documentation
 
    rlm_techn1
 
-References
+参考文献
 ^^^^^^^^^^
 
-* PJ Huber. ‘Robust Statistics’ John Wiley and Sons, Inc., New York. 1981.
-* PJ Huber. 1973, ‘The 1972 Wald Memorial Lectures: Robust Regression: Asymptotics, Conjectures, and Monte Carlo.’ The Annals of Statistics, 1.5, 799-821.
-* R Venables, B Ripley. ‘Modern Applied Statistics in S’ Springer, New York,
+* PJ Huber. ‘稳健的统计’ John Wiley and Sons, Inc., New York. 1981.
+* PJ Huber. 1973, “ 1972年的Wald纪念演讲：稳健的回归：渐进、猜想和蒙特卡洛” 统计年鉴, 1.5, 799-821.
+* R Venables, B Ripley. 纽约州斯普林格的“现代应用统计”
 
-Module Reference
+模块参考
 ----------------
 
 .. module:: statsmodels.robust
 
-Model Classes
+模型类
 ^^^^^^^^^^^^^
 
 .. module:: statsmodels.robust.robust_linear_model
@@ -61,7 +61,7 @@ Model Classes
 
    RLM
 
-Model Results
+结果类
 ^^^^^^^^^^^^^
 
 .. autosummary::
@@ -71,7 +71,7 @@ Model Results
 
 .. _norms:
 
-Norms
+范数
 ^^^^^
 
 .. module:: statsmodels.robust.norms
@@ -91,7 +91,7 @@ Norms
    estimate_location
 
 
-Scale
+标准化
 ^^^^^
 
 .. module:: statsmodels.robust.scale

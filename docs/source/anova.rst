@@ -2,14 +2,13 @@
 
 .. _anova:
 
-ANOVA
+方差分析
 =====
 
-Analysis of Variance models containing anova_lm for ANOVA analysis with a
-linear OLSModel, and AnovaRM for repeated measures ANOVA, within ANOVA for
-balanced data.
+方差分析模型包含线性最小二乘模型的方差线性的方差分析, 和 AnovaRM 用于重复测量的方差分析, 
+以及用于平衡数据的方差分析
 
-Examples
+例子
 --------
 
 .. ipython:: python
@@ -28,11 +27,11 @@ Examples
     table = sm.stats.anova_lm(moore_lm, typ=2) # Type 2 ANOVA DataFrame
     print(table)
 
-A more detailed example for `anova_lm` can be found here:
+更多方差线性的方差分析示例:
 
 *  `ANOVA <examples/notebooks/generated/interactions_anova.html>`__
 
-Module Reference
+模块参考
 ----------------
 
 .. module:: statsmodels.stats.anova

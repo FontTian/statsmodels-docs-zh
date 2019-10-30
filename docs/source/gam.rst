@@ -56,7 +56,7 @@ https://archive.ics.uci.edu/ml/datasets/automobile
     gam_bs.select_penweight_kfold()[0]
 
 
-参考
+参考文献
 ^^^^^^^^^^
 
 * Hastie, Trevor, and Robert Tibshirani. 1986. 广义可加模型. Statistical Science 1 (3): 297-310.

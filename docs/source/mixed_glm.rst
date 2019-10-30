@@ -1,45 +1,37 @@
 .. currentmodule:: statsmodels.genmod.bayes_mixed_glm
 
-Generalized Linear Mixed Effects Models
+广义线性混合效应模型
 =======================================
 
-Generalized Linear Mixed Effects (GLIMMIX) models are generalized
-linear models with random effects in the linear predictors.
-statsmodels currently supports estimation of binomial and Poisson
-GLIMMIX models using two Bayesian methods: the Laplace approximation
-to the posterior, and a variational Bayes approximation to the
-posterior.  Both methods provide point estimates (posterior means) and
-assessments of uncertainty (posterior standard deviation).
+广义线性混合效应（GLIMMIX）模型是在线性预测变量中具有随机效应的广义线性模型。
+statsmodel当前支持使用两种贝叶斯方法对二项式和泊松 GLIMMIX模型进行估计
+后验的拉普拉斯近似，和后验的可变贝叶斯近似.  两种方法均提供了点估计 (后验均值) 和
+不确定性估计 (后验标准偏差).
 
-The current implementation only supports independent random effects.
+当前的实现仅支持独立的随机效果.
 
-Technical Documentation
+技术文档
 -----------------------
 
-Unlike statsmodels mixed linear models, the GLIMMIX implementation is
-not group-based.  Groups are created by interacting all random effects
-with a categorical variable.  Note that this creates large, sparse
-random effects design matrices `exog_vc`.  Internally, `exog_vc` is
-converted to a scipy sparse matrix.  When passing the arguments
-directly to the class initializer, a sparse matrix may be passed.
-When using formulas, a dense matrix is created then converted to
-sparse.  For very large problems, it may not be feasible to use
-formulas due to the size of this dense intermediate matrix.
+与statsmodels混合线性模型不同，GLIMMIX不是基于组来实现的，而是通过将所有分类变量的随机效应的交互来创建组。
+注意，这样就会创建大的、稀疏的随机效应设计矩阵 `exog_vc`.  在内部, `exog_vc` 被转换为稀疏矩阵.  
+当把参数直接传递给类初始化程序时，可能也会传递一个稀疏矩阵；使用公式时, 将创建一个密集矩阵，并将其转换为
+稀疏矩阵。对于非常大的问题，由于该密集中间矩阵的大小，使用公式可能不可行。
 
-References
+参考文献
 ^^^^^^^^^^
 
 Blei, Kucukelbir, McAuliffe (2017).  Variational Inference: A review
 for Statisticians https://arxiv.org/pdf/1601.00670.pdf
 
-Module Reference
+模块参考
 ----------------
 
 .. module:: statsmodels.genmod.bayes_mixed_glm
    :synopsis: Bayes Mixed Generalized Linear Models
 
 
-The model classes are:
+模型类:
 
 .. autosummary::
    :toctree: generated/
@@ -47,7 +39,7 @@ The model classes are:
    BinomialBayesMixedGLM
    PoissonBayesMixedGLM
 
-The result class is:
+结果类:
 
 .. autosummary::
    :toctree: generated/

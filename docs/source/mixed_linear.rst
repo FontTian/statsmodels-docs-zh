@@ -2,38 +2,25 @@
 
 .. _mixedlmmod:
 
-Linear Mixed Effects Models
+线性混合效应模型
 ===========================
 
-Linear Mixed Effects models are used for regression analyses involving
-dependent data.  Such data arise when working with longitudinal and
-other study designs in which multiple observations are made on each
-subject.  Some specific linear mixed effects models are
+线性混合效应模型用于解决相关数据的回归分析。当使用纵向研究和其他研究设计时，
+会产生此类数据，在这些研究中，每个主题都有多个观察结果。一下是一些特定的线性混合效果模型是
 
-* *Random intercepts models*, where all responses in a group are
-  additively shifted by a value that is specific to the group.
+* *随机截距模型*，其中组中的所有响应都累加了特定于该组的值。
 
-* *Random slopes models*, where the responses in a group follow a
-  (conditional) mean trajectory that is linear in the observed
-  covariates, with the slopes (and possibly intercepts) varying by
-  group.
+* *随机斜率模型*，其中组中的响应遵循在观察到的协变量中呈线性的（条件）平均轨迹，
+并且斜率（可能是截距）随组而变化。
 
-* *Variance components models*, where the levels of one or more
-  categorical covariates are associated with draws from distributions.
-  These random terms additively determine the conditional mean of each
-  observation based on its covariate values.
+* *方差分量模型*，其中一个或多个分类协变量的水平与分布图相关。
+这些随机项根据其协变量值累加确定每个观察的条件均值。
 
-The statsmodels implementation of LME is primarily group-based,
-meaning that random effects must be independently-realized for
-responses in different groups.  There are two types of random effects
-in our implementation of mixed models: (i) random coefficients
-(possibly vectors) that have an unknown covariance matrix, and (ii)
-random coefficients that are independent draws from a common
-univariate distribution.  For both (i) and (ii), the random effects
-influence the conditional mean of a group through their matrix/vector
-product with a group-specific design matrix.
+LME的statsmodels实现主要基于组，这意味着对于不同组中的响应，必须独立实现随机效应。在我们的混合模型实现中，
+有两种类型的随机效应：（i）具有未知协方差矩阵的随机系数（可能是向量），以及（ii）从常见单变量分布中独立得出
+的随机系数。对于（i）和（ii）而言，随机效应通过其具有特定于组的设计矩阵的矩阵/矢量乘积来影响组的条件均值。
 
-A simple example of random coefficients, as in (i) above, is:
+如上（i）所示，随机系数的一个简单示例是:
 
 .. math::
 
@@ -51,7 +38,7 @@ described by three parameters: :math:`{\rm var}(\gamma_{0i})`,
 \gamma_{1i})`.  There is also a parameter for :math:`{\rm
 var}(\epsilon_{ij})`.
 
-A simple example of variance components, as in (ii) above, is:
+如上（ii）所示，方差成分的一个简单示例是:
 
 .. math::
 
@@ -64,18 +51,14 @@ identically distributed with zero mean, and variance :math:`\tau_1^2`,
 and the :math:`\eta_{2j}` are independent and identically distributed
 with zero mean, and variance :math:`\tau_2^2`.
 
-statsmodels MixedLM handles most non-crossed random effects models,
-and some crossed models.  To include crossed random effects in a
-model, it is necessary to treat the entire dataset as a single group.
-The variance components arguments to the model can then be used to
-define models with various combinations of crossed and non-crossed
-random effects.
+statsmodels MixedLM处理大多数非交叉随机效应模型和某些交叉模型。为了将交叉随机效应包括在模型中，
+有必要将整个数据集视为一个组。然后，可以使用模型的方差成分参数来定义具有交叉和非交叉随机效应的
+各种组合的模型。
 
-The statsmodels LME framework currently supports post-estimation
-inference via Wald tests and confidence intervals on the coefficients,
-profile likelihood analysis, likelihood ratio testing, and AIC.
+目前，statsmodels LME框架通过 Wald 检验以及系数的置信区间，轮廓似然分析，
+似然比检验和AIC进行估计后推断。
 
-Examples
+例子
 --------
 
 .. ipython:: python
@@ -89,82 +72,70 @@ Examples
   mdf = md.fit()
   print(mdf.summary())
 
-Detailed examples can be found here
+更多详细示例：
 
 * `Mixed LM <examples/notebooks/generated/mixed_lm_example.html>`__
 
-There are some notebook examples on the Wiki:
-`Wiki notebooks for MixedLM <https://github.com/statsmodels/statsmodels/wiki/Examples#linear-mixed-models>`_
+维基百科上的一些示例:
+`MixedLM 的维基笔记 <https://github.com/statsmodels/statsmodels/wiki/Examples#linear-mixed-models>`_
 
 
 
-Technical Documentation
+技术文档
 -----------------------
 
-The data are partitioned into disjoint groups.
-The probability model for group :math:`i` is:
+数据被分成不相交的组。
+第 :math:`i` 组概率模型为:
 
 .. math::
 
     Y = X\beta + Z\gamma + Q_1\eta_1 + \cdots + Q_k\eta_k + \epsilon
 
-where
+其中
 
-* :math:`n_i` is the number of observations in group :math:`i`
-* :math:`Y` is a :math:`n_i` dimensional response vector
-* :math:`X` is a :math:`n_i * k_{fe}` dimensional matrix of fixed effects
-  coefficients
-* :math:`\beta` is a :math:`k_{fe}`-dimensional vector of fixed effects slopes
-* :math:`Z` is a :math:`n_i * k_{re}` dimensional matrix of random effects
-  coefficients
-* :math:`\gamma` is a :math:`k_{re}`-dimensional random vector with mean 0
-  and covariance matrix :math:`\Psi`; note that each group
-  gets its own independent realization of gamma.
-* :math:`Q_j` is a :math:`n_i \times q_j` dimensional design matrix for the
-  :math:`j^\rm{th}` variance component.
-* :math:`\eta_j` is a :math:`q_j`-dimensional random vector containing independent
-  and identically distributed values with variance :math:`\tau_j^2`.
-* :math:`\epsilon` is a :math:`n_i` dimensional vector of i.i.d normal
-  errors with mean 0 and variance :math:`\sigma^2`; the :math:`\epsilon`
-  values are independent both within and between groups
+* :math:`n_i` 是第 :math:`i` 组中的观测值
+* :math:`Y` 是一个 :math:`n_i` 维的响应变量
+* :math:`X` 是一个 :math:`n_i * k_{fe}` 维的固定效应系数矩阵
+* :math:`\beta` 是一个 :math:`k_{fe}`-维的固定效应斜率矩阵
+* :math:`Z` 是一个 :math:`n_i * k_{re}` 维的随机效应系数矩阵
+* :math:`\gamma` 是一个 :math:`k_{re}`-维的随机向量，均值为 0 ，
+  协方差矩阵为 :math:`\Psi`; 每组都有独立实现的 gamma 
+* :math:`Q_j` 是第 :math:`j` 个方差成分的 :math:`n_i \times q_j` 维的设计矩阵
+* :math:`\eta_j` 是一个 :math:`q_j`-维的随机向量，具有 :math:`\tau_j^2`的方差独立且均匀分布的值
+* :math:`\epsilon` 是一个 :math:`n_i` 维的服从i.i.d 正态误差的向量 均值为0，方差为 :math:`\sigma^2`;  :math:`\epsilon`
+  值的内部和组间相互独立
 
-:math:`Y, X, \{Q_j\}` and :math:`Z` must be entirely observed.  :math:`\beta`,
-:math:`\Psi`, and :math:`\sigma^2` are estimated using ML or REML estimation,
-and :math:`\gamma`, :math:`\{\eta_j\}` and :math:`\epsilon` are
-random so define the probability model.
+在机器学习和REML 估计中，
+:math:`Y, X, \{Q_j\}` 和 :math:`Z` 必须完全遵守  :math:`\beta`,
+:math:`\Psi`, 和 :math:`\sigma^2` 分布，
+且 :math:`\gamma`, :math:`\{\eta_j\}` 和 :math:`\epsilon` 是随机的，所以定义了概率模型
 
-The marginal mean structure is :math:`E[Y|X,Z] = X*\beta`.  If only
-the marginal mean structure is of interest, GEE is a good alternative
-to mixed models.
+边际均值机构为 :math:`E[Y|X,Z] = X*\beta`。  如果仅关注边际均值结构，则GEE是混合模型的不错选择。
 
-Notation:
+符号:
 
-* :math:`cov_{re}` is the random effects covariance matrix (referred
-  to above as :math:`\Psi`) and :math:`scale` is the (scalar) error
-  variance.  There is also a single estimated variance parameter
-  :math:`\tau_j^2` for each variance component.  For a single group,
-  the marginal covariance matrix of endog given exog is
-  :math:`scale*I + Z * cov_{re} * Z`, where :math:`Z` is the design
-  matrix for the random effects in one group.
+* :math:`cov_{re}` 是随机效应协方差矩阵 (在上面表示为 :math:`\Psi`) 而 :math:`scale` 是标准误差方差。
+  每个方差成分都有一个估计方差参数
+  :math:`\tau_j^2` 。  对于单个组来说,
+  给定 exog 和 endog 的边际协方差矩阵 
+  :math:`scale*I + Z * cov_{re} * Z`, 其中 :math:`Z` 是一组随机效应的设计矩阵
 
-References
+参考文献
 ^^^^^^^^^^
 
-The primary reference for the implementation details is:
+T实现细节的主要参考了:
 
-*   MJ Lindstrom, DM Bates (1988).  *Newton Raphson and EM algorithms for
-    linear mixed effects models for repeated measures data*.  Journal of
-    the American Statistical Association. Volume 83, Issue 404, pages 1014-1022.
+*   MJ Lindstrom, DM Bates (1988).  *Newton Raphson 和 EM 算法用于线性混合效应模型的重复测量数据*.  Journal of
+    美国统计协会杂志. 第 83 卷, 第 404 期, 第 1014-1022 页.
 
-See also this more recent document:
+另外，还参考以下最新文档:
 
 * http://econ.ucsb.edu/~doug/245a/Papers/Mixed%20Effects%20Implement.pdf
 
-All the likelihood, gradient, and Hessian calculations closely follow
-Lindstrom and Bates.
+所有的 likelihood（似然）、 gradient（梯度） 和 Hessian 的计算紧跟
+Lindstrom 和 Bates.
 
-The following two documents are written more from the perspective of
-users:
+以下两个文档是从用户角度编写的:
 
 * http://lme4.r-forge.r-project.org/lMMwR/lrgprt.pdf
 
@@ -174,21 +145,21 @@ users:
 
    General references for this class of models are
 
-Module Reference
+模块参考
 ----------------
 
 .. module:: statsmodels.regression.mixed_linear_model
    :synopsis: Mixed Linear Models
 
 
-The model class is:
+模型类:
 
 .. autosummary::
    :toctree: generated/
 
    MixedLM
 
-The result class is:
+结果类:
 
 .. autosummary::
    :toctree: generated/
