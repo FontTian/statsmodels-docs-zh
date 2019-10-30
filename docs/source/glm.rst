@@ -2,47 +2,46 @@
 
 .. _glm:
 
-Generalized Linear Models
+广义线性模型
 =========================
 
-Generalized linear models currently supports estimation using the one-parameter
-exponential families.
+广义线性模型当前支持使用一参数指数族进行估计。
 
-See `Module Reference`_ for commands and arguments.
+有关命令和参数，请参考 `Module Reference` 。
 
-Examples
+例子
 --------
 
 .. ipython:: python
    :okwarning:
 
-   # Load modules and data
+   # 加载模块和数据集
    import statsmodels.api as sm
    data = sm.datasets.scotland.load(as_pandas=False)
    data.exog = sm.add_constant(data.exog)
 
-   # Instantiate a gamma family model with the default link function.
+   # 实例化之后 gamma 家族模型一般都有 link 函数。
    gamma_model = sm.GLM(data.endog, data.exog, family=sm.families.Gamma())
    gamma_results = gamma_model.fit()
    print(gamma_results.summary())
 
-Detailed examples can be found here:
+更多详细示例:
 
 * `GLM <examples/notebooks/generated/glm.html>`__
 * `Formula <examples/notebooks/generated/glm_formula.html>`__
 
-Technical Documentation
+技术文档
 -----------------------
 
 ..   ..glm_techn1
 ..   ..glm_techn2
 
-The statistical model for each observation :math:`i` is assumed to be
+每个观测值的统计模型， :math:`i` 的表达式
 
  :math:`Y_i \sim F_{EDM}(\cdot|\theta,\phi,w_i)` and
  :math:`\mu_i = E[Y_i|x_i] = g^{-1}(x_i^\prime\beta)`.
 
-where :math:`g` is the link function and :math:`F_{EDM}(\cdot|\theta,\phi,w)`
+当 :math:`g` 是 link 函数， :math:`F_{EDM}(\cdot|\theta,\phi,w)`
 is a distribution of the family of exponential dispersion models (EDM) with
 natural parameter :math:`\theta`, scale parameter :math:`\phi` and weight
 :math:`w`.
@@ -68,56 +67,54 @@ the weights :math:`w_i` might be different for every :math:`y_i` such that the
 estimation of :math:`\beta` depends on them.
 
 ================================================= ============================== ============================== ======================================== =========================================== ============================================================================ =====================
-Distribution                                      Domain                         :math:`\mu=E[Y|x]`             :math:`v(\mu)`                           :math:`\theta(\mu)`                         :math:`b(\theta)`                                                            :math:`\phi`
+分布                                      域                        :math:`\mu=E[Y|x]`             :math:`v(\mu)`                           :math:`\theta(\mu)`                         :math:`b(\theta)`                                                            :math:`\phi`
 ================================================= ============================== ============================== ======================================== =========================================== ============================================================================ =====================
-Binomial :math:`B(n,p)`                           :math:`0,1,\ldots,n`           :math:`np`                     :math:`\mu-\frac{\mu^2}{n}`              :math:`\log\frac{p}{1-p}`                   :math:`n\log(1+e^\theta)`                                                    1
-Poisson :math:`P(\mu)`                            :math:`0,1,\ldots,\infty`      :math:`\mu`                    :math:`\mu`                              :math:`\log(\mu)`                           :math:`e^\theta`                                                             1
-Neg. Binom. :math:`NB(\mu,\alpha)`                :math:`0,1,\ldots,\infty`      :math:`\mu`                    :math:`\mu+\alpha\mu^2`                  :math:`\log(\frac{\alpha\mu}{1+\alpha\mu})` :math:`-\frac{1}{\alpha}\log(1-\alpha e^\theta)`                             1
-Gaussian/Normal :math:`N(\mu,\sigma^2)`           :math:`(-\infty,\infty)`       :math:`\mu`                    :math:`1`                                :math:`\mu`                                 :math:`\frac{1}{2}\theta^2`                                                  :math:`\sigma^2`
-Gamma :math:`N(\mu,\nu)`                          :math:`(0,\infty)`             :math:`\mu`                    :math:`\mu^2`                            :math:`-\frac{1}{\mu}`                      :math:`-\log(-\theta)`                                                       :math:`\frac{1}{\nu}`
-Inv. Gauss. :math:`IG(\mu,\sigma^2)`              :math:`(0,\infty)`             :math:`\mu`                    :math:`\mu^3`                            :math:`-\frac{1}{2\mu^2}`                   :math:`-\sqrt{-2\theta}`                                                     :math:`\sigma^2`
-Tweedie :math:`p\geq 1`                           depends on :math:`p`           :math:`\mu`                    :math:`\mu^p`                            :math:`\frac{\mu^{1-p}}{1-p}`               :math:`\frac{\alpha-1}{\alpha}\left(\frac{\theta}{\alpha-1}\right)^{\alpha}` :math:`\phi`
+二项式分布 :math:`B(n,p)`                           :math:`0,1,\ldots,n`           :math:`np`                     :math:`\mu-\frac{\mu^2}{n}`              :math:`\log\frac{p}{1-p}`                   :math:`n\log(1+e^\theta)`                                                    1
+泊松分布 :math:`P(\mu)`                            :math:`0,1,\ldots,\infty`      :math:`\mu`                    :math:`\mu`                              :math:`\log(\mu)`                           :math:`e^\theta`                                                             1
+负二项分布 :math:`NB(\mu,\alpha)`                :math:`0,1,\ldots,\infty`      :math:`\mu`                    :math:`\mu+\alpha\mu^2`                  :math:`\log(\frac{\alpha\mu}{1+\alpha\mu})` :math:`-\frac{1}{\alpha}\log(1-\alpha e^\theta)`                             1
+高斯/标准正太分布 :math:`N(\mu,\sigma^2)`           :math:`(-\infty,\infty)`       :math:`\mu`                    :math:`1`                                :math:`\mu`                                 :math:`\frac{1}{2}\theta^2`                                                  :math:`\sigma^2`
+Gamma分布 :math:`N(\mu,\nu)`                          :math:`(0,\infty)`             :math:`\mu`                    :math:`\mu^2`                            :math:`-\frac{1}{\mu}`                      :math:`-\log(-\theta)`                                                       :math:`\frac{1}{\nu}`
+逆高斯分布. :math:`IG(\mu,\sigma^2)`              :math:`(0,\infty)`             :math:`\mu`                    :math:`\mu^3`                            :math:`-\frac{1}{2\mu^2}`                   :math:`-\sqrt{-2\theta}`                                                     :math:`\sigma^2`
+Tweedie分布 :math:`p\geq 1`                           depends on :math:`p`           :math:`\mu`                    :math:`\mu^p`                            :math:`\frac{\mu^{1-p}}{1-p}`               :math:`\frac{\alpha-1}{\alpha}\left(\frac{\theta}{\alpha-1}\right)^{\alpha}` :math:`\phi`
 ================================================= ============================== ============================== ======================================== =========================================== ============================================================================ =====================
 
-The Tweedie distribution has special cases for :math:`p=0,1,2` not listed in the
-table and uses :math:`\alpha=\frac{p-2}{p-1}`.
+Tweedie分布具有 :math:`p=0,1,2` 的特殊情况
+没有在表中列出和使用 :math:`\alpha=\frac{p-2}{p-1}`.
 
-Correspondence of mathematical variables to code:
+数学变量与代码的对应关系:
 
-* :math:`Y` and :math:`y` are coded as ``endog``, the variable one wants to
-  model
-* :math:`x` is coded as ``exog``, the covariates alias explanatory variables
-* :math:`\beta` is coded as ``params``, the parameters one wants to estimate
-* :math:`\mu` is coded as ``mu``, the expectation (conditional on :math:`x`)
-  of :math:`Y`
-* :math:`g` is coded as ``link`` argument to the ``class Family``
-* :math:`\phi` is coded as ``scale``, the dispersion parameter of the EDM
-* :math:`w` is not yet supported (i.e. :math:`w=1`), in the future it might be
+* :math:`Y` 和 :math:`y` 编码为 ``endog``, 要对变量 math:`Y` 建模
+* :math:`x` 编码为 ``exog``, 协变量别名解释变量
+* :math:`\beta` 编码为 ``params``, 要估算的参数
+* :math:`\mu` 编码为 ``mu``, (基于 :math:`x`) math:`Y`的期望。
+* :math:`g` 编码为 ``link`` 传递给 ``class Family``
+* :math:`\phi` 编码为 ``scale``, EDM 的参数
+* :math:`w` 目前不支持 (i.e. :math:`w=1`)的情况, 未来有可能支持
   ``var_weights``
-* :math:`p` is coded as ``var_power`` for the power of the variance function
-  :math:`v(\mu)` of the Tweedie distribution, see table
-* :math:`\alpha` is either
+* :math:`p` 编码为 ``var_power`` 方差函数的幂服从
+  :math:`v(\mu)` 分布, 请参见表
+* :math:`\alpha` 或者是
 
-  * Negative Binomial: the ancillary parameter ``alpha``, see table
-  * Tweedie: an abbreviation for :math:`\frac{p-2}{p-1}` of the power :math:`p`
-    of the variance function, see table
+  * 负二项式: 辅助参数 ``alpha``, 请参见表
+  * Tweedie: Tweedie 的缩写 :math:`\frac{p-2}{p-1}`  :math:`p`
+    的函数, 请参见表
 
 
-References
+参考
 ^^^^^^^^^^
 
-* Gill, Jeff. 2000. Generalized Linear Models: A Unified Approach. SAGE QASS Series.
-* Green, PJ. 1984. “Iteratively reweighted least squares for maximum likelihood estimation, and some robust and resistant alternatives.” Journal of the Royal Statistical Society, Series B, 46, 149-192.
-* Hardin, J.W. and Hilbe, J.M. 2007. “Generalized Linear Models and Extensions.” 2nd ed. Stata Press, College Station, TX.
-* McCullagh, P. and Nelder, J.A. 1989. “Generalized Linear Models.” 2nd ed. Chapman & Hall, Boca Rotan.
+* Gill, Jeff. 2000. 广义线性模型：统一方法. SAGE QASS 系列.
+* Green, PJ. 1984. “迭代加权最小二乘以求最大似然估计，以及一些健壮和可靠的替代方案。”皇家统计学会杂志， B 系列, 46, 149-192.
+* Hardin, J.W. and Hilbe, J.M. 2007. “广义线性模型和扩展”，第二版. Stata Press, College Station, TX.
+* McCullagh, P. and Nelder, J.A. 1989. “广义线性模型”。第二版. Chapman & Hall, Boca Rotan.
 
-Module Reference
+模块参考
 ----------------
 
 .. module:: statsmodels.genmod.generalized_linear_model
-   :synopsis: Generalized Linear Models (GLM)
+   :synopsis: 广义线性模型 (GLM)
 
-Model Class
+模型类
 ^^^^^^^^^^^
 
 .. autosummary::
@@ -125,7 +122,7 @@ Model Class
 
    GLM
 
-Results Class
+结果类
 ^^^^^^^^^^^^^
 
 .. autosummary::
@@ -136,10 +133,10 @@ Results Class
 
 .. _families:
 
-Families
+家族模型
 ^^^^^^^^
 
-The distribution families currently implemented are
+当前发行的家族模型有
 
 .. module:: statsmodels.genmod.families.family
 .. currentmodule:: statsmodels.genmod.families.family
@@ -159,12 +156,12 @@ The distribution families currently implemented are
 
 .. _links:
 
-Link Functions
+Link 函数
 ^^^^^^^^^^^^^^
 
-The link functions currently implemented are the following. Not all link
-functions are available for each distribution family. The list of
-available link functions can be obtained by
+下表是当前实现了 link 函数，并不是每个家族模型都可以使用 link 函数。
+可以使用 link 函数的如下表
+
 
 ::
 
@@ -195,11 +192,10 @@ available link functions can be obtained by
 
 .. _varfuncs:
 
-Variance Functions
+方差函数
 ^^^^^^^^^^^^^^^^^^
 
-Each of the families has an associated variance function. You can access
-the variance functions here:
+每个族都有关联的方差函数。方差函数如下表：
 
 ::
 

@@ -2,22 +2,18 @@
 
 .. _gee:
 
-Generalized Estimating Equations
+广义估计方程
 ================================
 
-Generalized Estimating Equations estimate generalized linear models for
-panel, cluster or repeated measures data when the observations are possibly
-correlated withing a cluster but uncorrelated across clusters. It supports
-estimation of the same one-parameter exponential families as Generalized
-Linear models (`GLM`).
+广义估计方程是针对观测值的面板、与其中一个聚类相关但与各个聚类不相关和非独立时，
+从广义线性模型发展而来，它具有相同的广义线性模型(`GLM`) 的 one-parameter 指数族
 
-See `Module Reference`_ for commands and arguments.
+有关命令和参数，请看 `Module Reference`_ 
 
-Examples
+例子
 --------
 
-The following illustrates a Poisson regression with exchangeable correlation
-within clusters using data on epilepsy seizures.
+在聚类时使用癫痫发作数据来说明具有可交换相关性的泊松分布回归
 
 .. ipython:: python
 
@@ -34,35 +30,29 @@ within clusters using data on epilepsy seizures.
     print(res.summary())
 
 
-Several notebook examples of the use of GEE can be found on the Wiki:
-`Wiki notebooks for GEE <https://github.com/statsmodels/statsmodels/wiki/Examples#generalized-estimating-equations-gee>`_
+在维基百科可以找到几个使用GEE模型的示例：
+`GEE的维基笔记 <https://github.com/statsmodels/statsmodels/wiki/Examples#generalized-estimating-equations-gee>`_
 
 
-References
+参考
 ^^^^^^^^^^
 
-* KY Liang and S Zeger. "Longitudinal data analysis using generalized
-  linear models". Biometrika (1986) 73 (1): 13-22.
-* S Zeger and KY Liang. "Longitudinal Data Analysis for Discrete and
-  Continuous Outcomes". Biometrics Vol. 42, No. 1 (Mar., 1986),
+* KY Liang 和 S Zeger. “使用广义线性模型进行纵向数据分析”. Biometrika (1986) 73 (1): 13-22.
+* S Zeger 和 KY Liang. “用于离散和连续结果的纵向数据分析”. Biometrics Vol. 42, No. 1 (Mar., 1986),
   pp. 121-130
-* A Rotnitzky and NP Jewell (1990). "Hypothesis testing of regression
-  parameters in semiparametric generalized linear models for cluster
-  correlated data", Biometrika, 77, 485-497.
-* Xu Guo and Wei Pan (2002). "Small sample performance of the score test in
-  GEE".
+* A Rotnitzky 和 NP Jewell (1990). “聚类相关数据的半参数广义线性模型中回归参数的假设检验”, Biometrika, 77, 485-497.
+* Xu Guo 和 Wei Pan (2002). “ GEE中分数测试的小样本性能”.
   http://www.sph.umn.edu/faculty1/wp-content/uploads/2012/11/rr2002-013.pdf
-* LA Mancl LA, TA DeRouen (2001). A covariance estimator for GEE with improved
-  small-sample properties.  Biometrics. 2001 Mar;57(1):126-34.
+* LA Mancl LA, TA DeRouen (2001). 具有改进的小样本属性的GEE协方差估计器.  生物识别. 2001 Mar;57(1):126-34.
 
 
-Module Reference
+模块参考
 ----------------
 
 .. module:: statsmodels.genmod.generalized_estimating_equations
    :synopsis: Generalized estimating equations
 
-Model Class
+模型类
 ^^^^^^^^^^^
 
 .. autosummary::
@@ -82,7 +72,7 @@ Model Class
 
    QIF
 
-Results Classes
+结果类
 ^^^^^^^^^^^^^^^
 
 .. currentmodule:: statsmodels.genmod.generalized_estimating_equations
@@ -100,10 +90,10 @@ Results Classes
 
    QIFResults
 
-Dependence Structures
+依赖结构
 ^^^^^^^^^^^^^^^^^^^^^
 
-The dependence structures currently implemented are
+当前实现的依赖结构是
 
 .. module:: statsmodels.genmod.cov_struct
    :synopsis: Covariance structures for Generalized Estimating Equations (GEE)
@@ -121,10 +111,10 @@ The dependence structures currently implemented are
    Nested
 
 
-Families
+家族模型
 ^^^^^^^^
 
-The distribution families are the same as for GLM, currently implemented are
+与 GLM 相同，目前已实现
 
 .. module:: statsmodels.genmod.families.family
    :synopsis: Generalized Linear Model (GLM) families
@@ -144,12 +134,11 @@ The distribution families are the same as for GLM, currently implemented are
    Tweedie
 
 
-Link Functions
+Link 函数
 ^^^^^^^^^^^^^^
 
-The link functions are the same as for GLM, currently implemented are the
-following. Not all link functions are available for each distribution family.
-The list of available link functions can be obtained by
+GEE的Link 函数与GLM相同, 下面是目前已实现的函数. 并不是每个家族模型都可以使用 link 函数。
+可以使用 link 函数的如下表.
 
 ::
 

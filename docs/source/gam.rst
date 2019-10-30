@@ -2,23 +2,20 @@
 
 .. _gam:
 
-Generalized Additive Models (GAM)
+广义可加模型 (GAM)
 =================================
 
-Generalized Additive Models allow for penalized estimation of smooth terms
-in generalized linear models.
+广义可加模型允许对广义线性模型中的平滑项进行惩罚估计。
 
-See `Module Reference`_ for commands and arguments.
+有关命令和参数，请参见 `Module Reference`_ 
 
-Examples
+例子
 --------
 
-The following illustrates a Gaussian and a Poisson regression where
-categorical variables are treated as linear terms and the effect of
-two explanatory variables is captured by penalized B-splines.
-The data is from the automobile dataset
+例子说明了高斯和泊松回归，其中将分类变量视为线性项
+，而两个解释变量的影响则通过惩罚B-splines来捕获。数据来自汽车数据集
 https://archive.ics.uci.edu/ml/datasets/automobile
-We can load a dataframe with selected columns from the unit test module.
+我们可以加载单元测试模块的 DataFrame .
 
 .. ipython:: python
 
@@ -59,22 +56,22 @@ We can load a dataframe with selected columns from the unit test module.
     gam_bs.select_penweight_kfold()[0]
 
 
-References
+参考
 ^^^^^^^^^^
 
-* Hastie, Trevor, and Robert Tibshirani. 1986. Generalized Additive Models. Statistical Science 1 (3): 297-310.
-* Wood, Simon N. 2006. Generalized Additive Models: An Introduction with R. Texts in Statistical Science. Boca Raton, FL: Chapman & Hall/CRC.
-* Wood, Simon N. 2017. Generalized Additive Models: An Introduction with R. Second edition. Chapman & Hall/CRC Texts in Statistical Science. Boca Raton: CRC Press/Taylor & Francis Group.
+* Hastie, Trevor, and Robert Tibshirani. 1986. 广义可加模型. Statistical Science 1 (3): 297-310.
+* Wood, Simon N. 2006. 广义可加模型: An Introduction with R. 统计科学笔记. Boca Raton, FL: Chapman & Hall/CRC.
+* Wood, Simon N. 2017. 广义可加模型: R的简介. 第二版. Chapman & Hall/CRC 的统计科学教科书. Boca Raton: CRC Press/Taylor & Francis Group.
 
 
-Module Reference
+模块参考
 ----------------
 
 .. module:: statsmodels.gam.generalized_additive_model
    :synopsis: Generalized Additive Models
 .. currentmodule:: statsmodels.gam.generalized_additive_model
 
-Model Class
+模型类
 ^^^^^^^^^^^
 
 .. autosummary::
@@ -83,7 +80,7 @@ Model Class
    GLMGam
    LogitGam
 
-Results Classes
+结果类
 ^^^^^^^^^^^^^^^
 
 .. autosummary::
@@ -112,10 +109,8 @@ polynomial smoother basis but those have not been verified yet.
 
 
 
-Families and Link Functions
+家族模型和 Link 函数
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The distribution families in `GLMGam` are the same as for GLM and so are
-the corresponding link functions.
-Current unit tests only cover Gaussian and Poisson, and GLMGam might not
-work for all options that are available in GLM.
+GLMGam 与 GLM 相同，具有相同的 link 函数。当前的联合测试仅涵盖了高斯和泊松，
+并且GLMGam可能不适用于GLM中所有选项。
