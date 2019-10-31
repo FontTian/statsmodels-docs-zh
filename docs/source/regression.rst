@@ -42,15 +42,15 @@
 
 线性统计模型可以表达为
 
- :math:`Y = X\beta + \mu`,  当 :math:`\mu\sim N\left(0,\Sigma\right).`
+ :math:`Y = X\beta + \mu`,  其中 :math:`\mu\sim N\left(0,\Sigma\right).`
 
 取决于:math:`\Sigma` 的属性, 目前我们有四种类型可用:
 
-* GLS : 任意协方差的广义最小二乘 :math:`\Sigma`
-* OLS : i.i.d. 误差的普通最小二乘 :math:`\Sigma=\textbf{I}`
-* WLS : 异方误差的加权最小二乘 :math:`\text{diag}\left  (\Sigma\right)`
+* GLS : 任意协方差的广义最小二乘 :math:`\Sigma` 
+* OLS : i.i.d. 误差的普通最小二乘 :math:`\Sigma=\textbf{I}` 
+* WLS : 异方误差的加权最小二乘 :math:`\text{diag}\left  (\Sigma\right)` 
 * GLSAR : 具有自相关AR（p）误差的可行广义最小二乘法
-  :math:`\Sigma=\Sigma\left(\rho\right)`
+  :math:`\Sigma=\Sigma\left(\rho\right)` 
 
 所有回归模型都定义了相同的方法并遵循相同的结构，并且可以类似的方式使用。其中一些
 包含其他特定于模型的方法和属性。
