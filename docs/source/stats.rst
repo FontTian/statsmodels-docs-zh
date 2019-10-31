@@ -6,17 +6,12 @@
 .. _stats:
 
 
-Statistics :mod:`stats`
+统计 :mod:`stats`
 =======================
 
-This section collects various statistical tests and tools.
-Some can be used independently of any models, some are intended as extension to the
-models and model results.
+本节收集各种统计测试和工具。某些模型可以独立于任何模型使用，而某些模型则是对模型和模型结果的扩展。
 
-API Warning: The functions and objects in this category are spread out in
-various modules and might still be moved around. We expect that in future the
-statistical tests will return class instances with more informative reporting
-instead of only the raw numbers.
+API警告：此类别中的函数和对象分布在各个模块中，并且可能仍在移动。我们希望将来统计检验将返回具有更多信息报告的类实例，而不仅仅是原始数字。
 
 
 .. _stattools:
@@ -42,7 +37,7 @@ Residual Diagnostics and Specification Tests
    expected_robust_kurtosis
 
 .. module:: statsmodels.stats.diagnostic
-   :synopsis: Statistical methods and tests to diagnose model fit problems
+   :synopsis: 用于诊断模型拟合问题的统计方法和检验
 
 .. currentmodule:: statsmodels.stats.diagnostic
 
@@ -77,11 +72,11 @@ Residual Diagnostics and Specification Tests
    kstest_normal
    lilliefors
 
-Outliers and influence measures
+异常值和影响措施
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. module:: statsmodels.stats.outliers_influence
-   :synopsis: Statistical methods and measures for outliers and influence
+   :synopsis: 异常值和影响的统计方法和度量
 
 .. currentmodule:: statsmodels.stats.outliers_influence
 
@@ -93,15 +88,13 @@ Outliers and influence measures
    MLEInfluence
    variance_inflation_factor
 
-See also the notes on :ref:`notes on regression diagnostics <diagnostics>`
+另请参阅 ::`关于回归诊断的注释： <diagnostics>` 。
 
-Sandwich Robust Covariances
+Sandwich Robust 协方差
 ---------------------------
 
-The following functions calculate covariance matrices and standard errors for
-the parameter estimates that are robust to heteroscedasticity and
-autocorrelation in the errors. Similar to the methods that are available
-for the LinearModelResults, these methods are designed for use with OLS.
+以下函数针对参数估计计算协方差矩阵和标准误差，这些参数估计对误差的异方差性和自相关具有鲁棒性。
+与 LinearModelResults 可用的方法类似，这些方法设计用于 OLS。
 
 .. currentmodule:: statsmodels.stats
 
@@ -115,8 +108,7 @@ for the LinearModelResults, these methods are designed for use with OLS.
    sandwich_covariance.cov_cluster_2groups
    sandwich_covariance.cov_white_simple
 
-The following are standalone versions of the heteroscedasticity robust
-standard errors attached to LinearModelResults
+以下是 LinearModelResults 附带的异方差稳健性标准误差的独立版本
 
 .. autosummary::
    :toctree: generated/
@@ -129,13 +121,13 @@ standard errors attached to LinearModelResults
    sandwich_covariance.se_cov
 
 
-Goodness of Fit Tests and Measures
+拟合优度和量度
 ----------------------------------
 
-some tests for goodness of fit for univariate distributions
+一些关于单变量分布拟合优度的检验
 
 .. module:: statsmodels.stats.gof
-   :synopsis: Goodness of fit measures and tests
+   :synopsis: 拟合度和检验的优度
 
 .. currentmodule:: statsmodels.stats.gof
 
@@ -156,7 +148,7 @@ some tests for goodness of fit for univariate distributions
    kstest_normal
    lilliefors
 
-Non-Parametric Tests
+非参数检验
 --------------------
 
 .. module:: statsmodels.sandbox.stats.runs
@@ -187,12 +179,11 @@ Non-Parametric Tests
 
 .. _interrater:
 
-Interrater Reliability and Agreement
+评估的可靠性和协议
 ------------------------------------
 
-The main function that statsmodels has currently available for interrater
-agreement measures and tests is Cohen's Kappa. Fleiss' Kappa is currently
-only implemented as a measures but without associated results statistics.
+statsmodels 当前可用于跨界协议度量和检验的主要功能有 Cohen's Kappa。
+ Fleiss' Kappa 目前仅作为一种措施执行，而没有相关的结果统计。
 
 .. module:: statsmodels.stats.inter_rater
 .. currentmodule:: statsmodels.stats.inter_rater
@@ -205,18 +196,15 @@ only implemented as a measures but without associated results statistics.
    to_table
    aggregate_raters
 
-Multiple Tests and Multiple Comparison Procedures
+多次检验和比较的程序
 -------------------------------------------------
 
-`multipletests` is a function for p-value correction, which also includes p-value
-correction based on fdr in `fdrcorrection`.
-`tukeyhsd` performs simultaneous testing for the comparison of (independent) means.
-These three functions are verified.
-GroupsStats and MultiComparison are convenience classes to multiple comparisons similar
-to one way ANOVA, but still in development
+`multipletests` 是用于 p-value 校正的功能，还包括基于 `fdrcorrection` 中的 fdr 的 p-value 校正
+`tukeyhsd` 同时执行检验与比较（独立）均值，这三个功能已得到了验证，GroupsStats 和 MultiComparison 
+是对多次比较的便捷的类，类似于一种方差分析，但仍在开发中。
 
 .. module:: statsmodels.sandbox.stats.multicomp
-   :synopsis: Experimental methods for controlling size while performing multiple comparisons
+   :synopsis: 用于在进行多次比较时控制尺寸的实验方法
 
 
 .. currentmodule:: statsmodels.stats.multitest
@@ -237,7 +225,7 @@ to one way ANOVA, but still in development
    TukeyHSDResults
 
 .. module:: statsmodels.stats.multicomp
-   :synopsis: Methods for controlling size while performing multiple comparisons
+   :synopsis: 执行多个比较时控制大小的方法
 
 .. currentmodule:: statsmodels.stats.multicomp
 
@@ -247,7 +235,7 @@ to one way ANOVA, but still in development
    pairwise_tukeyhsd
 
 .. module:: statsmodels.stats.multitest
-   :synopsis: Multiple testing p-value and FDR adjustments
+   :synopsis: 多次检验的 p-value 和 FDR 调整
 
 .. currentmodule:: statsmodels.stats.multitest
 
@@ -273,7 +261,7 @@ to one way ANOVA, but still in development
    OLSEffects
    RegModelEffects
 
-The following functions are not (yet) public
+以下功能尚未公开
 
 .. currentmodule:: statsmodels.sandbox.stats.multicomp
 
@@ -306,19 +294,15 @@ The following functions are not (yet) public
 
 .. _tost:
 
-Basic Statistics and t-Tests with frequency weights
+具有频率权重的基本统计量和t检验
 ---------------------------------------------------
 
-Besides basic statistics, like mean, variance, covariance and correlation for
-data with case weights, the classes here provide one and two sample tests
-for means. The t-tests have more options than those in scipy.stats, but are
-more restrictive in the shape of the arrays. Confidence intervals for means
-are provided based on the same assumptions as the t-tests.
+除了基本统计数据（如具有案例权重的数据的均值，方差，协方差和相关性）外，
+此处的类还提供一个和两个均值样本检验。t检验比scipy.stats中的检验有更多选择，
+但对阵列形状的限制更多。根据与t检验相同的假设提供均值的置信区间。
 
-Additionally, tests for equivalence of means are available for one sample and
-for two, either paired or independent, samples. These tests are based on TOST,
-two one-sided tests, which have as null hypothesis that the means are not
-"close" to each other.
+此外，均值相等性检验可用于一个样本和两个成对或独立样本。
+这些检验基于TOST（两个单面检验），作为零假设，即手段彼此之间并不“接近”。
 
 .. module:: statsmodels.stats.weightstats
    :synopsis: Weighted statistics
@@ -337,8 +321,7 @@ two one-sided tests, which have as null hypothesis that the means are not
    ztost
    zconfint
 
-weightstats also contains tests and confidence intervals based on summary
-data
+weightstats 还包含基于汇总数据的测试和置信区间。
 
 .. currentmodule:: statsmodels.stats.weightstats
 
@@ -352,15 +335,12 @@ data
    _zstat_generic2
 
 
-Power and Sample Size Calculations
+功效和样本数量计算
 ----------------------------------
 
-The :mod:`power` module currently implements power and sample size calculations
-for the t-tests, normal based test, F-tests and Chisquare goodness of fit test.
-The implementation is class based, but the module also provides
-three shortcut functions, ``tt_solve_power``, ``tt_ind_solve_power`` and
-``zt_ind_solve_power`` to solve for any one of the parameters of the power
-equations.
+ :mod:`power` 模块目前实现功率和样本大小计算的t检验, 正常的基于检验，F-检验和配合检验的卡方优度，
+ 该实现是基于类的，但该模块还提供了三种快捷功能， ``tt_solve_power``, ``tt_ind_solve_power`` 和
+``zt_ind_solve_power`` 求解功效方程中的任一参数。
 
 
 .. module:: statsmodels.stats.power
@@ -384,12 +364,11 @@ equations.
 
 .. _proportion_stats:
 
-Proportion
+比例
 ----------
 
 
-Also available are hypothesis test, confidence intervals and effect size for
-proportions that can be used with NormalIndPower.
+ NormalIndPower 可以与假设检验，置信区间和比例效应大小共同来使用。
 
 .. module:: statsmodels.stats.proportion
    :synopsis: Tests for proportions
@@ -421,16 +400,14 @@ proportions that can be used with NormalIndPower.
    samplesize_confint_proportion
 
 
-Moment Helpers
+Moment 助手
 --------------
 
-When there are missing values, then it is possible that a correlation or
-covariance matrix is not positive semi-definite. The following three
-functions can be used to find a correlation or covariance matrix that is
-positive definite and close to the original matrix.
+当缺少值时，相关性或协方差矩阵可能不是正半定的。
+可以使用以下三个函数查找正定且接近原始矩阵的相关或协方差矩阵。
 
 .. module:: statsmodels.stats.correlation_tools
-   :synopsis: Procedures for ensuring correlations are positive semi-definite
+   :synopsis: 确保相关性为正半定性的程序
 
 .. currentmodule:: statsmodels.stats.correlation_tools
 
@@ -447,8 +424,7 @@ positive definite and close to the original matrix.
    kernel_covariance
 
 
-These are utility functions to convert between central and non-central moments, skew,
-kurtosis and cummulants.
+这些实用程序功能可在中央和非中央力矩，偏斜，峰度和累积量之间进行转换。
 
 .. module:: statsmodels.stats.moment_helpers
    :synopsis: Tools for converting moments
@@ -471,21 +447,17 @@ kurtosis and cummulants.
    se_cov
 
 
-Mediation Analysis
+调解分析
 ------------------
 
-Mediation analysis focuses on the relationships among three key variables:
-an 'outcome', a 'treatment', and a 'mediator'. Since mediation analysis is a
-form of causal inference, there are several assumptions involved that are
-difficult or impossible to verify. Ideally, mediation analysis is conducted in
-the context of an experiment such as this one in which the treatment is
-randomly assigned. It is also common for people to conduct mediation analyses
-using observational data in which the treatment may be thought of as an
-'exposure'. The assumptions behind mediation analysis are even more difficult
-to verify in an observational setting.
+调解分析关注三个关键变量之间的关系： 'outcome', 'treatment', 和 'mediator'. 
+由于调解分析是因果推理的一种形式，因此涉及一些难以验证或无法验证的假设。
+理想情况下，调解分析是在这样的实验环境中进行的，在这种实验中，治疗是随机分配的。
+人们通常使用观察数据进行调解分析，在这种情况下，治疗可被视为“暴露”。在观察环境中，
+调解分析背后的假设更加难以验证。
 
 .. module:: statsmodels.stats.mediation
-   :synopsis: Mediation analysis
+   :synopsis: 中介分析
 
 .. currentmodule:: statsmodels.stats.mediation
 
@@ -496,16 +468,14 @@ to verify in an observational setting.
    MediationResults
 
 
-Oaxaca-Blinder Decomposition
+Oaxaca-Blinder 分解
 ----------------------------
  
-The Oaxaca-Blinder, or Blinder-Oaxaca as some call it, decomposition attempts to explain 
-gaps in means of groups. It uses the linear models of two given regression equations to 
-show what is explained by regression coefficients and known data and what is unexplained 
-using the same data. There are two types of Oaxaca-Blinder decompositions, the two-fold 
-and the three-fold, both of which can and are used in Economics Literature to discuss 
-differences in groups. This method helps classify discrimination or unobserved effects.
-This function attempts to port the functionality of the oaxaca command in STATA to Python.
+ Oaxaca-Blinder 或某些人称之为 Blinder-Oaxaca 的分解试图解释群体均值的差距。
+ 它使用两个给定回归方程的线性模型来显示回归系数和已知数据所解释的内容，
+ 以及使用相同数据无法解释的内容。 Oaxaca-Blinder 分解有两种类型，分别是两倍和三倍分解，
+ 在经济学文献中都可以并且用于讨论群体差异。此方法有助于对歧视或未观察到的影响进行分类。
+ 此函数尝试将 STATA 中的 oaxaca 命令功能移植到 Python 。
 
 .. module:: statsmodels.stats.oaxaca
    :synopsis: Oaxaca-Blinder Decomposition

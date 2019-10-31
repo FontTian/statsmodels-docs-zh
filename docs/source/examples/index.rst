@@ -2,19 +2,17 @@
 
 .. _statsmodels-examples:
 
-Examples
+例子
 ========
 
-This page provides a series of examples, tutorials and recipes to help you get
-started with ``statsmodels``. Each of the examples shown here is made available
-as an IPython Notebook and as a plain python script on the `statsmodels github
+该页面提供了一系列示例、教程和食谱，用来帮助您入门 ``statsmodels``. 此处展示的每个示例
+都可以作为 IPython Notebook 和纯 python 脚本用在 `statsmodels github
 repository <https://github.com/statsmodels/statsmodels/tree/master/examples>`_.
 
-We also encourage users to submit their own examples, tutorials or cool
-`statsmodels` trick to the `Examples wiki page
-<https://github.com/statsmodels/statsmodels/wiki/Examples>`_
+我们还鼓励用户在 `Examples wiki page <https://github.com/statsmodels/statsmodels/wiki/Examples>`_ 
+提交自己的示例、教程或很酷的statsmodels技巧
 
-{# This content is white space sensitive. Do not reformat #}
+{# 此内容对空格敏感。不要重新格式化 #}
 
 {% for category in examples%}
 {% set underscore = "-" * (category.header | length) %}

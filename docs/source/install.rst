@@ -2,26 +2,24 @@
 
 .. _install:
 
-Installing statsmodels
+安装 statsmodels
 ======================
 
-The easiest way to install statsmodels is to install it as part of the `Anaconda <https://docs.continuum.io/anaconda/>`_
-distribution, a cross-platform distribution for data analysis and scientific
-computing. This is the recommended installation method for most users.
+安装 statsmodels 的最简单方法是将其安装 `Anaconda <https://docs.continuum.io/anaconda/>`_
+发行版一同安装, 后者是用于数据分析和科学计算的跨平台发行版。对于大多数用户，这是推荐的安装方法。
 
 Instructions for installing from PyPI, source or a development version are also provided.
 
 
-Python Support
+Python 支持
 --------------
 
-statsmodels supports Python 3.5, 3.6 and 3.7.
+statsmodels 支持 Python 3.5, 3.6 and 3.7.
 
 Anaconda
 --------
-statsmodels is available through conda provided by
-`Anaconda <https://www.continuum.io/downloads>`__. The latest release can
-be installed using:
+statsmodels i可通过
+`Anaconda <https://www.continuum.io/downloads>`__ 提供的 conda 来获得，可以使用一下方法安装最新版本：
 
 .. code-block:: bash
 
@@ -30,105 +28,92 @@ be installed using:
 PyPI (pip)
 ----------
 
-To obtain the latest released version of statsmodels using pip:
+也可以使用 pip 来安装最新发布的 statsmodels 版本:
 
 .. code-block:: bash
 
     pip install statsmodels
 
-Follow `this link to our PyPI page <https://pypi.org/project/statsmodels/>`__ to directly
-download wheels or source.
+点击 `this link to our PyPI page <https://pypi.org/project/statsmodels/>`__ 直接下载源代码
 
-For Windows users, unofficial recent binaries (wheels) are occasionally
-available `here <https://www.lfd.uci.edu/~gohlke/pythonlibs/#statsmodels>`__.
+对于 Windows 用户, 此处会提供一些非官方的最新文件 `here <https://www.lfd.uci.edu/~gohlke/pythonlibs/#statsmodels>`__.
 
-Obtaining the Source
+获取源
 --------------------
 
-We do not release very often but the master branch of our source code is
-usually fine for everyday use. You can get the latest source from our
-`github repository <https://github.com/statsmodels/statsmodels>`__. Or if you
-have git installed:
+我们不会经常发布，但是源代码仓库中的 master 分支通常适合日常使用。您可以从我们的
+`github repository <https://github.com/statsmodels/statsmodels>`__ 获取最新的资源。 或者，你已经安装了 git:
 
 .. code-block:: bash
 
     git clone git://github.com/statsmodels/statsmodels.git
 
-If you want to keep up to date with the source on github just periodically do:
+如果您想定期了解github上的源代码，请定期执行以下操作:
 
 .. code-block:: bash
 
     git pull
 
-in the statsmodels directory.
+在 statsmodels 目录中.
 
 Installation from Source
 ------------------------
 
-You will need a C compiler installed to build statsmodels. If you are building
-from the github source and not a source release, then you will also need
-Cython. You can follow the instructions below to get a C compiler setup for
-Windows.
+您将需要安装C编译器来构建 statsmodels 。如果您是从 github 源而不是源发行版构建的，那么您还将需要
+Cython. 您可以按照以下说明获取 Windows 的 C 编译器设置。
 
-If your system is already set up with pip, a compiler, and git, you can try:
+如果您的系统已经使用 pip, 编译器 和 git 进行设置，则可以尝试:
 
 .. code-block:: bash
 
     pip install git+https://github.com/statsmodels/statsmodels
 
-If you do not have pip installed or want to do the installation more manually,
-you can also type:
+如果您没有安装 pip 或想要手动进行更多安装，则还可以输入：
 
 .. code-block:: bash
 
     python setup.py install
 
-Or even more manually
+甚至更多手动
 
 .. code-block:: bash
 
     python setup.py build
     python setup.py install
 
-statsmodels can also be installed in `develop` mode which installs statsmodels
-into the current python environment in-place. The advantage of this is that
-edited modules will immediately be re-interpreted when the python interpreter
-restarts without having to re-install statsmodels.
+statsmodels 也可以在 `develop` 模型下安装，该模式将 statsmodels 直接安装到当前的
+ python 环境中。这样做的好处是，当 python 编译器重新启动时，将立即重新编译已编译的模块，
+ 而无需重新安装 statsmodels 模块。
 
 .. code-block:: bash
 
     python setup.py develop
 
-Compilers
+编译器
 ~~~~~~~~~
 
 Linux
 ^^^^^
 
-If you are using Linux, we assume that you are savvy enough to install `gcc` on
-your own. More than likely, it is already installed.
+如果您使用的是Linux，并且你足够聪明可以自行安装 `gcc` ，尽管它很有可能已经安装好了。
 
 Windows
 ^^^^^^^
 
-It is strongly recommended to use 64-bit Python if possible.
+强烈建议你使用 64-bit Python 。
 
-Getting the right compiler is especially confusing for Windows users. Over time,
-Python has been built using a variety of different Windows C compilers.
-`This guide <https://wiki.python.org/moin/WindowsCompilers>`_ should help
-clarify which version of Python uses which compiler by default.
+对于Windows用户而言，获得正确的编译器尤其令人困惑。随着时间的流逝，Python已使用各种不同的 Windows C 编译器来构建。
+`本指南 <https://wiki.python.org/moin/WindowsCompilers>`_ 有助于阐明默认情况下使用哪个 Python 版本编译器。
 
 Mac
 ^^^
 
-Installing statsmodels on MacOS requires installing `gcc` which provides
-a suitable C compiler. We recommend installing Xcode and the Command Line
-Tools.
+在 MacOS 上安装 statsmodels 需要安装 `gcc` 它提供了合适的C编译器。我们建议安装 Xcode 和命令行工具。
 
 Dependencies
 ------------
 
-The current minimum dependencies are:
+当前的 minimum dependencies 是:
 
 * `Python <https://www.python.org>`__ >= 3.5
 * `NumPy <https://www.scipy.org/>`__ >= 1.14
@@ -136,30 +121,21 @@ The current minimum dependencies are:
 * `Pandas <https://pandas.pydata.org/>`__ >= 0.21
 * `Patsy <https://patsy.readthedocs.io/en/latest/>`__ >= 0.5.0
 
-Cython is required to build from a git checkout but not to run or install from PyPI:
+需要 Cython 从 git checkout 进行构建，而不是从 PyPI 运行或安装:
 
-* `Cython <https://cython.org/>`__ >= 0.29 is required to build the code from
-  github but not from a source distribution.
+* 需要 `Cython <https://cython.org/>`__ >= 0.29 才能从 github 而非源代码分发构建代码。
 
-Given the long release cycle, statsmodels follows a loose time-based policy for
-dependencies: minimal dependencies are lagged about one and a half to two
-years. Our next planned update of minimum versions is expected in the first
-half of 2020.
+考虑到较长的发布周期, statsmodels 遵循基于时间的宽松策略来进行 dependencies:
+ minimal dependencies 被滞后了大约一年半到两年. 我们的下一个最低版本计划更新预计将在 2020 年上半年。
 
-Optional Dependencies
+可选 Dependencies
 ---------------------
 
-* `cvxopt <https://cvxopt.org/>`__ is required for regularized fitting of
-  some models.
-* `Matplotlib <https://matplotlib.org/>`__ >= 2.2 is needed for plotting
-  functions and running many of the examples.
-* If installed, `X-12-ARIMA <https://www.census.gov/srd/www/x13as/>`__ or
-  `X-13ARIMA-SEATS <https://www.census.gov/srd/www/x13as/>`__ can be used
-  for time-series analysis.
-* `pytest <https://docs.pytest.org/en/latest/>`__ is required to run
-  the test suite.
-* `IPython <https://ipython.org>`__ >= 5.0 is required to build the
-  docs locally or to use the notebooks.
-* `joblib <http://pythonhosted.org/joblib/>`__ >= 0.9 can be used to accelerate distributed
-  estimation for certain models.
-* `jupyter <https://jupyter.org/>`__ is needed to run the notebooks.
+* `cvxopt <https://cvxopt.org/>`__ 是某些模型的常规拟合所必​​需的。
+* `Matplotlib <https://matplotlib.org/>`__ >= 2.2 是绘制函数和运行许多示例所需的。
+*  如果安装了 `X-12-ARIMA <https://www.census.gov/srd/www/x13as/>`__ 或
+  `X-13ARIMA-SEATS <https://www.census.gov/srd/www/x13as/>`__ 则可以用于时间序列分析。
+* `pytest <https://docs.pytest.org/en/latest/>`__ 是运行测试套件所必需的
+*  如果要在本地构建文档或使用笔记本，需要`IPython <https://ipython.org>`__ >= 5.0 。
+* `joblib <http://pythonhosted.org/joblib/>`__ >= 0.9 可用于加速某些模型的分布式估计。
+*  需要`jupyter <https://jupyter.org/>`__ 才能运行 notebooks 。

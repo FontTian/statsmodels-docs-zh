@@ -3,18 +3,14 @@
    :alt: statsmodels
    :align: left
 
-:ref:`statsmodels <about:About statsmodels>` is a Python module that provides classes and functions for the estimation
-of many different statistical models, as well as for conducting statistical tests, and statistical
-data exploration. An extensive list of result statistics are available for each estimator.
-The results are tested against existing statistical packages to ensure that they are correct. The
-package is released under the open source Modified BSD (3-clause) license.
-The online documentation is hosted at `statsmodels.org <https://www.statsmodels.org/>`__.
+:ref:`statsmodels <about:About statsmodels>` 是一个Python模块，它提供用于估计的许多不同统计模型，
+进行统计检验和统计数据探索的类和函数。每个估算器都有大量结果统计信息列表。将结果与现有统计数据包进行测试，
+以确保结果正确。该软件包是根据开源的经过修改的 BSD (3-条款) 许可发布.在线文档托管在 `statsmodels.org <https://www.statsmodels.org/>`__.
 
-Introduction
+较少
 ============
 
-``statsmodels`` supports specifying models using R-style formulas and ``pandas`` DataFrames.
-Here is a simple example using ordinary least squares:
+``statsmodels`` 支持使用 R-样式公式和 ``pandas`` DataFrames。这是一个普通最小二乘法的示例:
 
 .. ipython:: python
 
@@ -22,23 +18,23 @@ Here is a simple example using ordinary least squares:
     import statsmodels.api as sm
     import statsmodels.formula.api as smf
 
-    # Load data
+    # 加载数据
     dat = sm.datasets.get_rdataset("Guerry", "HistData").data
 
-    # Fit regression model (using the natural log of one of the regressors)
+    # 拟合回归模型 (使用回归变量之一的自然对数)
     results = smf.ols('Lottery ~ Literacy + np.log(Pop1831)', data=dat).fit()
 
-    # Inspect the results
+    # 输出结果
     print(results.summary())
 
-You can also use ``numpy`` arrays instead of formulas:
+你也可以使用 ``numpy`` 数组来替代公式:
 
 .. ipython:: python
 
     import numpy as np
     import statsmodels.api as sm
 
-    # Generate artificial data (2 regressors + constant)
+    # 生成数据 (2 个回归项 + 1 个常数)
     nobs = 100
     X = np.random.random((nobs, 2))
     X = sm.add_constant(X)
@@ -46,24 +42,22 @@ You can also use ``numpy`` arrays instead of formulas:
     e = np.random.random(nobs)
     y = np.dot(X, beta) + e
 
-    # Fit regression model
+    # 拟合回归模型
     results = sm.OLS(y, X).fit()
 
-    # Inspect the results
+    # 输出结果
     print(results.summary())
 
-Have a look at `dir(results)` to see available results. Attributes are described in
-`results.__doc__` and results methods have their own docstrings.
+通过 `dir(results)` 来查看结果. 属性的描述在 `results.__doc__` ，且结果的方法有其自己的文档。
 
-Citation
+引文
 ========
 
-Please use following citation to cite statsmodels in scientific publications:
+在科学出版物中使用统计模型时，请考虑使用以下引用：
 
 
-Seabold, Skipper, and Josef Perktold. "`statsmodels: Econometric and statistical modeling with
-python. <http://conference.scipy.org/proceedings/scipy2010/pdfs/seabold.pdf>`_" *Proceedings
-of the 9th Python in Science Conference.* 2010.
+Seabold, Skipper, and Josef Perktold. "`使用 python 进行经济计量和统计建模. <http://conference.scipy.org/proceedings/scipy2010/pdfs/seabold.pdf>`_" *Proceedings
+第 9 届python科学会议论文集.* 2010.
 
 Bibtex entry::
 

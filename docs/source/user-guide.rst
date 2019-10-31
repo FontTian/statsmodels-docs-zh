@@ -1,7 +1,7 @@
-User Guide
+用户指南
 ==========
 
-Background
+背景
 ----------
 
 .. toctree::
@@ -11,7 +11,7 @@ Background
    example_formulas
    pitfalls
 
-Regression and Linear Models
+回归和线性模型
 ----------------------------
 
 .. toctree::
@@ -27,7 +27,7 @@ Regression and Linear Models
    mixed_glm
    anova
 
-Time Series Analysis
+时间序列分析
 --------------------
 
 .. toctree::
@@ -37,7 +37,7 @@ Time Series Analysis
    statespace
    vector_ar
 
-Other Models
+其他模型
 ------------
 
 .. toctree::
@@ -49,7 +49,7 @@ Other Models
    miscmodels
    multivariate
 
-Statistics and Tools
+统计与工具
 --------------------
 
 .. toctree::
@@ -66,7 +66,7 @@ Statistics and Tools
    large_data
    optimization
 
-Data Sets
+数据集
 ---------
 .. toctree::
    :maxdepth: 1

@@ -7,23 +7,21 @@
 
 .. _var:
 
-Vector Autoregressions :mod:`tsa.vector_ar`
+向量自回归 :mod:`tsa.vector_ar`
 ===========================================
 
-:mod:`statsmodels.tsa.vector_ar` contains methods that are useful
-for simultaneously modeling and analyzing multiple time series using
-:ref:`Vector Autoregressions (VAR) <var>` and
-:ref:`Vector Error Correction Models (VECM) <vecm>`.
+:mod:`statsmodels.tsa.vector_ar` 包含的方法可用于同时使用
+:ref:`Vector Autoregressions (VAR) <var>` 和
+:ref:`Vector Error Correction Models (VECM) <vecm>`. 进行建模和分析多个时间序列
 
 .. _var_process:
 
-VAR(p) processes
+VAR(p) 过程
 ----------------
 
-We are interested in modeling a :math:`T \times K` multivariate time series
-:math:`Y`, where :math:`T` denotes the number of observations and :math:`K` the
-number of variables. One way of estimating relationships between the time series
-and their lagged values is the *vector autoregression process*:
+我们感兴趣的是对 :math:`T \times K` 维的多元时间序列
+:math:`Y` 进行建模， 其中 :math:`T` 表示 and :math:`K` 表示变量输. 
+估计时间序列与其滞后值之间的关系的一种方法是向量自回归过程： *vector autoregression process*:
 
 .. math::
 
@@ -31,23 +29,23 @@ and their lagged values is the *vector autoregression process*:
 
    u_t \sim {\sf Normal}(0, \Sigma_u)
 
-where :math:`A_i` is a :math:`K \times K` coefficient matrix.
+其中 :math:`A_i` 是一个 :math:`K \times K` 维的系数矩阵。
 
-We follow in large part the methods and notation of `Lutkepohl (2005)
+我们在很大程度上遵循了 `Lutkepohl (2005)
 <https://www.springer.com/gb/book/9783540401728>`__,
-which we will not develop here.
+的方法和符号，在此不再赘述。
 
-Model fitting
+模型拟合
 ~~~~~~~~~~~~~
 
-.. note::
+.. 注意::
 
-    The classes referenced below are accessible via the
-    :mod:`statsmodels.tsa.api` module.
+    以下引用的类可通过
+    :mod:`statsmodels.tsa.api` 模块进行访问。.
 
-To estimate a VAR model, one must first create the model using an `ndarray` of
-homogeneous or structured dtype. When using a structured or record array, the
-class will use the passed variable names. Otherwise they can be passed
+要估算VAR模型，必须首先使用同构或结构化的 `ndarray` 创建模型.
+ 当使用结构化或记录 array 时，该类将使用传递的变量名称。
+ 否则，可以直接的的传递它们：
 explicitly:
 
 .. ipython:: python
@@ -62,14 +60,14 @@ explicitly:
 .. ipython:: python
    :okwarning:
 
-   # some example data
+   # 示例数据
    import numpy as np
    import pandas
    import statsmodels.api as sm
    from statsmodels.tsa.api import VAR
    mdata = sm.datasets.macrodata.load_pandas().data
 
-   # prepare the dates index
+   # 将时间作为 index
    dates = mdata[['year', 'quarter']].astype(int).astype(str)
    quarterly = dates["year"] + "Q" + dates["quarter"]
    from statsmodels.tsa.base.datetools import dates_from_str
@@ -79,20 +77,17 @@ explicitly:
    mdata.index = pandas.DatetimeIndex(quarterly)
    data = np.log(mdata).diff().dropna()
 
-   # make a VAR model
+   # 创建 VAR 模型
    model = VAR(data)
 
-.. note::
+.. 注意::
 
-   The :class:`VAR` class assumes that the passed time series are
-   stationary. Non-stationary or trending data can often be transformed to be
-   stationary by first-differencing or some other method. For direct analysis of
-   non-stationary time series, a standard stable VAR(p) model is not
-   appropriate.
+    :class:`VAR` 模型类假定传递时间序列是平稳的. 非平稳或趋势数据通常可以
+    通过一阶微分或其他方法转换为平稳数据. 对于非平稳时间序列的直接分析，
+    标准的稳定 VAR(p) 模型不合适
 
-To actually do the estimation, call the `fit` method with the desired lag
-order. Or you can have the model select a lag order based on a standard
-information criterion (see below):
+在实际进行估算时，请使用所需的滞后顺序调用 `fit` 方法。或者，您可以让模型
+根据标准信息条件选择滞后顺序 (请参见下文):
 
 .. ipython:: python
    :okwarning:
@@ -100,9 +95,9 @@ information criterion (see below):
    results = model.fit(2)
    results.summary()
 
-Several ways to visualize the data using `matplotlib` are available.
+有几种使用 `matplotlib` 可视化数据的方法
 
-Plotting input time series:
+绘制输入的时间序列:
 
 .. ipython:: python
    :okwarning:
@@ -111,7 +106,7 @@ Plotting input time series:
    results.plot()
 
 
-Plotting time series autocorrelation function:
+绘制时间序列自相关函数:
 
 .. ipython:: python
 
@@ -119,52 +114,47 @@ Plotting time series autocorrelation function:
    results.plot_acorr()
 
 
-Lag order selection
+滞后顺序选择
 ~~~~~~~~~~~~~~~~~~~
 
-Choice of lag order can be a difficult problem. Standard analysis employs
-likelihood test or information criteria-based order selection. We have
-implemented the latter, accessible through the :class:`VAR` class:
+滞后顺序的选择可能是一个难题。标准分析采用可能性测试或基于信息准则的顺序选择。
+我们已经实现了后者，可以通过 :class:`VAR` 类进行访问:
 
 .. ipython:: python
 
    model.select_order(15)
 
-When calling the `fit` function, one can pass a maximum number of lags and the
-order criterion to use for order selection:
+调用 `fit` 函数时, 可以传递最大滞后数和用于顺序选择的顺序标准：
 
 .. ipython:: python
 
    results = model.fit(maxlags=15, ic='aic')
 
-Forecasting
+预测
 ~~~~~~~~~~~
 
-The linear predictor is the optimal h-step ahead forecast in terms of
-mean-squared error:
+就均方误差而言，线性预测器是最优的 h-step 提前预测:
 
 .. math::
 
    y_t(h) = \nu + A_1 y_t(h − 1) + \cdots + A_p y_t(h − p)
 
-We can use the `forecast` function to produce this forecast. Note that we have
-to specify the "initial value" for the forecast:
+我们可以使用预测功能来生成此预测。请注意，我们必须为预测指定e "initial value(初始值)" :
 
 .. ipython:: python
 
    lag_order = results.k_ar
    results.forecast(data.values[-lag_order:], 5)
 
-The `forecast_interval` function will produce the above forecast along with
-asymptotic standard errors. These can be visualized using the `plot_forecast`
-function:
+ `forecast_interval` 函数将产生上述预测以及渐近标准误差。可以使用 `plot_forecast`
+函数将其可视化:
 
 .. ipython:: python
 
    @savefig var_forecast.png
    results.plot_forecast(10)
 
-Class Reference
+Class 参考
 ~~~~~~~~~~~~~~~
 
 .. module:: statsmodels.tsa.vector_ar
@@ -181,11 +171,10 @@ Class Reference
    VARResults
 
 
-Post-estimation Analysis
+估计后分析
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Several process properties and additional results after
-estimation are available for vector autoregressive processes.
+向量自回归过程可以使用几种过程属性和估计后的其他结果。
 
 .. currentmodule:: statsmodels.tsa.vector_ar.var_model
 .. autosummary::
@@ -202,34 +191,28 @@ estimation are available for vector autoregressive processes.
    WhitenessTestResults
 
 
-Impulse Response Analysis
+脉冲响应分析
 -------------------------
 
-*Impulse responses* are of interest in econometric studies: they are the
-estimated responses to a unit impulse in one of the variables. They are computed
-in practice using the MA(:math:`\infty`) representation of the VAR(p) process:
+*Impulse responses* 在计量经济学研究中很重要：它们是对变量之一中单位脉冲的估计响应。
+实际上，它们是使用 VAR(p) 过程的 MA(:math:`\infty`) 表示来计算的:
 
 .. math::
 
     Y_t = \mu + \sum_{i=0}^\infty \Phi_i u_{t-i}
 
-We can perform an impulse response analysis by calling the `irf` function on a
-`VARResults` object:
+我们可以通过在 `VARResults` 对象上调用 `irf` 函数来进行脉冲响应分析:
 
 .. ipython:: python
    :okwarning:
 
    irf = results.irf(10)
 
-These can be visualized using the `plot` function, in either orthogonalized or
-non-orthogonalized form. Asymptotic standard errors are plotted by default at
-the 95% significance level, which can be modified by the user.
+这些可以使用绘图函数以正交或非正交形式可视化。默认情况下，渐近标准误差以95％的显着性水平绘制，可以由用户修改。
 
-.. note::
+.. 注意::
 
-    Orthogonalization is done using the Cholesky decomposition of the estimated
-    error covariance matrix :math:`\hat \Sigma_u` and hence interpretations may
-    change depending on variable ordering.
+   使用估计的误差协方差矩阵 :math:`\hat \Sigma_u` 的 Cholesky 分解完成正交化，因此解释可能会根据变量顺序而变化
 
 .. ipython:: python
 
@@ -237,16 +220,14 @@ the 95% significance level, which can be modified by the user.
    irf.plot(orth=False)
 
 
-Note the `plot` function is flexible and can plot only variables of interest if
-so desired:
+请注意 `plot` 函数是灵活的，并且可以根据需要来绘制感兴趣的变量：:
 
 .. ipython:: python
 
    @savefig var_realgdp.png
    irf.plot(impulse='realgdp')
 
-The cumulative effects :math:`\Psi_n = \sum_{i=0}^n \Phi_i` can be plotted with
-the long run effects as follows:
+累积效应 :math:`\Psi_n = \sum_{i=0}^n \Phi_i` 可以用长期效应进行绘制，如下所示
 
 .. ipython:: python
 
@@ -260,11 +241,10 @@ the long run effects as follows:
 
    IRAnalysis
 
-Forecast Error Variance Decomposition (FEVD)
+预测误差方差分解 (FEVD)
 --------------------------------------------
 
-Forecast errors of component j on k in an i-step ahead forecast can be
-decomposed using the orthogonalized impulse responses :math:`\Theta_i`:
+可以使用正交化的脉冲响应 :math:`\Theta_i` 来分解提前 i-step 预测中的分量j在k上的预测误差:
 
 .. math::
 
@@ -272,14 +252,14 @@ decomposed using the orthogonalized impulse responses :math:`\Theta_i`:
 
     \mathrm{MSE}_j(h) = \sum_{i=0}^{h-1} e_j^\prime \Phi_i \Sigma_u \Phi_i^\prime e_j
 
-These are computed via the `fevd` function up through a total number of steps ahead:
+通过 `fevd` 函数计算的，总共需要经过以下步骤:
 
 .. ipython:: python
 
    fevd = results.fevd(5)
    fevd.summary()
 
-They can also be visualized through the returned :class:`FEVD` object:
+它们也可以通过返回的 :class:`FEVD` 对象可视化:
 
 .. ipython:: python
 
@@ -293,48 +273,37 @@ They can also be visualized through the returned :class:`FEVD` object:
 
    FEVD
 
-Statistical tests
+统计检验
 -----------------
 
-A number of different methods are provided to carry out hypothesis tests about
-the model results and also the validity of the model assumptions (normality,
-whiteness / "iid-ness" of errors, etc.).
+提供了许多不同的方法来执行关于模型结果以及模型假设的有效性的假设检验 (正态化、
+whiteness / "iid-ness"  误差, 等等.).
 
-Granger causality
+Granger 因果关系
 ~~~~~~~~~~~~~~~~~
 
-One is often interested in whether a variable or group of variables is "causal"
-for another variable, for some definition of "causal". In the context of VAR
-models, one can say that a set of variables are Granger-causal within one of the
-VAR equations. We will not detail the mathematics or definition of Granger
-causality, but leave it to the reader. The :class:`VARResults` object has the
-`test_causality` method for performing either a Wald (:math:`\chi^2`) test or an
-F-test.
+对于 "causal"的某种定义，人们通常会对一个变量或一组变量是否对另一个变量 "causal" 感兴趣。在 VAR
+模型的上下文中，可以说一组变量是其中一个 VAR 方程中的 Granger 因果关系. 我们不会详细介绍 Granger
+因果关系的数学或定义, 而是将其留给读者。 :class:`VARResults` 对象具有用于执行任一 Wald (:math:`\chi^2`) 测试或F-检验.
 
 .. ipython:: python
 
    results.test_causality('realgdp', ['realinv', 'realcons'], kind='f')
 
-Normality
+正态化
 ~~~~~~~~~
 
-As pointed out in the beginning of this document, the white noise component
-:math:`u_t` is assumed to be normally distributed. While this assumption
-is not required for parameter estimates to be consistent or asymptotically
-normal, results are generally more reliable in finite samples when residuals
-are Gaussian white noise. To test whether this assumption is consistent with
-a data set, :class:`VARResults` offers the `test_normality` method.
+如本文档开头所指出的，假定白噪声分量 :math:`u_t` 是正态分布的。尽管参数估计值一致或渐近正常不需要此假设，
+但当残差为高斯白噪声时，在有限样本中，结果通常更可靠。为了测试此假设是否与数据集一致 :class:`VARResults` 提供了 `test_normality` 方法.
 
 .. ipython:: python
 
     results.test_normality()
 
-Whiteness of residuals
+残差白度
 ~~~~~~~~~~~~~~~~~~~~~~
 
-To test the whiteness of the estimation residuals (this means absence of
-significant residual autocorrelations) one can use the `test_whiteness`
-method of :class:`VARResults`.
+为了测试估计残差的白度 (这意味着不存在显著残差自相关的) 可以使用 :class:`VARResults` 类的方法`test_whiteness` 。
 
 
 .. currentmodule:: statsmodels.tsa.vector_ar.hypothesis_test_results
@@ -348,10 +317,10 @@ method of :class:`VARResults`.
 
 .. _svar:
 
-Structural Vector Autoregressions
+结构矢量自回归
 ---------------------------------
 
-There are a matching set of classes that handle some types of Structural VAR models.
+有一组匹配的类可以处理某些类型的结构化 VAR 模型.
 
 .. module:: statsmodels.tsa.vector_ar.svar_model
    :synopsis: Structural vector autoregressions and related tools
@@ -367,63 +336,50 @@ There are a matching set of classes that handle some types of Structural VAR mod
 
 .. _vecm:
 
-Vector Error Correction Models (VECM)
+矢量误差校正模型 (VECM)
 -------------------------------------
 
-Vector Error Correction Models are used to study short-run deviations from
-one or more permanent stochastic trends (unit roots). A VECM models the
-difference of a vector of time series by imposing structure that is implied
-by the assumed number of stochastic trends. :class:`VECM` is used to
-specify and estimate these models.
+矢量误差校正模型用于研究与一个或多个永久随机趋势 (单位根)的短期偏差。VECM 通过施加
+假设的随机趋势数量所隐含的结构来建模时间序列矢量的差异。 class:`VECM` 用于指定和估计这些模型。
 
-A VECM(:math:`k_{ar}-1`) has the following form
+ VECM(:math:`k_{ar}-1`) 具有以下形式
 
 .. math::
 
     \Delta y_t = \Pi y_{t-1} + \Gamma_1 \Delta y_{t-1} + \ldots
                    + \Gamma_{k_{ar}-1} \Delta y_{t-k_{ar}+1} + u_t
 
-where
+其中
 
 .. math::
 
     \Pi = \alpha \beta'
 
-as described in chapter 7 of [1]_.
+ 如第7章中 [1]_ 的所述。
 
-A VECM(:math:`k_{ar} - 1`) with deterministic terms has the form
+具有确定性项的 VECM(:math:`k_{ar} - 1`) 具有以下形式
 
 .. math::
 
    \Delta y_t = \alpha \begin{pmatrix}\beta' & \eta'\end{pmatrix} \begin{pmatrix}y_{t-1} \\
                 D^{co}_{t-1}\end{pmatrix} + \Gamma_1 \Delta y_{t-1} + \dots + \Gamma_{k_{ar}-1} \Delta y_{t-k_{ar}+1} + C D_t + u_t.
 
-In :math:`D^{co}_{t-1}` we have the deterministic terms which are inside
-the cointegration relation (or restricted to the cointegration relation).
-:math:`\eta` is the corresponding estimator. To pass a deterministic term
-inside the cointegration relation, we can use the `exog_coint` argument.
-For the two special cases of an intercept and a linear trend there exists
-a simpler way to declare these terms: we can pass ``"ci"`` and ``"li"``
-respectively to the `deterministic` argument. So for an intercept inside
-the cointegration relation we can either pass ``"ci"`` as `deterministic`
-or `np.ones(len(data))` as `exog_coint` if `data` is passed as the
-`endog` argument. This ensures that :math:`D_{t-1}^{co} = 1` for all
-:math:`t`.
+在 :math:`D^{co}_{t-1}` 中，我们具有位于协整关系内（或仅限于协整关系）的确定项。
+:math:`\eta` 是对应的估计量。要在协整关系中传递确定项, 我们可以使用 `exog_coint` 参数。
+对于截距和线性趋势这两种特殊情况，存在一种更简单的方式来表明这些内容: 我们可以将 ``"ci"`` 和 ``"li"``
+分别传递给 `deterministic` 参数. 因此，对于协整关系的内部截距，我们可以传递 ``"ci"`` 作为 `deterministic` 参数
+或者传递 `np.ones(len(data))` 作为 `exog_coint` 参数，如果 `data` 以
+`endog` 参数来传递. 对于所有的 :math:`t` 可以确定 :math:`D_{t-1}^{co} = 1` 。
 
-We can also use deterministic terms outside the cointegration relation.
-These are defined in :math:`D_t` in the formula above with the
-corresponding estimators in the matrix :math:`C`. We specify such terms by
-passing them to the `exog` argument. For an intercept and/or linear trend
-we again have the possibility to use `deterministic` alternatively. For
-an intercept we pass ``"co"`` and for a linear trend we pass ``"lo"`` where
-the `o` stands for `outside`.
 
-The following table shows the five cases considered in [2]_. The last
-column indicates which string to pass to the `deterministic` argument for
-each of these cases.
+我们还可以在协整关系之外使用确定项。这些定义的 :math:`D_t` ，在上面的公式中， :math:`C` 具有相应的估计量。
+我们通过传递他们给 `exog` 参数来指定确定项。对于截距 and/or 线性趋势，我们可以再次使用确定性的可能性。
+对于截距我们可以传递 ``"co"`` ，且对于线性趋势我们可以传递 ``"lo"`` ，其中 `o` 表示 `outside`。
+
+下表表示了在 [2]_ 中考虑的五种情况， 最后一列表示在每种情况下要传递给 `deterministic` 参数的字符串。
 
 ====  ===============================  ===================================  =============
-Case  Intercept                        Slope of the linear trend            `deterministic`
+Case         截距                                线性趋势的斜率              `deterministic`
 ====  ===============================  ===================================  =============
 I     0                                0                                    ``"nc"``
 II    :math:`- \alpha \beta^T \mu`     0                                    ``"ci"``
@@ -445,9 +401,9 @@ V     :math:`\neq 0`                   :math:`\neq 0`                       ``"c
    CointRankResults
 
 
-References
+参考文献
 ----------
-.. [1] Lütkepohl, H. 2005. *New Introduction to Multiple Time Series Analysis*. Springer.
+.. [1] Lütkepohl, H. 2005. *多元时间序列分析的新概论*. Springer.
 
 .. [2] Johansen, S. 1995. *Likelihood-Based Inference in Cointegrated *
        *Vector Autoregressive Models*. Oxford University Press.

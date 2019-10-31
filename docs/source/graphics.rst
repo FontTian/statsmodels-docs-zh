@@ -2,12 +2,12 @@
 
 .. _graphics:
 
-Graphics
+图形
 ========
 
 .. automodule:: statsmodels.graphics
 
-Goodness of Fit Plots
+拟合优度图
 ---------------------
 
 .. currentmodule:: statsmodels.graphics.gofplots
@@ -19,7 +19,7 @@ Goodness of Fit Plots
    qqplot_2samples
    ProbPlot
 
-Boxplots
+箱线图
 --------
 
 .. currentmodule:: statsmodels.graphics.boxplots
@@ -30,7 +30,7 @@ Boxplots
    violinplot
    beanplot
 
-Correlation Plots
+相关图
 ------------------
 
 .. currentmodule:: statsmodels.graphics.correlation
@@ -48,7 +48,7 @@ Correlation Plots
 
    scatter_ellipse
 
-Functional Plots
+功能图
 ----------------
 
 .. currentmodule:: statsmodels.graphics.functional
@@ -61,7 +61,7 @@ Functional Plots
    rainbowplot
    banddepth
 
-Regression Plots
+回归图
 ----------------
 
 .. currentmodule:: statsmodels.graphics.regressionplots
@@ -80,7 +80,7 @@ Regression Plots
    influence_plot
    plot_leverage_resid2
 
-Time Series Plots
+时间序列图
 -----------------
 
 .. currentmodule:: statsmodels.graphics.tsaplots
@@ -93,7 +93,7 @@ Time Series Plots
    month_plot
    quarter_plot
 
-Other Plots
+其他图
 -----------
 
 .. currentmodule:: statsmodels.graphics.factorplots

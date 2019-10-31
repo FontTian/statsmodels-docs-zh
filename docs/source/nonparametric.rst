@@ -3,57 +3,43 @@
 .. _nonparametric:
 
 
-Nonparametric Methods :mod:`nonparametric`
+非参数方法 :mod:`nonparametric`
 ==========================================
 
-This section collects various methods in nonparametric statistics. This
-includes kernel density estimation for univariate and multivariate data,
-kernel regression and locally weighted scatterplot smoothing (lowess).
+本节收集非参数统计中的各种方法。这包括用于单变量和多变量数据的核密度估计，
+核回归和局部加权散点图平滑 (lowess).
 
-sandbox.nonparametric contains additional functions that are work in progress
-or do not have unit tests yet. We are planning to include here nonparametric
-density estimators, especially based on kernel or orthogonal polynomials,
-smoothers, and tools for nonparametric models and methods in other parts of
-statsmodels.
+sandbox.nonparametric 包含正在进行的工作或尚未进行单元测试的其他功能。
+我们计划在此包括非参数密度估计量，特别是基于核或正交多项式，平滑器以及
+用于统计模型其他部分的非参数模型和方法的工具。
 
 
-Kernel density estimation
+内核密度估计
 -------------------------
 
-The kernel density estimation (KDE) functionality is split between univariate
-and multivariate estimation, which are implemented in quite different ways.
+内核密度估计 (KDE) 功能分为单变量估计和多变量估计，这两种实现方式完全不同。
 
-Univariate estimation (as provided by `KDEUnivariate`) uses FFT transforms,
-which makes it quite fast.  Therefore it should be preferred for *continuous,
-univariate* data if speed is important.  It supports using different kernels;
-bandwidth estimation is done only by a rule of thumb (Scott or Silverman).
+单变量估计 (由 `KDEUnivariate` 提供) 使用FFT变换，这使其速度非常快。
+因此，如果速度很重要，则对于连续的单变量数据应该是首选。它支持使用不同的内核。
+带宽估计只能通过经验法则(Scott or Silverman).
 
-Multivariate estimation (as provided by `KDEMultivariate`) uses product
-kernels.   It supports least squares and maximum likelihood cross-validation
-for bandwidth estimation, as well as estimating mixed continuous, ordered and
-unordered data.  The default kernels (Gaussian, Wang-Ryzin and
-Aitchison-Aitken) cannot be altered at the moment however.  Direct estimation
-of the conditional density (:math:`P(X | Y) = P(X, Y) / P(Y)`) is supported
-by `KDEMultivariateConditional`.
+多变量估计 (由 `KDEMultivariate` 提供) u使用乘积核。它支持最小二乘和最大似然交叉验证，
+以进行带宽估计，以及估计混合的连续、有序和无序数据。但是，目前无法更改默认内核 (Gaussian, Wang-Ryzin 和
+Aitchison-Aitken) 。 `KDEMultivariateConditional` 支持对条件密度 (:math:`P(X | Y) = P(X, Y) / P(Y)`) 的直接估计。
 
-`KDEMultivariate` can do univariate estimation as well, but is up to two orders
-of magnitude slower than `KDEUnivariate`.
+`KDEMultivariate` 也可以进行单变量估计，但比 `KDEUnivariate` 慢两个数量级
 
 
-Kernel regression
+Kernel 回归
 -----------------
 
-Kernel regression (as provided by `KernelReg`) is based on the same product
-kernel approach as `KDEMultivariate`, and therefore has the same set of
-features (mixed data, cross-validated bandwidth estimation, kernels) as
-described above for `KDEMultivariate`.  Censored regression is provided by
-`KernelCensoredReg`.
+Kernel 回归 (由 `KernelReg` 提供) 基于与 `KDEMultivariate` 相同的乘积内核方法，
+因此具有与上述 `KDEMultivariate` 相同的功能集（混合数据，交叉验证的带宽估计，内核），
+审查的回归由 `KernelCensoredReg` 提供。
 
-Note that code for semi-parametric partial linear models and single index
-models, based on `KernelReg`, can be found in the sandbox.
+请注意，可以在沙箱中找到基于 `KernelReg` 的半参数部分线性模型和单索引模型的代码。
 
-
-References
+参考文献
 ----------
 
 * B.W. Silverman, "Density Estimation for Statistics and Data Analysis"
@@ -81,13 +67,13 @@ References
   Models", 2006, Econometric Reviews 25, 523-544
 
 
-Module Reference
+模块参考
 ----------------
 
 .. module:: statsmodels.nonparametric
-   :synopsis: Nonparametric estimation of densities and curves
+   :synopsis: 密度和曲线的非参数估计
 
-The public functions and classes are
+公开的功能和类是
 
 .. currentmodule:: statsmodels.nonparametric.smoothers_lowess
 .. autosummary::
@@ -116,7 +102,7 @@ The public functions and classes are
    KernelReg
    KernelCensoredReg
 
-helper functions for kernel bandwidths
+内核带宽的辅助函数
 
 .. currentmodule:: statsmodels.nonparametric.bandwidths
 .. autosummary::
@@ -126,8 +112,6 @@ helper functions for kernel bandwidths
    bw_silverman
    select_bandwidth
 
-There are some examples for nonlinear functions in
-:mod:`statsmodels.nonparametric.dgp_examples`
+:mod:`statsmodels.nonparametric.dgp_examples` 有一些非线性函数的示例。
 
-The sandbox.nonparametric contains additional insufficiently tested classes
-for testing functional form and for semi-linear and single index models.
+ sandbox.nonparametric 包含其他未充分检验的类，这些类用于测试功能形式以及半线性和单索引模型。
