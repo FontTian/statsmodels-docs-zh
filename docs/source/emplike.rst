@@ -4,39 +4,31 @@
 .. _emplike:
 
 
-Empirical Likelihood :mod:`emplike`
+经验似然 :mod:`emplike`
 ====================================
 
 
-Introduction
+介绍
 ------------
 
-Empirical likelihood is a method of nonparametric inference and estimation that lifts the
-obligation of having to specify a family of underlying distributions.  Moreover, empirical
-likelihood methods do not require re-sampling but still
-uniquely determine confidence regions whose shape mirrors the shape of the data.
-In essence, empirical likelihood attempts to combine the benefits of parametric
-and nonparametric methods while limiting their shortcomings.  The main difficulties  of
-empirical likelihood is the computationally intensive methods required to conduct inference.
-:mod:`statsmodels.emplike` attempts to provide a user-friendly interface that allows the
-end user to effectively conduct empirical likelihood analysis without having to concern
-themselves with the computational burdens.
+Empirical likelihood 经验似然性是一种非参数推理和估计的方法，它消除了必须指定一组基础分布的义务。
+此外，经验似然方法不需要重新采样，但仍然唯一地确定其形状反映数据形状的置信区域。本质上，经验似然尝试
+将参数方法和非参数方法的优点结合起来，同时限制它们的缺点。经验似然的主要困难是进行推理所需的计算量大的方法。
+:mod:`statsmodels.emplike` 试图提供一个用户友好的界面，使最终用户可以有效地进行经验似然分析，而不必担心计算负担。
 
-Currently, :mod:`emplike` provides methods to conduct hypothesis tests and form confidence
-intervals for descriptive statistics.  Empirical likelihood estimation and inference
-in a regression, accelerated failure time and instrumental variable model are
-currently under development.
+目前, :mod:`emplike` 提供了进行假设检验和形成描述性统计的置信区间的方法。目前正在开发经验似然估计和回归，
+加速故障时间和工具变量模型的推断。
 
-References
+参考文献
 ^^^^^^^^^^
 
-The main reference for empirical likelihood is::
+经验似然的主要参考是::
 
     Owen, A.B. "Empirical Likelihood." Chapman and Hall, 2001.
 
 
 
-Examples
+例子
 --------
 
 .. ipython:: python
@@ -44,20 +36,20 @@ Examples
   import numpy as np
   import statsmodels.api as sm
 
-  # Generate Data
+  # 生成数据
   x = np.random.standard_normal(50)
 
-  # initiate EL
+  # 启动 EL
   el = sm.emplike.DescStat(x)
 
-  # confidence interval for the mean
+  # 平均值的置信区间
   el.ci_mean()
 
   # test variance is 1
   el.test_var(1)
 
 
-Module Reference
+模块参考
 ----------------
 
 .. module:: statsmodels.emplike

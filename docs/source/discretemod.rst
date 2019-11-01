@@ -3,58 +3,51 @@
 
 .. _discretemod:
 
-Regression with Discrete Dependent Variable
+离散因变量回归
 ===========================================
 
-Regression models for limited and qualitative dependent variables. The module
-currently allows the estimation of models with binary (Logit, Probit), nominal
-(MNLogit), or count (Poisson, NegativeBinomial) data.
+有限和定性因变量的回归模型。该模块当前允许使用二值化 (Logit, Probit), 名义
+(MNLogit), 或计数 (Poisson, NegativeBinomial) 数据来估计模型。
 
-Starting with version 0.9, this also includes new count models, that are still
-experimental in 0.9, NegativeBinomialP, GeneralizedPoisson and zero-inflated
-models, ZeroInflatedPoisson, ZeroInflatedNegativeBinomialP and
-ZeroInflatedGeneralizedPoisson.
+从0.9版开始，这还包括新的计数模型，这些模型仍在0.9中进行试验 NegativeBinomialP, GeneralizedPoisson 和 zero-inflated
+models, ZeroInflatedPoisson, ZeroInflatedNegativeBinomialP 和 ZeroInflatedGeneralizedPoisson.
 
-See `Module Reference`_ for commands and arguments.
+有关命令和参数，请参见 `Module Reference`_ 。
 
-Examples
+例子
 --------
 
 .. ipython:: python
   :okwarning:
 
-  # Load the data from Spector and Mazzeo (1980)
+  # 加载数据 Spector 和 Mazzeo (1980)
   import statsmodels.api as sm
   spector_data = sm.datasets.spector.load_pandas()
   spector_data.exog = sm.add_constant(spector_data.exog)
 
-  # Logit Model
+  # Logit 模型
   logit_mod = sm.Logit(spector_data.endog, spector_data.exog)
   logit_res = logit_mod.fit()
   print(logit_res.summary())
 
-Detailed examples can be found here:
+更多详细示例:
 
 
-* `Overview <examples/notebooks/generated/discrete_choice_overview.html>`__
-* `Examples <examples/notebooks/generated/discrete_choice_example.html>`__
+* `总览 <examples/notebooks/generated/discrete_choice_overview.html>`__
+* `例子 <examples/notebooks/generated/discrete_choice_example.html>`__
 
-Technical Documentation
+技术文档
 -----------------------
 
-Currently all models are estimated by Maximum Likelihood and assume
-independently and identically distributed errors.
+当前，所有模型都是通过最大似然估计的，并假设独立且均等分布的误差。
 
-All discrete regression models define the same methods and follow the same
-structure, which is similar to the regression results but with some methods
-specific to discrete models. Additionally some of them contain additional model
-specific methods and attributes.
+所有离散回归模型都定义相同的方法并遵循相同的结构，这与回归结果相似，但其中有离散模型一些特定方法。此外，其中还包含其他特定于模型的方法和属性。
 
 
-References
+参考文献
 ^^^^^^^^^^
 
-General references for this class of models are::
+此类模型的一般参考是::
 
     A.C. Cameron and P.K. Trivedi.  `Regression Analysis of Count Data`.
         Cambridge, 1998
@@ -64,13 +57,13 @@ General references for this class of models are::
 
     W. Greene. `Econometric Analysis`. Prentice Hall, 5th. edition. 2003.
 
-Module Reference
+模块参考
 ----------------
 
 .. module:: statsmodels.discrete.discrete_model
-   :synopsis: Models for discrete data
+   :synopsis: 离散数据模型
 
-The specific model classes are:
+特定的模型类是:
 
 .. autosummary::
    :toctree: generated/
@@ -103,7 +96,7 @@ The specific model classes are:
    ConditionalMNLogit
    ConditionalPoisson
 
-The specific result classes are:
+具体的结果类是:
 
 .. currentmodule:: statsmodels.discrete.discrete_model
 
@@ -127,13 +120,9 @@ The specific result classes are:
    ZeroInflatedGeneralizedPoissonResults
 
 
-:class:`DiscreteModel` is a superclass of all discrete regression models. The
-estimation results are returned as an instance of one of the subclasses of
-:class:`DiscreteResults`. Each category of models, binary, count and
-multinomial, have their own intermediate level of model and results classes.
-This intermediate classes are mostly to facilitate the implementation of the
-methods and attributes defined by :class:`DiscreteModel` and
-:class:`DiscreteResults`.
+:class:`DiscreteModel` 是所有离散回归模型的超类。估算结果作为 :class:`DiscreteResults`子类之一的实例返回 。
+模型的每个类别（ binary, count 和 multinomial）都有自己的中间级别的模型和结果类。这中间阶级大多是便于通过定义
+的方法和属性的实现 :class:`DiscreteModel` 和 :class:`DiscreteResults` 。
 
 .. currentmodule:: statsmodels.discrete.discrete_model
 

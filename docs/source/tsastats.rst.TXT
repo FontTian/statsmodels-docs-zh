@@ -1,18 +1,17 @@
 .. currentmodule:: statsmodels.tsa.tsatools
 
-Time Series Analysis
+时间序列分析
 ====================
 
-These are some of the helper functions for doing time series analysis. First
-we can load some a some data from the US Macro Economy 1959:Q1 - 2009:Q3. ::
+这些是进行时间序列分析的一些辅助功能。首先我们可以从  US Macro Economy 1959:Q1 - 2009:Q3 美国宏观经济中加载一些数据。 ::
 
   >>> data = sm.datasets.macrodata.load(as_pandas=False)
 
-The macro dataset is a structured array. ::
+宏观数据集是一个结构化数组 ::
 
  >>> data = data.data[['year','quarter','realgdp','tbilrate','cpi','unemp']]
 
-We can add a lag like so ::
+我们可以添加 add_lag  ::
 
  >>> data = sm.tsa.add_lag(data, 'realgdp', lags=2)
 

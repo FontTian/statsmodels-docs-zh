@@ -6,17 +6,16 @@
 .. _distributions:
 
 
-Distributions
+分布
 =============
 
-This section collects various additional functions and methods for statistical
-distributions.
+本节收集用于统计分布的各种其他功能和方法。
 
-Empirical Distributions
+经验分布
 -----------------------
 
 .. module:: statsmodels.distributions.empirical_distribution
-   :synopsis: Tools for working with empirical distributions
+   :synopsis: 用于经验分布的工具
 
 .. currentmodule:: statsmodels.distributions.empirical_distribution
 
@@ -32,11 +31,11 @@ Distribution Extras
 
 
 .. module:: statsmodels.sandbox.distributions.extras
-   :synopsis: Probability distributions and random number generators
+   :synopsis: 概率分布和随机数生成器
 
 .. currentmodule:: statsmodels.sandbox.distributions.extras
 
-*Skew Distributions*
+*偏斜分布*
 
 .. autosummary::
    :toctree: generated/
@@ -46,7 +45,7 @@ Distribution Extras
    ACSkewT_gen
    skewnorm2
 
-*Distributions based on Gram-Charlier expansion*
+*基于 Gram-Charlier 展开的分布*
 
 .. autosummary::
    :toctree: generated/
@@ -56,7 +55,7 @@ Distribution Extras
    pdf_moments
    NormExpan_gen
 
-*cdf of multivariate normal* wrapper for scipy.stats
+scipy.stats 的 *多元正态分布* 封装 
 
 
 .. autosummary::
@@ -65,17 +64,14 @@ Distribution Extras
    mvstdnormcdf
    mvnormcdf
 
-Univariate Distributions by non-linear Transformations
+非线性变换的单变量分布
 ------------------------------------------------------
 
-Univariate distributions can be generated from a non-linear transformation of an
-existing univariate distribution. `Transf_gen` is a class that can generate a new
-distribution from a monotonic transformation, `TransfTwo_gen` can use hump-shaped
-or u-shaped transformation, such as abs or square. The remaining objects are
-special cases.
+可以从现有单变量分布生成一个非线性变换的单变量分布， `Transf_gen` 类是可以从单调变换生成新分布的类
+`TransfTwo_gen` 可以使用 驼峰形 或 u形 变换，例如  abs 或 square. 其余对象是特殊情况。
 
 .. module:: statsmodels.sandbox.distributions.transformed
-   :synopsis: Experimental probability distributions and random number generators
+   :synopsis: 实验概率分布和随机数生成器
 
 .. currentmodule:: statsmodels.sandbox.distributions.transformed
 

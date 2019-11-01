@@ -4,27 +4,20 @@
 .. _gmm:
 
 
-Generalized Method of Moments :mod:`gmm`
+广义矩量法 :mod:`gmm`
 ========================================
 
-:mod:`statsmodels.gmm` contains model classes and functions that are based on
-estimation with Generalized Method of Moments.
-Currently the general non-linear case is implemented. An example class for the standard
-linear instrumental variable model is included. This has been introduced as a test case, it
-works correctly but it does not take the linear structure into account. For the linear
-case we intend to introduce a specific implementation which will be faster and numerically
-more accurate.
+:mod:`statsmodels.gmm` 包含基于通用矩量估计的模型类和函数。当前，一般的非线性情况已经实现。
+包含标准线性工具变量模型的示例类。这是作为一个测试用例引入的，它可以正常工作，但是没有考虑线性结构。
+对于线性情况，我们打算引入一个特定的实现，该实现将更快并且在数值上更加准确。
 
-Currently, GMM takes arbitrary non-linear moment conditions and calculates the estimates
-either for a given weighting matrix or iteratively by alternating between estimating
-the optimal weighting matrix and estimating the parameters. Implementing models with
-different moment conditions is done by subclassing GMM. In the minimal implementation
-only the moment conditions, `momcond` have to be defined.
+当前, GMM 采用任意非线性矩条件，并通过给定最佳加权矩阵和估计参数之间交替来计算给定加权矩阵的估计值
+或迭代计算。通过将 GMM 子类化，可以实现具有不同力矩条件的模型。在最小的实现中，仅需定义即时条件 `momcond` 。
 
 .. currentmodule:: statsmodels.sandbox.regression.gmm
 
 
-Module Reference
+模块参考
 """"""""""""""""
 
 .. module:: statsmodels.sandbox.regression.gmm

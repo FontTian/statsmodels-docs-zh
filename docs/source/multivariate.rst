@@ -6,13 +6,13 @@
 .. _multivariate:
 
 
-Multivariate Statistics :mod:`multivariate`
+多元统计 :mod:`multivariate`
 ===========================================
 
-This section includes methods and algorithms from multivariate statistics.
+本节包括多元统计中的方法和算法。
 
 
-Principal Component Analysis
+主成分分析
 ----------------------------
 
 .. module:: statsmodels.multivariate.pca
@@ -27,7 +27,7 @@ Principal Component Analysis
    pca
 
 
-Factor Analysis
+因子分析
 ---------------
 
 .. currentmodule:: statsmodels.multivariate.factor
@@ -39,7 +39,7 @@ Factor Analysis
    FactorResults
 
 
-Factor Rotation
+因子旋转
 ---------------
 
 .. currentmodule:: statsmodels.multivariate.factor_rotation
@@ -53,7 +53,7 @@ Factor Rotation
    promax
 
 
-Canonical Correlation
+典型相关
 ---------------------
 
 .. currentmodule:: statsmodels.multivariate.cancorr
@@ -64,7 +64,7 @@ Canonical Correlation
    CanCorr
 
 
-MANOVA
+多元方差统计 MANOVA
 ------
 
 .. currentmodule:: statsmodels.multivariate.manova
@@ -75,11 +75,10 @@ MANOVA
    MANOVA
 
 
-MultivariateOLS
+多元 OLS
 ---------------
 
-`_MultivariateOLS` is a model class with limited features. Currently it
-supports multivariate hypothesis tests and is used as backend for MANOVA.
+`_MultivariateOLS` 是一个功能有限的模型类。目前它支持多变量假设检验，并用作 MANOVA 的后端
 
 .. currentmodule:: statsmodels.multivariate.multivariate_ols
 

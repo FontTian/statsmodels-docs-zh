@@ -8,13 +8,12 @@
    import numpy as np
    np.set_printoptions(suppress=True)
 
-The Datasets Package
+数据集
 ====================
 
-``statsmodels`` provides data sets (i.e. data *and* meta-data) for use in
-examples, tutorials, model testing, etc.
+``statsmodels`` 提供用于示例，教程，模型测试等的数据集（即数据和元数据）。
 
-Using Datasets from Stata
+使用 Stata 中的数据集
 -------------------------
 
 .. autosummary::
@@ -22,10 +21,10 @@ Using Datasets from Stata
 
    webuse
 
-Using Datasets from R
+使用 R 中的数据集
 ---------------------
 
-The `Rdatasets project <https://vincentarelbundock.github.io/Rdatasets/>`__ gives access to the datasets available in R's core datasets package and many other common R packages. All of these datasets are available to statsmodels by using the :func:`get_rdataset` function. The actual data is accessible by the ``data`` attribute. For example:
+The `Rdatasets project <https://vincentarelbundock.github.io/Rdatasets/>`__ 可以访问R中的核心数据集包和许多其他常见的R程序包提供的数据集。通过使用 :func:`get_rdataset` 函数，所有这些数据集都可用于 statsmodels ， ``data`` 属性可以访问实际数据。例如
 
 .. ipython:: python
 
@@ -35,7 +34,7 @@ The `Rdatasets project <https://vincentarelbundock.github.io/Rdatasets/>`__ give
    duncan_prestige.data.head(5)
 
 
-R Datasets Function Reference
+R 数据集功能参考
 -----------------------------
 
 
@@ -47,7 +46,7 @@ R Datasets Function Reference
    clear_data_home
 
 
-Available Datasets
+可用数据集
 ------------------
 
 .. toctree::
@@ -56,45 +55,40 @@ Available Datasets
 
    generated/*
 
-Usage
+用法
 -----
 
-Load a dataset:
+加载数据集:
 
 .. ipython:: python
 
    import statsmodels.api as sm
    data = sm.datasets.longley.load_pandas()
 
-The `Dataset` object follows the bunch pattern explained  in :ref:`proposal <dataset_proposal>`. The full dataset is available in the ``data`` attribute.
-
+ `Dataset` 对象遵循 :ref:`proposal <dataset_proposal>` 解释的束模式。data 属性中提供了完整的数据集。
 .. ipython:: python
 
    data.data
 
-Most datasets hold convenient representations of the data in the attributes `endog` and `exog`:
+大多数数据集都在 `endog` 和 `exog`属性中方便地展示数据：
 
 .. ipython:: python
 
    data.endog.iloc[:5]
    data.exog.iloc[:5,:]
 
-Univariate datasets, however, do not have an `exog` attribute.
+但是，单变量数据集没有 `exog` 属性。
 
-Variable names can be obtained by typing:
+可以通过输入以下内容获取变量名称：
 
 .. ipython:: python
 
    data.endog_name
    data.exog_name
 
-If the dataset does not have a clear interpretation of what should be an
-`endog` and `exog`, then you can always access the `data` or `raw_data`
-attributes. This is the case for the `macrodata` dataset, which is a collection
-of US macroeconomic data rather than a dataset with a specific example in mind.
-The `data` attribute contains a record array of the full dataset and the
-`raw_data` attribute contains an ndarray with the names of the columns given
-by the `names` attribute.
+如果数据集对应为 `endog` 和 `exog`没有明确的解释，则您始终可以访问 `data` 或 `raw_data` 属性。
+宏观数据数据集就是这种情况，它是美国宏观经济数据的集合，而不是带有特定示例的数据集。`data` 属性
+包含完整数据集的记录数组，而`raw_data` 属性包含 ndarray ，其名称由 `data` 属性提供。
 
 .. ipython:: python
 
@@ -102,12 +96,11 @@ by the `names` attribute.
    type(data.raw_data)
    data.names
 
-Loading data as pandas objects
+将数据作为 pandas 对象加载
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-For many users it may be preferable to get the datasets as a pandas DataFrame or
-Series object. Each of the dataset modules is equipped with a ``load_pandas``
-method which returns a ``Dataset`` instance with the data readily available as pandas objects:
+对于许多用户而言，最好将数据集作为 pandas DataFrame 或 Series 对象来获取。每个数据集模块都有
+一种 ``load_pandas`` 方法，该方法返回一个 ``Dataset`` 实例，该实例具有作为熊猫对象随时可用的数据：
 
 .. ipython:: python
 
@@ -115,15 +108,14 @@ method which returns a ``Dataset`` instance with the data readily available as p
    data.exog
    data.endog
 
-The full DataFrame is available in the ``data`` attribute of the Dataset object
+完整的 DataFrame ， ``data`` 在 Dataset 对象的属性中可用
 
 .. ipython:: python
 
    data.data
 
 
-With pandas integration in the estimation classes, the metadata will be attached
-to model results:
+通过将熊猫集成到估计类中，元数据将附加到模型结果中：
 
 .. ipython:: python
    :okwarning:
@@ -133,17 +125,16 @@ to model results:
    res.params
    res.summary()
 
-Extra Information
+其他信息
 ^^^^^^^^^^^^^^^^^
 
-If you want to know more about the dataset itself, you can access the
-following, again using the Longley dataset as an example ::
+如果您想了解有关数据集本身的更多信息，可以再次使用 Longley 数据集为例，访问以下内容 ::
 
     >>> dir(sm.datasets.longley)[:6]
     ['COPYRIGHT', 'DESCRLONG', 'DESCRSHORT', 'NOTE', 'SOURCE', 'TITLE']
 
-Additional information
+附加信息
 ----------------------
 
-* The idea for a datasets package was originally proposed by David Cournapeau and can be found :ref:`here <dataset_proposal>` with updates by Skipper Seabold.
-* To add datasets, see the :ref:`notes on adding a dataset <add_data>`.
+* 数据集软件包的想法最初是由 David Cournapeau 提出的，可以在 :ref:`here <dataset_proposal>` 并由 Skipper Seabold 进行更新。
+* 要添加数据集，请参阅 :ref:`notes on adding a dataset <add_data>`.

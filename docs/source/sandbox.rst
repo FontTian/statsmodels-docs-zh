@@ -4,37 +4,28 @@
 Sandbox
 =======
 
-This sandbox contains code that is for various reasons not ready to be
-included in statsmodels proper. It contains modules from the old stats.models
-code that have not been tested, verified and updated to the new statsmodels
-structure: cox survival model, mixed effects model with repeated measures,
-generalized additive model and the formula framework. The sandbox also
-contains code that is currently being worked on until it fits the pattern
-of statsmodels or is sufficiently tested.
+This sandbox 包含出于各种原因尚未准备好包含在 statsmodels 中的代码，它包含未经测试，验证和更新为新 statsmodels 结构的
+旧 stats.models 代码模块，cox 生存模型, 具有重复度量的混合效应模型，广义加性模型和公式框架。 sandbox 还包含当前正在处理
+的代码，直到它适合 statsmodels 模块或经过充分测试为止。
 
-All sandbox modules have to be explicitly imported to indicate that they are
-not yet part of the core of statsmodels. The quality and testing of the
-sandbox code varies widely.
+必须明确导入所有 sandbox 模块，以指示它们还不是 statsmodels 核心的一部分。沙盒代码的质量和测试差异很大。
 
 
-Examples
+例子
 --------
 
-There are some examples in the `sandbox.examples` folder. Additional
-examples are directly included in the modules and in subfolders of
-the sandbox.
+ `sandbox.examples`文件夹中有一些示例。其他示例直接包含在 sandbox 的模块和子文件夹中。
 
 
-Module Reference
+模块参考
 ----------------
 
 
-Time Series analysis :mod:`tsa`
+时间序列分析 :mod:`tsa`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-In this part we develop models and functions that will be useful for time
-series analysis. Most of the models and function have been moved to
-:mod:`statsmodels.tsa`.
+在这一部分中，我们将开发对时间序列分析有用的模型和函数。大多数模型和功能已移至 :mod:`statsmodels.tsa` 。
+
 
 Moving Window Statistics
 """"""""""""""""""""""""
@@ -57,22 +48,18 @@ statistics/moments <https://pandas.pydata.org/pandas-docs/stable/computation.htm
    movstat.movmoment
 
 
-Regression and ANOVA
+回归与方差分析
 ^^^^^^^^^^^^^^^^^^^^
 
 .. module:: statsmodels.sandbox.regression.anova_nistcertified
-   :synopsis: Experimental ANOVA estimator
+   :synopsis: 实验方差分析估算器
 
 .. currentmodule:: statsmodels.sandbox.regression.anova_nistcertified
 
-The following two ANOVA functions are fully tested against the NIST test data
-for balanced one-way ANOVA. ``anova_oneway`` follows the same pattern as the
-oneway anova function in scipy.stats but with higher precision for badly
-scaled problems. ``anova_ols`` produces the same results as the one way anova
-however using the OLS model class. It also verifies against the NIST tests,
-with some problems in the worst scaled cases. It shows how to do simple ANOVA
-using statsmodels in three lines and is also best taken as a recipe.
-
+以下两个 ANOVA 函数已针对平衡单向 ANOVA 的 NIST 测试数据进行了全面检验。anova_oneway 遵循与 scipy.stats 中
+的单向方差函数相同的模式，但对于严重缩放的问题具有更高的精度。 ``anova_ols`` 产生相同的结果作为然而使用 OLS 
+模型类的单向 ANOVA。它还可以针对 NIST 测试进行验证，在最坏的情况下会出现一些问题。它显示了如何在三行中使用 
+statsmodels进行简单的 ANOVA 并且最好将其作为配方。
 
 .. autosummary::
    :toctree: generated/
@@ -81,13 +68,11 @@ using statsmodels in three lines and is also best taken as a recipe.
    anova_ols
 
 
-The following are helper functions for working with dummy variables and
-generating ANOVA results with OLS. They are best considered as recipes since
-they were written with a specific use in mind. These function will eventually
-be rewritten or reorganized.
+以下是用于处理伪变量并使用 OLS 生成 ANOVA 结果的辅助函数。最好将它们视为食谱，
+因为它们在编写时会考虑到特定的用途。这些功能最终将被重写或重组。
 
 .. module:: statsmodels.sandbox.regression
-   :synopsis: Experimental regression tools
+   :synopsis: 实验回归工具
 
 .. currentmodule:: statsmodels.sandbox.regression
 
@@ -100,9 +85,7 @@ be rewritten or reorganized.
    try_ols_anova.dropname
    try_ols_anova.form2design
 
-The following are helper functions for group statistics where groups are
-defined by a label array. The qualifying comments for the previous group
-apply also to this group of functions.
+以下是用于组统计的帮助程序功能，其中组由标签数组定义。前一组的合格注释也适用于该组功能。
 
 
 .. autosummary::
@@ -117,19 +100,15 @@ apply also to this group of functions.
    try_catdata.labelmeanfilter_nd
    try_catdata.labelmeanfilter_str
 
-Additional to these functions, sandbox regression still contains several
-examples, that are illustrative of the use of the regression models of
-statsmodels.
+除了这些功能之外，sandbox 回归还包含几个示例，这些示例说明了 statsmodels 回归模型的使用。
 
 
 
-Systems of Regression Equations and Simultaneous Equations
+回归方程组和联立方程组
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The following are for fitting systems of equations models.  Though the returned
-parameters have been verified as accurate, this code is still very
-experimental, and the usage of the models will very likely change significantly
-before they are added to the main codebase.
+以下是方程模型的拟合系统。尽管返回的参数已经过验证，但该代码仍处于实验阶段，
+在将模型添加到主代码库之前，它们的用法很有可能会发生重大变化。
 
 .. module:: statsmodels.sandbox.sysreg
    :synopsis: Experimental system regression models
@@ -150,7 +129,7 @@ Miscellaneous
 .. currentmodule:: statsmodels.sandbox.tools.tools_tsa
 
 
-Descriptive Statistics Printing
+描述性统计输出
 """""""""""""""""""""""""""""""
 
 .. module:: statsmodels.sandbox
@@ -167,7 +146,7 @@ Descriptive Statistics Printing
 
 
 
-Original stats.models
+原始的 stats.models
 ^^^^^^^^^^^^^^^^^^^^^
 
 None of these are fully working. The formula framework is used by cox and

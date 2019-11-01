@@ -2,22 +2,21 @@
 
 .. _dataset_proposal:
 
-Dataset for statsmodels: design proposal
+statsmodels 的数据集: design proposal
 ===============================================
 
-One of the thing numpy/scipy is missing now is a set of datasets, available for
-demo, courses, etc. For example, R has a set of dataset available at the core.
+ numpy/scipy 缺少一系列可用于演示、教程的数据集，例如 R 有一系列的核心数据集。
 
-The expected usage of the datasets are the following:
+数据集的用途如下:
 
-        - examples, tutorials for model usage
-        - testing of model usage vs. other statistical packages
+        - 示例，模型用法教程
+        - 检验模型效果与其他统计信息的数据包
 
-That is, a dataset is not only data, but also some meta-data. The goal of this
-proposal is to propose common practices for organizing the data, in a way which
-is both straightforward, and does not prevent specific usage of the data.
+也就是说，数据集不仅是数据，而且还包括一些元数据。本提案的目的是提出一种简单明了且
+又不妨碍数据特定用途的组织数据的通用做法。
 
-Background
+
+背景
 ----------
 
 This proposal was adapted from David Cournapeau's original proposal for a
@@ -26,7 +25,7 @@ in the statsmodels scikit.  The structure of the datasets itself, while
 specific to statsmodels, should be general enough such that it might be used
 for other types of data (e.g., in the learn scikit or scipy itself).
 
-Organization
+组织
 ------------
 
 Each dataset is a directory in the `datasets` directory and defines a python
@@ -59,12 +58,10 @@ be defined for each package, containing a Python string:
 
 See `datasets/data_template.py` for more information.
 
-Format of the data
+数据格式
 ------------------
 
-This is strongly suggested a practice for the `Dataset` object returned by the
-load function.  Instead of using classes to provide meta-data, the Bunch pattern
-is used.
+强烈建议使用load函数返回的 `Dataset` 对象，代替使用类提供元数据，而是使用 Bunch 模式。
 
 ::
 
@@ -73,47 +70,41 @@ is used.
         dict.__init__(self,kw)
         self.__dict__ = self
 
-See this `Reference <http://code.activestate.com/recipes/52308-the-simple-but-handy-collector-of-a-bunch-of-named/>`_
+请参考 `Reference <http://code.activestate.com/recipes/52308-the-simple-but-handy-collector-of-a-bunch-of-named/>`_
 
-In practice, you can use ::
+在实践中，您可以使用 ::
 
   >>> from statsmodels.datasets import Dataset
 
-as the default collector as in `datasets/data_template.py`.
+作为默认收集器，如 `datasets/data_template.py`.
 
-The advantage of the Bunch pattern is that it preserves look-up by attribute.
-The key goals are:
+Bunch 模式的优点是它保留了按属性查找。主要目标是：
 
-    - For people who just want the data, there is no extra burden
-    - For people who need more, they can easily extract what they need from
-      the returned values. Higher level abstractions can be built easily
-      from this model.
-    - All possible datasets should fit into this model.
+    - 对于只需要数据的人来说，没有额外的负担
+    - 对于需要更多内容的人，他们可以轻松地从返回的值中提取所需的内容。
+      通过此模型可以轻松构建更高级别的抽象。
+    - 所有可能的数据集都应适合此模型
 
-For the datasets to be useful in statsmodels the Dataset object
-returned by load has the following conventions and attributes:
+为了使数据集在statsmodels中有用，封装 Dataset 对象应该遵从一下约定和属性：
 
-    - Calling the object itself returns the plain ndarray of the full dataset.
-    - `data`: A recarray containing the actual data.  It is assumed
-      that all of the data can safely be cast to a float at this point.
-    - `raw_data`: This is the plain ndarray version of 'data'.
-    - `names`: this returns data.dtype.names so that name[i] is the i-th
-      column in 'raw_data'.
-    - `endog`: this value is provided for convenience in tests and examples
-    - `exog`: this value is provided for convenience in tests and examples
-    - `endog_name`: the name of the endog attribute
-    - `exog_name`: the names of the exog attribute
 
-This contains enough information to get all useful information through
-introspection and simple functions. Further, attributes are easily added that
-may be useful for other packages.
+    - 调用对象本身将返回完整数据集的纯 ndarray 。
+    - `data`: 包含实际数据的Recarray。假设此时所有数据都可以安全地转换为浮点数。
+    - `raw_data`: 这是'data'的纯ndarray版本。 
+    - `names`: 这将返回 data.dtype.names 以便 name[i] 是 'raw_data' 中的第i列。
+    - `endog`: t提供此值是为了方便测试和示例
+    - `exog`: 提供此值是为了方便测试和示例
+    - `endog_name`: endog 属性的名称
+    - `exog_name`: exog 属性的名称
 
-Adding a dataset
+它包含足够的信息，可以通过自省和简单功能获得所有有用的信息。此外，可以轻松添加对其他程序包可能有用的属性。
+
+添加数据集
 ----------------
 
-See the :ref:`notes on adding a dataset <add_data>`.
+请参考 :ref:`notes on adding a dataset <add_data>`.
 
-Example Usage
+用法示例
 -------------
 
 ::
@@ -121,18 +112,15 @@ Example Usage
   >>> from statsmodels import datasets
   >>> data = datasets.longley.load(as_pandas=True)
 
-Remaining problems:
+仍然存在的问题:
 -------------------
 
-    - If the dataset is big and cannot fit into memory, what kind of API do
-      we want to avoid loading all the data in memory? Can we use memory
-      mapped arrays ?
-    - Missing data: I thought about subclassing both record arrays and
-      masked arrays classes, but I do not know if this is feasible, or even
-      makes sense. I have the feeling that some Data mining software use
-      Nan (for example, weka seems to use float internally), but this
-      prevents them from representing integer data.
-    - What to do with non-float data, i.e., strings or categorical variables?
+    - 如果数据集很大且无法容纳到内存中，我们要避免使用哪种API来将所有数据加载到内存中？
+      我们可以使用内存映射数组吗？
+    - Missing data: 我曾考虑过将记录数组和掩码数组类都子类化，但是我不知道这是否可行，
+      甚至还没有道理。我有一些数据挖掘软件使用Nan的感觉 (例如, weka 似乎在内部使用 float ),
+       但这阻止了它们表示整数数据。
+    - 如何处理 non-float 数据，即字符串或分类变量？
 
 
 Current implementation
@@ -141,7 +129,7 @@ Current implementation
 An implementation following the above design is available in `statsmodels`.
 
 
-Note
+注意
 ----
 
 Although the datasets package emerged from the learn package, we try to keep it

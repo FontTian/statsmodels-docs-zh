@@ -3,35 +3,31 @@
 
 .. _tools:
 
-Tools
+工具
 =====
 
-Our tool collection contains some convenience functions for users and
-functions that were written mainly for internal use.
+我们的工具集包含一些方便用户的功能，以及主要供内部使用而编写的功能。
 
-Additional to this tools directory, several other subpackages have their own
-tools modules, for example :mod:`statsmodels.tsa.tsatools`
+除了此工具目录外，其他几个子程序包也有自己的工具模块，例如 :mod:`statsmodels.tsa.tsatools`
 
 
-Module Reference
+模块参考
 ----------------
 
 .. module:: statsmodels.tools
-   :synopsis: Tools for variable transformation and common numerical operations
+   :synopsis: 用于变量转换和常用数值运算的工具
 
-Basic tools :mod:`tools`
+基本工具 :mod:`tools`
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-These are basic and miscellaneous tools. The full import path is
-`statsmodels.tools.tools`.
+这些是基本的杂项工具。完整的导入路径是 `statsmodels.tools.tools` 。
 
 .. autosummary::
    :toctree: generated/
 
    tools.add_constant
 
-The next group are mostly helper functions that are not separately tested or
-insufficiently tested.
+下一组主要是未单独测试或未充分测试的辅助功能。
 
 .. autosummary::
    :toctree: generated/
@@ -48,7 +44,7 @@ insufficiently tested.
 
 .. _numdiff:
 
-Numerical Differentiation
+数值微分
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. autosummary::
@@ -61,20 +57,14 @@ Numerical Differentiation
    numdiff.approx_hess3
    numdiff.approx_hess_cs
 
-Measure for fit performance :mod:`eval_measures`
+衡量拟合效果 :mod:`eval_measures`
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The first group of function in this module are standalone versions of
-information criteria, aic bic and hqic. The function with `_sigma` suffix
-take the error sum of squares as argument, those without, take the value
-of the log-likelihood, `llf`, as argument.
+此模块中的第一组功能是信息标准的独立版本 aic bic 和 hqic. 带 `_sigma` 后缀的函数将误差平方和作为参数，
+没有后缀的函数将对数似然值 `llf` 作为参数。
 
-The second group of function are measures of fit or prediction performance,
-which are mostly one liners to be used as helper functions. All of those
-calculate a performance or distance statistic for the difference between two
-arrays. For example in the case of Monte Carlo or cross-validation, the first
-array would be the estimation results for the different replications or draws,
-while the second array would be the true or observed values.
+第二组功能是衡量拟合或预测的效果,它们通常是用作辅助功能，所有这些都是为了衡量两个数组之间的效果或统计信息差异。
+例如，在 Monte Carlo（蒙特卡洛）或交叉验证的情况下，第一个数组将是不同重复或绘图的估计结果，而第二个数组将是真实值或观察值。
 
 .. currentmodule:: statsmodels.tools
 

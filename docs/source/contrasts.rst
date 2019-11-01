@@ -1,6 +1,6 @@
 :orphan:
 
-Patsy: Contrast Coding Systems for categorical variables
+Patsy: 用于分类变量的对比编码系统
 ===========================================================
 
 .. note:: This document is based heavily on `this excellent resource from UCLA <http://www.ats.ucla.edu/stat/r/library/contrast_coding.htm>`__.
@@ -39,7 +39,7 @@ To have a look at the contrast matrices in Patsy, we will use data from UCLA ATS
       ...:         return ContrastMatrix(contrast, _name_levels("Simp.", levels[:-1]))
       ...:
 
-Example Data
+示例数据
 ------------
 
 .. ipython:: python
@@ -54,7 +54,7 @@ It will be instructive to look at the mean of the dependent variable, write, for
 
    hsb2.groupby('race')['write'].mean()
 
-Treatment (Dummy) Coding
+处理 (Dummy) 编码
 ------------------------
 
 Dummy coding is likely the most well known coding scheme. It compares each level of the categorical variable to a base reference level. The base reference level is the value of the intercept. It is the default contrast in Patsy for unordered categorical factors. The Treatment contrast matrix for race would be
@@ -83,7 +83,7 @@ This is a bit of a trick, as the `race` category conveniently maps to zero-based
 
 We explicitly gave the contrast for race; however, since Treatment is the default, we could have omitted this.
 
-Simple Coding
+简单编码
 -------------
 
 Like Treatment Coding, Simple Coding compares each level to a fixed reference level. However, with simple coding, the intercept is the grand mean of all the levels of the factors. See :ref:`user-defined` for how to implement the Simple contrast.
@@ -98,7 +98,7 @@ Like Treatment Coding, Simple Coding compares each level to a fixed reference le
    res = mod.fit()
    print(res.summary())
 
-Sum (Deviation) Coding
+求和 (Deviation) 编码
 ----------------------
 
 Sum coding compares the mean of the dependent variable for a given level to the overall mean of the dependent variable over all the levels. That is, it uses contrasts between each of the first k-1 levels and level k In this example, level 1 is compared to all the others, level 2 to all the others, and level 3 to all the others.
@@ -119,7 +119,7 @@ This corresponds to a parameterization that forces all the coefficients to sum t
 
    hsb2.groupby('race')['write'].mean().mean()
 
-Backward Difference Coding
+后向差异编码
 --------------------------
 
 In backward difference coding, the mean of the dependent variable for a level is compared with the mean of the dependent variable for the prior level. This type of coding may be useful for a nominal or an ordinal variable.
@@ -142,7 +142,7 @@ For example, here the coefficient on level 1 is the mean of `write` at level 2 c
    hsb2.groupby('race').mean()["write"][2] - \
        hsb2.groupby('race').mean()["write"][1]
 
-Helmert Coding
+Helmert 编码
 --------------
 
 Our version of Helmert coding is sometimes referred to as Reverse Helmert Coding. The mean of the dependent variable for a level is compared to the mean of the dependent variable over all previous levels. Hence, the name 'reverse' being sometimes applied to differentiate from forward Helmert coding. This comparison does not make much sense for a nominal variable such as race, but we would use the Helmert contrast like so:
@@ -174,7 +174,7 @@ As you can see, these are only equal up to a constant. Other versions of the Hel
    1./k * (grouped.mean()["write"][k] - grouped.mean()["write"][:k-1].mean())
 
 
-Orthogonal Polynomial Coding
+正交多项式编码
 ----------------------------
 
 The coefficients taken on by polynomial coding for `k=4` levels are the linear, quadratic, and cubic trends in the categorical variable. The categorical variable here is assumed to be represented by an underlying, equally spaced numeric variable. Therefore, this type of encoding is used only for ordered categorical variables with equal spacing. In general, the polynomial contrast produces polynomials of order `k-1`. Since `race` is not an ordered factor variable let's use `read` as an example. First we need to create an ordered categorical from `read`.
@@ -204,7 +204,7 @@ As you can see, readcat has a significant linear effect on the dependent variabl
 
 .. _user-defined:
 
-User-Defined Coding
+用户自定义编码
 -------------------
 
 If you want to use your own coding, you must do so by writing a coding class that contains a code_with_intercept and a code_without_intercept method that return a `patsy.contrast.ContrastMatrix` instance.

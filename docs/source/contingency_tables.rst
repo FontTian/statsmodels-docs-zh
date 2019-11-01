@@ -3,45 +3,28 @@
 .. _contingency_tables:
 
 
-Contingency tables
+列联表
 ==================
 
-statsmodels supports a variety of approaches for analyzing contingency
-tables, including methods for assessing independence, symmetry,
-homogeneity, and methods for working with collections of tables from a
-stratified population.
+statsmodels 支持多种分析列联表的方法，包括评估独立性，对称性，同质性
+的方法以及处理来自分层总体的表集合的方法。
 
-The methods described here are mainly for two-way tables.  Multi-way
-tables can be analyzed using log-linear models.  statsmodels does not
-currently have a dedicated API for loglinear modeling, but Poisson
-regression in :class:`statsmodels.genmod.GLM` can be used for this
-purpose.
+这里描述的方法主要用于双向表。可以使用对数线性模型分析多路表。statsmodels当前
+没有用于对数线性建模的专用API，但是 :class:`statsmodels.genmod.GLM` 类中的 Poisson 回归可用于此目的。 
 
-A contingency table is a multi-way table that describes a data set in
-which each observation belongs to one category for each of several
-variables.  For example, if there are two variables, one with
-:math:`r` levels and one with :math:`c` levels, then we have a
-:math:`r \times c` contingency table.  The table can be described in
-terms of the number of observations that fall into a given cell of the
-table, e.g. :math:`T_{ij}` is the number of observations that have
-level :math:`i` for the first variable and level :math:`j` for the
-second variable.  Note that each variable must have a finite number of
-levels (or categories), which can be either ordered or unordered.  In
-different contexts, the variables defining the axes of a contingency
-table may be called **categorical variables** or **factor variables**.
-They may be either **nominal** (if their levels are unordered) or
-**ordinal** (if their levels are ordered).
+列联表是描述数据集的多向表，其中每个观察值属于多个变量中的每个变量的一个类别
+例如，如果有两个变量，一个具有 :math:`r` 级别，一个具有 :math:`c` 级别，
+则我们有一个 :math:`r \times c` 列联表。可以根据落入表的给定单元格中的观察次数来描述该表，
+例如，观测值 :math:`T_{ij}` 表示第一个变量的水平为 :math:`i` ，第二个变量的水平为 :math:`j` 。
+请注意，每个变量必须具有有限数量的级别(或类别),可以有序或无序。 在不同的上下文中，定义列联表
+的轴的变量可以称为 **categorical variables（分类变量）** or **factor variables（因子变量）**.
+它们可以是 **nominal（名义的）** (如果它们的水平是无序的) 或者 **ordinal（有序的）** (如果它们的水平是有序的).
 
-The underlying population for a contingency table is described by a
-**distribution table** :math:`P_{i, j}`.  The elements of :math:`P`
-are probabilities, and the sum of all elements in :math:`P` is 1.
-Methods for analyzing contingency tables use the data in :math:`T` to
-learn about properties of :math:`P`.
+列联表的基础人口由 **分布表** :math:`P_{i, j}` 来描述，其中 :math:`P` 表示概率，所有元素之和的概率 :math:`P` 是 1.
+分析列联表的方法是使用 :math:`T` 的数据来了解 :math:`P` 的属性
 
-The :class:`statsmodels.stats.Table` is the most basic class for
-working with contingency tables.  We can create a ``Table`` object
-directly from any rectangular array-like object containing the
-contingency table cell counts:
+ :class:`statsmodels.stats.Table` 类是使用列联表最基础的类，我们可以直接通过任何包含列联表单元格计算的矩形数组对象来
+ 创建一个 Table 对象。
 
 .. ipython:: python
 
@@ -55,8 +38,7 @@ contingency table cell counts:
     tab = tab.loc[:, ["None", "Some", "Marked"]]
     table = sm.stats.Table(tab)
 
-Alternatively, we can pass the raw data and let the Table class
-construct the array of cell counts for us:
+另外，我们可以传递原始数据，并让 Table 类为我们构造单元格计数数组：
 
 .. ipython:: python
 
@@ -64,21 +46,17 @@ construct the array of cell counts for us:
     table = sm.stats.Table.from_data(data)
 
 
-Independence
+Independence（独立性）
 ------------
 
-**Independence** is the property that the row and column factors occur
-independently. **Association** is the lack of independence.  If the
-joint distribution is independent, it can be written as the outer
-product of the row and column marginal distributions:
+**Independence（独立性）** 是行和列因子独立发生的属性。 **Association（联合）** 是缺乏独立性。 
+如果联合分布是独立的，则可以将其写为行和列边际分布的外积：
 
 .. math::
 
     P_{ij} = \sum_k P_{ij} \cdot \sum_k P_{kj} \quad \text{for all} \quad  i, j
 
-We can obtain the best-fitting independent distribution for our
-observed data, and then view residuals which identify particular cells
-that most strongly violate independence:
+我们可以从观测数据中获得最佳拟合的独立分布，然后查看并识别出强烈违反独立性的特定单元格的残差：
 
 .. ipython:: python
 
@@ -86,18 +64,11 @@ that most strongly violate independence:
     print(table.fittedvalues)
     print(table.resid_pearson)
 
-In this example, compared to a sample from a population in which the
-rows and columns are independent, we have too many observations in the
-placebo/no improvement and treatment/marked improvement cells, and too
-few observations in the placebo/marked improvement and treated/no
-improvement cells.  This reflects the apparent benefits of the
-treatment.
+在这个示例中, 与行和列独立的总体样本相比，我们在安慰剂/无改善和治疗/显着改善细胞中观测到太量的观测结果，
+而在安慰剂/显着改善和治疗/没有改善细胞中仅观测到很少的结果。这反映出该治疗的明显益处。
 
-If the rows and columns of a table are unordered (i.e. are nominal
-factors), then the most common approach for formally assessing
-independence is using Pearson's :math:`\chi^2` statistic.  It's often
-useful to look at the cell-wise contributions to the :math:`\chi^2`
-statistic to see where the evidence for dependence is coming from.
+如果表的行和列是无序的（即名义变量），那么我们评估独立性的最常用方法是 Pearson's :math:`\chi^2` 统计。
+通过查看细胞贡献的 :math:`\chi^2` 卡方统计量，以此作为独立性验证的依据通常是有效的。
 
 .. ipython:: python
 
@@ -105,29 +76,23 @@ statistic to see where the evidence for dependence is coming from.
     print(rslt.pvalue)
     print(table.chi2_contribs)
 
-For tables with ordered row and column factors, we can us the **linear
-by linear** association test to obtain more power against alternative
-hypotheses that respect the ordering.  The test statistic for the
-linear by linear association test is
+对于有序行和列因子的表，我们可以通过 **linear by linear** 相关检验来获得更多的权重，用来对抗关于排序的替代假设。
+线性关联检验的检验统计量是：
 
 .. math::
 
     \sum_k r_i c_j T_{ij}
 
-where :math:`r_i` and :math:`c_j` are row and column scores.  Often
-these scores are set to the sequences 0, 1, ....  This gives the
-'Cochran-Armitage trend test'.
+其中 :math:`r_i` 和 :math:`c_j` 是行和列的得分，通常这些分数设置为序列 0, 1, ... ， 还给出了 'Cochran-Armitage 趋势检验'。
 
 .. ipython:: python
 
     rslt = table.test_ordinal_association()
     print(rslt.pvalue)
 
-We can assess the association in a :math:`r\times x` table by
-constructing a series of :math:`2\times 2` tables and calculating
-their odds ratios.  There are two ways to do this.  The **local odds
-ratios** construct :math:`2\times 2` tables from adjacent row and
-column categories.
+我们可以通过构造一系列 :math:`2\times 2` 表并计算他们的 odds ratios（比值比）来评估 :math:`r\times x` 表中的关联。有两种方法
+可以做到这点，从相邻行和列类别的 **local odds ratios** （本地优势比）来构建 :math:`2\times 2` 表
+
 
 .. ipython:: python
 
@@ -137,8 +102,8 @@ column categories.
     taloc = sm.stats.Table2x2(np.asarray([[29, 7], [13, 7]]))
     print(taloc.oddsratio)
 
-The **cumulative odds ratios** construct :math:`2\times 2` tables by
-dichotomizing the row and column factors at each possible point.
+也可以通过在每个可能的点上对行和列因子进行二分法的 **cumulative odds ratios** （累积比值比）来构建 :math:`2\times 2` 表。
+
 
 .. ipython:: python
 
@@ -150,8 +115,7 @@ dichotomizing the row and column factors at each possible point.
     tacum = sm.stats.Table2x2(tab1)
     print(tacum.oddsratio)
 
-A mosaic plot is a graphical approach to informally assessing
-dependence in two-way tables.
+ mosaic plot（马赛克图）是一种非正式评估双向表中依赖性的图形方法。
 
 .. ipython:: python
 
@@ -159,28 +123,21 @@ dependence in two-way tables.
     fig, _ = mosaic(data, index=["Treatment", "Improved"])
 
 
-Symmetry and homogeneity
+对称性和同质性
 ------------------------
 
-**Symmetry** is the property that :math:`P_{i, j} = P_{j, i}` for
-every :math:`i` and :math:`j`.  **Homogeneity** is the property that
-the marginal distribution of the row factor and the column factor are
-identical, meaning that
+**Symmetry（对称性）** 的属性是 :math:`P_{i, j} = P_{j, i}` 对于每个 :math:`i` 和 :math:`j` 。  
+**Homogeneity（同质性）** 是行因子和列因子的边际分布相同的特性
 
 .. math::
 
     \sum_j P_{ij} = \sum_j P_{ji} \forall i
 
-Note that for these properties to be applicable the table :math:`P`
-(and :math:`T`) must be square, and the row and column categories must
-be identical and must occur in the same order.
+请注意，要使这些属性适用，表 :math:`P`(和 :math:`T`) 必须为正方形，行和列类别必须相同，并且必须
+以相同的顺序出现。
 
-To illustrate, we load a data set, create a contingency table, and
-calculate the row and column margins.  The :class:`Table` class
-contains methods for analyzing :math:`r \times c` contingency tables.
-The data set loaded below contains assessments of visual acuity in
-people's left and right eyes.  We first load the data and create a
-contingency table.
+为了说明这点，我们加载一个数据集，创建一个列联表，并计算行和列边距。 :class:`Table` 类包含分析方法 :math:`r \times c` 列联表
+下面加载的数据集包含人们左眼和右眼视敏度的评估。我们首先加载数据并创建一个列联表。
 
 .. ipython:: python
 
@@ -192,8 +149,7 @@ contingency table.
     tab.columns = tab.columns.get_level_values(1)
     print(tab)
 
-Next we create a :class:`SquareTable` object from the contingency
-table.
+从列联表创建一个 :class:`SquareTable` 对象
 
 .. ipython:: python
 
@@ -203,30 +159,23 @@ table.
     print(col)
 
 
-The ``summary`` method prints results for the symmetry and homogeneity
-testing procedures.
+这种 ``summary`` 方法输出的是对称性和均匀性的检测结果
 
 .. ipython:: python
 
     print(sqtab.summary())
 
-If we had the individual case records in a dataframe called ``data``,
-we could also perform the same analysis by passing the raw data using
-the ``SquareTable.from_data`` class method.
-
+如果在名为 ``data`` 的 dataframe 中有单独的案例记录，我们同样也可以通过使用 ``SquareTable.from_data`` 类来完成相同的分析。
 ::
 
     sqtab = sm.stats.SquareTable.from_data(data[['left', 'right']])
     print(sqtab.summary())
 
 
-A single 2x2 table
+单个2x2表
 ------------------
 
-Several methods for working with individual 2x2 tables are provided in
-the :class:`sm.stats.Table2x2` class.  The ``summary`` method displays
-several measures of association between the rows and columns of the
-table.
+ :class:`sm.stats.Table2x2` 类提供了几种处理单个。 ``summary`` 方法显示表的行和列之间的若干关联度量。
 
 .. ipython:: python
 
@@ -244,23 +193,15 @@ obtained if the transposed table is analyzed.
     print(t22.summary())
 
 
-Stratified 2x2 tables
+分层2x2表
 ---------------------
 
-Stratification occurs when we have a collection of contingency tables
-defined by the same row and column factors.  In the example below, we
-have a collection of 2x2 tables reflecting the joint distribution of
-smoking and lung cancer in each of several regions of China.  It is
-possible that the tables all have a common odds ratio, even while the
-marginal probabilities vary among the strata.  The 'Breslow-Day'
-procedure tests whether the data are consistent with a common odds
-ratio.  It appears below as the `Test of constant OR`.  The
-Mantel-Haenszel procedure tests whether this common odds ratio is
-equal to one.  It appears below as the `Test of OR=1`.  It is also
-possible to estimate the common odds and risk ratios and obtain
-confidence intervals for them.  The ``summary`` method displays all of
-these results.  Individual results can be obtained from the class
-methods and attributes.
+当我们有一组由同样行和列因子定义的列联表时，就会发生分层。在下面的示例中，我们有一组 2x2 表，
+反映了中国几个地区吸烟和肺癌的联合分布。表格可能都具有共同的odds ratio（比值比），即使边际概率
+在各阶层之间变化也是如此。'Breslow-Day' 程序测试数据是否与常见优势比一致。它在下面显示为
+ `Test of constant OR（常数 OR 测试）`。 Mantel-Haenszel 程序测试这个常见优势比是否等于 1 。
+它在下面显示为 ` OR=1 的测试`。还可以估计共同的几率和风险比并获得它们的置信区间。
+ ``summary``方法显示所有这些结果。可以从类方法和属性中获得单个结果。
 
 .. ipython:: python
 
@@ -273,7 +214,7 @@ methods and attributes.
     print(st.summary())
 
 
-Module Reference
+模块参考
 ----------------
 
 .. module:: statsmodels.stats.contingency_tables
@@ -291,10 +232,9 @@ Module Reference
    mcnemar
    cochrans_q
 
-See also
+也可以看看
 --------
 
-Scipy_ has several functions for analyzing contingency tables,
-including Fisher's exact test which is not currently in statsmodels.
+Scipy_ 有几个分析列联表的功能，包括 Fisher 的精确测试， 目前在 statsmodels 中还没有。
 
 .. _Scipy: https://docs.scipy.org/doc/scipy-0.18.0/reference/stats.html#contingency-table-functions
