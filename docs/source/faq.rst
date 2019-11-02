@@ -4,61 +4,53 @@
 
 .. _faq:
 
-Frequently Asked Question
+常见问题
 =========================
 
-What is statsmodels?
+statsmodels 是什么?
 --------------------
 
-statsmodels is a Python package that provides a collection of widely-used
-statistical models. While statsmodels historically has an econometrics-heavy
-user base, the package is designed to be useful to a large variety of
-statistical use cases. In comparison with other Python-based modelling
-tools, statsmodels focuses more heavily on the statistics and diagnostics
-underlying the models than having the most cutting-edge or predictive models.
+statsmodels 是一个 Python 软件包，提供了广泛使用的统计模型的集合。虽然 statsmodels 过去有大量的计量经济学用户群， 
+但该软件包的设计目的是可用于多种统计用例。与其他基于 Python 的建模工具相比， statsmodels 更加侧重于模型的基础统计
+和诊断，而不是拥有最前沿的或预测性的模型。
 
 .. _endog-exog-faq:
 
-What do endog and exog mean?
+endog 和 exog 是什么?
 ----------------------------
 
-These are shorthand for endogenous and exogenous variables. You might be more
-comfortable with the common ``y`` and ``X`` notation in linear models.
-Sometimes the endogenous variable ``y`` is called a dependent variable.
-Likewise, sometimes the exogenous variables ``X`` are called the independent
-variables. You can read about this in greater detail at :ref:`endog_exog`
+这些是 endogenous 和 exogenous 变量的缩写. 可能线性模型表示为通用 ``y`` 和 ``X`` 会让你更满意， 有时将内生变量
+ ``y`` 称为因变量。同样有时将外生变量称为自变量，你可以在 :ref:`endog_exog` 了解更多的详细内容。
 
 .. _missing-faq:
 
-How does statsmodels handle missing data?
+statsmodels 是如何处理缺失值?
 -----------------------------------------
 
-Missing data can be handled via the ``missing`` keyword argument. Every model
-takes this keyword. You can find more information in the docstring of
-:class:`statsmodels.base.Model <statsmodels.base.model.Model>`.
+缺失值可以通过 ``missing`` 关键字参数来处理，每个模型都使用此关键字。
+您可以在 :class:`statsmodels.base.Model <statsmodels.base.model.Model>`的文档中找到更多信息 。
 
 .. _build-faq:
 
-Why will not statsmodels build?
+为什么不构建 statsmodels ?
 -------------------------------
 
-Remember that to build, you must have:
+请记住，要构建，您必须具有:
 
-- The appropriate dependencies (numpy, pandas, scipy, Cython) installed
-- A suitable C compiler
-- A working python installation
+- 安装了适当的依赖项 (numpy, pandas, scipy, Cython) 
+- 合适的 C 编译器
+- 可以正常工作的 python 安装包
 
-Please review our :ref:`installation instructions <install>` for details.
+请查看我们的 :ref:`installation instructions <install>` 获得详细信息。
 
-You might also try cleaning up your source directory by running:
+您也可以尝试通过运行以下命令清理源目录:
 
 .. code-block:: bash
 
     pip uninstall statsmodels
     python setup.py clean
 
-And then attempting to re-compile. If you want to be more aggressive, you
-could also reset git to a prior version by:
+然后尝试重新编译。如果您想更积极一些，也可以通过以下方法将 git 重置为以前的版本：
 
 .. code-block:: bash
 
@@ -67,19 +59,16 @@ could also reset git to a prior version by:
     git checkout master
     python setup.py clean
 
-I'd like to contribute. Where do I start?
+如果我想贡献，该从哪里开始?
 -----------------------------------------
 
-Check out our :doc:`development pages <dev/index>` for a guide on how to
-get involved. We accept Pull Requests on our GitHub page for bugfixes and
-topics germane to statistics and statistical modeling. In addition, usability
-and quality of life enhancements are greatly appreciated as well.
+请查看我们的 :doc:`development pages <dev/index>` 以获取有关如何参与的指南。我们在 GitHub 页面上接受请求请求，获取与统计和统计
+建模密切相关的错误修正和主题。此外，人们也非常赞赏可用性和生活质量的提高。
 
-What if my question is not answered here?
+如果我的问题在这里没有回答怎么办?
 -----------------------------------------
 
-You may find answers for questions that have not yet been added here on GitHub
-under the `FAQ issues tag <https://github.com/statsmodels/statsmodels/labels/FAQ>`_.
-If not, please ask your question on stackoverflow using the
-`statsmodels tag <https://stackoverflow.com/questions/tagged/statsmodels>`_ or
-on the `mailing list <https://groups.google.com/forum/#!forum/pystatsmodels>`_.
+您可能会在 GitHub 的 `FAQ issues tag <https://github.com/statsmodels/statsmodels/labels/FAQ>`_.
+下找到尚未在此处添加的问题的答案。如果没有，请使用
+`statsmodels tag <https://stackoverflow.com/questions/tagged/statsmodels>`_ 或
+ `mailing list <https://groups.google.com/forum/#!forum/pystatsmodels>`_ 询问有关 stackoverflow 的问题。

@@ -1,35 +1,25 @@
-Pitfalls
+Pitfalls（陷阱）
 ========
 
-This page lists issues which may arise while using statsmodels. These 
-can be the result of data-related or statistical problems, software design,
-"non-standard" use of models, or edge cases. 
+本页列出了使用 statsmodels 时可能出现的问题。这些可能是数据相关或统计问题，软件设计，
+ "non-standard" 使用模型或出现极端情况的结果。
 
-statsmodels provides several warnings and helper functions for diagnostic
-checking (see this `blog article
-<http://jpktd.blogspot.ca/2012/01/anscombe-and-diagnostic-statistics.html>`_
-for an example of misspecification checks in linear regression). The coverage
-is of course not comprehensive, but more warnings and diagnostic functions will
-be added over time.
+statsmodels 提供了一些警告和帮助程序功能来进行诊断检查，（比如，有关线性回归中错误指定检查的示例， 请参阅 `blog article
+<http://jpktd.blogspot.ca/2012/01/anscombe-and-diagnostic-statistics.html>`_ 虽然涵盖范围并不全面，但是随着时间的推移会增加更多的警告和诊断功能。
 
-While the underlying statistical problems are the same for all statistical
-packages, software implementations differ in the way extreme or corner cases
-are handled. Please report corner cases for which the models might not work, so
-we can treat them appropriately.
+尽管所有统计软件包的基本统计问题都相同，但是软件实现在处理极端或极端情况的方式上有所不同。
+将报告模型可能无法使用的特殊情况，以便我们认真对待。
 
-Repeated calls to fit with different parameters
+重复调用以拟合不同的参数
 -----------------------------------------------
 
-Result instances often need to access attributes from the corresponding model
-instance. Fitting a model multiple times with different arguments can change
-model attributes. This means that the result instance may no longer point to
-the correct model attributes after the model has been re-fit. 
+结果实例通常需要访问相应模型实例的属性。使用不同的参数多次拟合模型可以更改模型属性。
+这意味着在重新拟合模型后，结果实例可能不再指向正确的模型属性。
 
-It is therefore best practice to create separate model instances when we want
-to fit a model using different fit function arguments. 
 
-For example, this works without problem because we are not keeping the results
-instance for further use ::
+因此，当我们要使用不同的拟合函数参数拟合模型时，最好的做法是创建单独的模型实例
+
+例如，因为我们没有保留结果实例以供进一步使用而没有出现问题 ::
 
   mod = AR(endog)
   aic = []
@@ -38,8 +28,7 @@ instance for further use ::
       aic.append(res.aic)
 
 
-However, when we want to hold on to two different estimation results, then it
-is recommended to create two separate model instances. ::
+但是，当我们要保留两个不同的估计结果时，建议创建两个单独的模型实例。 ::
 
   mod1 = RLM(endog, exog)
   res1 = mod1.fit(scale_est='mad')
@@ -47,48 +36,36 @@ is recommended to create two separate model instances. ::
   res2 = mod2.fit(scale_est=sm.robust.scale.HuberScale())
 
 
-Unidentified Parameters
+无法确定的参数
 -----------------------
 
-Rank deficient exog, perfect multicollinearity
+exog 的秩不足, 完美多重共线性
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Models based on linear models, GLS, RLM, GLM and similar, use a generalized
-inverse. This means that: 
+基于线性模型 GLS, RLM, GLM 和类似模型的模型使用广义逆。这意味着: 
 
-+ Rank deficient matrices will not raise an error
-+ Cases of almost perfect multicollinearity or ill-conditioned design matrices might produce numerically unstable results. Users need to manually check the rank or condition number of the matrix if this is not the desired behavior
++ 秩不足的矩阵不会引发错误
++ 几乎完美的多重共线性或病态设计矩阵的情况可能会产生数值不稳定的结果。如果这不是所需的行为，则用户需要手动检查矩阵的等级或条件编号。
   
-Note: statsmodels currently fails on the NIST benchmark case for Filip if the
-data is not rescaled, see `this blog <http://jpktd.blogspot.ca/2012/03/numerical-accuracy-in-linear-least.html>`_
+注意：如果未重新缩放数据，则 statsmodels 当前在Filip的NIST基准测试情况下失败 `this blog <http://jpktd.blogspot.ca/2012/03/numerical-accuracy-in-linear-least.html>`_
 
-Incomplete convergence in maximum likelihood estimation
+极大似然估计的不完全收敛
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-In some cases, the maximum likelihood estimator might not exist, parameters
-might be infinite or not unique (e.g. (quasi-)separation in models with binary
-endogenous variable). Under the default settings, statsmodels will print
-a warning if the optimization algorithm stops without reaching convergence.
-However, it is important to know that the convergence criteria may sometimes
-falsely indicate convergence (e.g. if the value of the objective function
-converged but not the parameters). In general, a user needs to verify
-convergence.
+在某些情况下，极大似然估计器可能不存在，参数可能是无限的或不是唯一的（例如，在具有二元内生变量的模型中，（准）分离）。
+在默认设置下，如果优化算法停止而未达到收敛，则statsmodels将警告。然而，重要是要知道收敛标准有时会错误地指示收敛
+（例如，如果目标函数的值收敛，而参数没有收敛），通常用户需要验证收敛。
 
-For binary Logit and Probit models, statsmodels raises an exception if perfect
-prediction is detected. There is, however, no check for quasi-perfect
-prediction.
+对于二分类 Logit 和 Probit 模型，如果检测到完美预测，则 statsmodels 会引发异常。然而却没有检查完美预测的情况。
 
-Other Problems
+其他问题
 --------------
 
-Insufficient variation in the data
+数据变化不足
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-It is possible that there is insufficient variation in the data for small
-datasets or for data with small groups in categorical variables. In these
-cases, the results might not be identified or some hidden problems might occur.
+对于小型数据集或分类变量中的分组较小的数据，数据的变化可能不足。在这些情况下，结果可能无法确定，
+或者可能会出现一些隐藏的问题。
 
-The only currently known case is a perfect fit in robust linear model estimation.
-For RLM, if residuals are equal to zero, then it does not cause an exception,
-but having this perfect fit can produce NaNs in some results (scale=0 and 0/0
-division) (issue #55).
+当前唯一已知的情况是鲁棒线性模型估计可以完美拟合。对于 RLM 模型，如果残差等于零，那么它不会引起异常，
+但是具有这种完美拟合可以在某些结果(scale=0 and 0/0 division) (issue #55).
