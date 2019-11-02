@@ -3,51 +3,37 @@
 
 .. _gmm_techn1:
 
-Technical Documentation
+技术文档
 =======================
 
-Introduction
+介绍
 ------------
 
-Generalized Method of Moments is an extension of the Method of Moments
-if there are more moment conditions than parameters that are estimated.
+如果力矩条件比估计的参数多，则广义矩量法是矩量法的扩展。
 
-simple example
+示例
 
 
-General Structure and Implementation
+总体结构和实施
 ------------------------------------
 
-The main class for GMM estimation, makes little assumptions about the
-moment conditions. It is designed for the general case when moment
-conditions are given as function by the user.
+ GMM 估计的主类几乎没有关于弯矩条件的假设。通常情况下，用户将力矩条件给出函数。
 
 ::
 
  def momcond(params)
 
-which should return a two dimensional array with observation in rows
-and moment conditions in columns. Denote this function by `$g(\theta)$`. Then
-the GMM estimator is given as the solution to the maximization problem:
+在行上是观测对象，在列上是矩条件时，将返回一个二维数组，用 `$g(\theta)$` 表示此函数， 给出 GMM 估计器
+作为最大化问题的解决方案：
 
 ..math: max_{\theta) g(theta)' W g(theta)  (1)
 
-The weighting matrix can be estimated in several different ways. The
-basic method `fitgmm` takes the weighting matrix as argument or if it is
-not given takes the identity matrix and maximizes (1)
-taking W as given. Since the optimizing functions solve minimization problems,
-we usually minimizes the negative of the objective function.
-`fit_iterative` calculates the optimal weighting matrix and maximizes the
-criterion function in alternating steps. The number of iterations can
-be given as an argument to this fit method. The optimal weighting matrix,
-which is the covariance matrix of the moment conditions, can be estimated
-in different ways. Kernel and shrinkage estimators are planned but not yet
-implemented. TODO
+可以通过几种不同的方式来估计加权矩阵。基本方法 `fitgmm` 将权重矩阵作为参数，如果未给出，则将恒等矩阵作为最大值，
+并根据最大化 W = 1 来给定 . 由于优化函数解决了最小化问题，因此我们通常将目标函数的负数最小化。 `fit_iterative` 
+计算最佳加权矩阵，并以交替步骤最大化标准函数。迭代次数可以作为此 fit 方法的参数给出。最佳加权矩阵，即力矩条件的
+协方差矩阵，可以用不同的方式估算。内核和收缩估计器已在计划之中，但尚未实施、执行。
 
-The GMM class itself does not define any moment conditions. To get an
-estimator for given moment conditions, GMM needs to be subclassed.
-The basic structure of writing new models based on
-the generic MLE or GMM framework and subclassing is described in
-`extending.rst` (TODO: link)
+ GMM 类本身未定义任何力矩条件。为了得得给定力矩条件的估计器，需要对 GMM 进行子类化。新模型的基本结构是基于通用 MLE 
+ 或 GMM 框架以及子类的描述在`extending.rst` (TODO: link)
 
-As an example
+举个例子
