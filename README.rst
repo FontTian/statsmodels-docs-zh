@@ -1,4 +1,4 @@
-|Travis Build Status| |Azure CI Build Status| |Appveyor Build Status| |Coveralls Coverage| |Statsmodels中文文档|
+|Travis Build Status| |Azure CI Build Status| |Appveyor Build Status| |Coveralls Coverage|
 
 
 为什么翻译
