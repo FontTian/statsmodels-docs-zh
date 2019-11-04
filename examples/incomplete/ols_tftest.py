@@ -1,14 +1,14 @@
-"""examples for usage of F-test on linear restrictions in OLS
+""" 在线性限制的OLS 模型上使用 F_test 进行示例。
 
-linear restriction is R \beta = 0
-R is (nr,nk), beta is (nk,1) (in matrix notation)
+线性限制 R \beta = 0
+R 是 (nr,nk), beta 是 (nk,1) (以矩阵表示法)
 
 
-TODO: clean this up for readability and explain
+TODO: 进行清理以提高可读性和可解释性
 
-Notes
+注意
 -----
-This example was written mostly for cross-checks and refactoring.
+这个例子主要是为交叉检验和重构而编写的。
 """
 
 import numpy as np
@@ -22,24 +22,24 @@ data = sm.datasets.longley.load()
 data.exog = sm.add_constant(data.exog, prepend=False)
 res = sm.OLS(data.endog, data.exog).fit()
 
-# test pairwise equality of some coefficients
+# 检验某些系数的成对相等性
 R2 = [[0, 1, -1, 0, 0, 0, 0], [0, 0, 0, 0, 1, -1, 0]]
 Ftest = res.f_test(R2)
 print(repr((Ftest.fvalue, Ftest.pvalue)))  # use repr to get more digits
 # 9.740461873303655 0.0056052885317360301
 
-# Compare to R (after running R_lm.s in the longley folder)
+# 与 R 比较 (after running R_lm.s in the longley folder)
 #
 # > library(car)
 # > linear.hypothesis(m1, c("GNP = UNEMP","POP = YEAR"))
-# Linear hypothesis test
+# 线性假设检验
 #
 # Hypothesis:
 # GNP - UNEMP = 0
 # POP - YEAR = 0
 #
 # Model 1: TOTEMP ~ GNPDEFL + GNP + UNEMP + ARMED + POP + YEAR
-# Model 2: restricted model
+# Model 2: 受限模型
 #
 #  Res.Df      RSS Df Sum of Sq      F   Pr(>F)
 # 1      9   836424
@@ -64,8 +64,8 @@ betatval[0]
 npt.assert_almost_equal(betatval[0], ttest0.tvalue, decimal=15)
 
 """
-# several ttests at the same time
-# currently not checked for this, but it (kind of) works
+# 同时进行几次 t_test
+# 目前没有进行检查，但是（某种程度上）可行
 >>> ttest0 = res.t_test(R[:2,:])
 >>> print(repr((ttest0.t, ttest0.pvalue))
 (array([[ 0.17737603,         NaN],

@@ -10,11 +10,10 @@ data = load()
 
 data_orig = (data.endog.copy(), data.exog.copy())
 
-# Note: In this example using zscored/standardized variables has no effect on
-#   regression estimates. Are there no numerical problems?
+# 请注意，在此例中，回归估计使用 z_scored/standardized 变量，没有数值问题？
 
 rescale = 0
-# 0: no rescaling, 1:demean, 2:standardize, 3:standardize and transform back
+# 0: 不需重新缩放, 1:demean, 2:标准化, 3:标准化并转换回来
 rescale_ratio = data.endog.std() / data.exog.std(0)
 if rescale > 0:
     # rescaling
@@ -24,18 +23,17 @@ if rescale > 1:
     data.endog /= data.endog.std()
     data.exog /= data.exog.std(0)
 
-# skip because mean has been removed, but dimension is hardcoded in table
+# 跳过，因为已经去均值化，但维度硬编码在表中
 data.exog = sm.tools.add_constant(data.exog, prepend=False)
 
 
 ols_model = sm.OLS(data.endog, data.exog)
 ols_results = ols_model.fit()
 
-# the Longley dataset is well known to have high multicollinearity
-# one way to find the condition number is as follows
+# 众所周知，Longley数据集存在多重共线性问题，查找条件编号的一种方法如下
 
 
-# Find OLS parameters for model with one explanatory variable dropped
+# 为删除一个解释变量的模型找到 OLS 模型参数
 
 resparams = np.nan * np.ones((7, 7))
 res = sm.OLS(data.endog, data.exog).fit()
