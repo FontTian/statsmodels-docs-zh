@@ -25,25 +25,6 @@ statsmodels主要包括如下子模块：
 比较：statsmodels更关注统计推断，提供不确定估计和参数p-value。相反的，scikit-learn注重预测。
 
 
-文献资料
-=============
-
-最新版本的文档位于
-
-https://www.statsmodels.org/stable/
-
-开发版本的文档位于
-
-https://www.statsmodels.org/dev/
-
-最新的改进在发行说明中突出显示
-
-https://www.statsmodels.org/stable/release/version0.9.html
-
-可从https://statsmodels.github.io/stable/ 和https://statsmodels.github.io/dev/获得文档的备份。
-
-
-
 主要特点
 =============
 
@@ -147,40 +128,3 @@ https://pypi.org/project/statsmodels/
 
 conda install statsmodels
 
-
-Installing from sources
-=======================
-
-有关要求，请参阅INSTALL.txt或请参阅文档
-
-https://statsmodels.github.io/dev/install.html
-
-执照
-=======
-
-Modified BSD (3-clause)
-
-讨论和发展
-==========================
-
-Discussions take place on our mailing list.
-
-https://groups.google.com/group/pystatsmodels
-
-我们对有关可用性的反馈和改进建议非常感兴趣。
-
-Bug 报告
-===========
-
-Bug 报告可以提交至问题跟踪器，网址为
-
-https://github.com/statsmodels/statsmodels/issues
-
-.. |Travis Build Status| image:: https://travis-ci.org/statsmodels/statsmodels.svg?branch=master
-   :target: https://travis-ci.org/statsmodels/statsmodels
-.. |Azure CI Build Status| image:: https://dev.azure.com/statsmodels/statsmodels-testing/_apis/build/status/statsmodels.statsmodels?branch=master
-   :target: https://dev.azure.com/statsmodels/statsmodels-testing/_build/latest?definitionId=1&branch=master
-.. |Appveyor Build Status| image:: https://ci.appveyor.com/api/projects/status/gx18sd2wc63mfcuc/branch/master?svg=true
-   :target: https://ci.appveyor.com/project/josef-pkt/statsmodels/branch/master
-.. |Coveralls Coverage| image:: https://coveralls.io/repos/github/statsmodels/statsmodels/badge.svg?branch=master
-   :target: https://coveralls.io/github/statsmodels/statsmodels?branch=master
