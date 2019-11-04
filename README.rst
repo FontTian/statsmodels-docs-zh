@@ -47,7 +47,7 @@ https://www.statsmodels.org/stable/release/version0.9.html
 主要特点
 =============
 
-* 线性回归模型 "https://github.com/Squidxwh/statsmodels-docs-zh/blob/master/docs/source/regression.rst" ：
+* 线性回归模型：
 
   - 普通最小二乘法
   - 广义最小二乘法
