@@ -1,4 +1,4 @@
-Release Notes
+发行说明
 =============
 
-The list of changes for each statsmodels release can be found [here](https://www.statsmodels.org/devel/release/index.html). Full details are available in the [commit logs](https://github.com/statsmodels/statsmodels).
+可以在这里 [here](https://www.statsmodels.org/devel/release/index.html) 找到每个statsmodels版本的更改列表. Full details are available in the [commit logs](https://github.com/statsmodels/statsmodels).
