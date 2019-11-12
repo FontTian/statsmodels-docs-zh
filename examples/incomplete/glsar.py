@@ -1,11 +1,10 @@
 """
-Generalized Least Squares with AR Errors
+具有 AR 误差的广义最小二乘
 
-6 examples for GLSAR with artificial data
+GLSAR 使用人工数据的 6 个示例 
 """
 
-# .. note: These examples were written mostly to cross-check results.  It is
-#    still being written, and GLSAR is still being worked on.
+# .. 注意：这些示例主要用于交叉检验结果。它是仍在编写中，并且GLSAR仍在开发中。
 
 
 import numpy as np
@@ -36,9 +35,9 @@ if 0 in examples:
     model0if = GLSAR(Y, X, 2)
     res = model0if.iterative_fit(6)
     print('iterativefit beta', res.params)
-    results.tvalues   # TODO: is this correct? it does equal params/bse
-    # but is not the same as the AR example (which was wrong)
-    print(results.t_test([0, 1]))  # are sd and t correct? vs
+    results.tvalues   # TODO: 这是正确的吗？它确实等于params / bse
+    # 但与AR示例不同（这是错误的）
+    print(results.t_test([0, 1]))  # sd 和 t 正确吗? vs
     print(results.f_test(np.eye(2)))
 
 
@@ -51,12 +50,12 @@ x = np.arange(nsample)
 X1 = sm.add_constant(x, prepend=False)
 
 wnoise = noiseratio * np.random.randn(nsample + nlags)
-# .. noise = noise[1:] + rhotrue*noise[:-1] # wrong this is not AR
+# .. noise = noise[1:] + rhotrue*noise[:-1] # 错，这不是 AR
 
-# .. find my drafts for univariate ARMA functions
+# .. 查找有关单变量 ARMA 函数的草稿
 # generate AR(p)
 if np.size(rhotrue) == 1:
-    # replace with scipy.signal.lfilter, keep for testing
+    # 替换为 scipy.signal.lfilter, 继续测试
     arnoise = np.zeros(nsample + 1)
     for i in range(1, nsample + 1):
         arnoise[i] = rhotrue * arnoise[i - 1] + wnoise[i]
@@ -66,7 +65,7 @@ if np.size(rhotrue) == 1:
 else:
     noise = signal.lfilter([1], np.hstack((1, -rhotrue)), wnoise)[nlags:]
 
-# generate GLS model with AR noise
+# 生成带有 AR 噪声的 GLS 模型
 y1 = np.dot(X1, beta) + noise
 
 if 1 in examples:
@@ -97,8 +96,7 @@ if 2 in examples:
 # generate pure AR(p) process
 Y = noise
 
-# example with no regressor,
-# results now have same estimated rho as yule-walker directly
+# 没有回归变量的示例，结果现在直接具有与 yule-walker 相同的估计 rho
 
 if 3 in examples:
     print('\nExample 3: pure AR(2), GLSAR versus Yule_Walker')
@@ -113,12 +111,12 @@ if 'test_copy' in examples:
     xx = X.copy()
     rhoyw, sigmayw = yule_walker(xx[:, 0], order=2)
     print(rhoyw, sigmayw)
-    print((xx == X).all())  # test for unchanged array (fixed)
+    print((xx == X).all())  # 测试没有变化的数组 (固定的)
 
     yy = Y.copy()
     rhoyw, sigmayw = yule_walker(yy, order=2)
     print(rhoyw, sigmayw)
-    print((yy == Y).all())  # test for unchanged array (fixed)
+    print((yy == Y).all())  # 测试没有变化的数组 (固定的)
 
 
 if 4 in examples:
