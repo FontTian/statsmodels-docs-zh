@@ -7,36 +7,29 @@
 # flake8: noqa
 # DO NOT EDIT
 
-# # Least squares fitting of models to data
+# # 最小二乘拟合模型数据
 
-# This is a quick introduction to `statsmodels` for physical scientists
-# (e.g. physicists, astronomers) or engineers.
-#
-# Why is this needed?
-#
-# Because most of `statsmodels` was written by statisticians and they use
-# a different terminology and sometimes methods, making it hard to know
-# which classes and functions are relevant and what their inputs and outputs
-# mean.
+# 这是针对物理科学家（例如物理学家，天文学家）或工程师的统计模型的快速介绍。
+
+# 为什么需要这个？
+
+# 因为大多数statsmodels是由统计学家编写的，并且它们使用不同的术语，有时甚至是方法，所以很难知道哪些类和函数是相关的以及它们的输入和输出是什么意思。
 
 import numpy as np
 import pandas as pd
 import statsmodels.api as sm
 
-# ## Linear models
+# ## 线性模型
 
-# Assume you have data points with measurements `y` at positions `x` as
-# well as measurement errors `y_err`.
-#
-# How can you use `statsmodels` to fit a straight line model to this data?
-#
-# For an extensive discussion see [Hogg et al. (2010), "Data analysis
+# 假设您在位置 x 处有关于测量数据点 y 以及测量误差 y_err。
+
+# 您如何使用statsmodels将直线模型拟合到此数据？
+
+# 有关广泛的讨论，请参见 [Hogg et al. (2010), "Data analysis
 # recipes: Fitting a model to data"](https://arxiv.org/abs/1008.4686) ...
-# we'll use the example data given by them in Table 1.
-#
-# So the model is `f(x) = a * x + b` and on Figure 1 they print the result
-# we want to reproduce ... the best-fit parameter and the parameter errors
-# for a "standard weighted least-squares fit" for this data are:
+# 我们将使用表1中给出的示例数据。
+
+# 因此，模型为f（x）= a * x + b，并且在图1上，他们打印了我们想要重现的结果...最佳拟合参数和为此的“标准加权最小二乘拟合”的参数误差 数据是：
 # * `a = 2.24 +- 0.11`
 # * `b = 34 +- 18`
 
@@ -69,27 +62,24 @@ except ImportError:
     from io import StringIO
 data = pd.read_csv(StringIO(data), delim_whitespace=True).astype(float)
 
-# Note: for the results we compare with the paper here, they drop the
-# first four points
+# Note: 对于结果，我们与本文进行了比较，他们删除了前四点
+
 data.head()
 
-# To fit a straight line use the weighted least squares class [WLS](https:
+# 要拟合一条直线，请使用加权最小二乘类 [WLS](https:
 # //www.statsmodels.org/devel/generated/statsmodels.regression.linear_model.
-# WLS.html) ... the parameters are called:
+# WLS.html) ... 这些参数命名为：
 # * `exog` = `sm.add_constant(x)`
 # * `endog` = `y`
 # * `weights` = `1 / sqrt(y_err)`
 #
-# Note that `exog` must be a 2-dimensional array with `x` as a column and
-# an extra column of ones. Adding this column of ones means you want to fit
-# the model `y = a * x + b`, leaving it off means you want to fit the model
-# `y = a * x`.
+# 请注意，“ exog”必须是二维数组，其中“ x”作为一列，并额外包含一列。 将此列加一意味着
+# 您要拟合模型y = a * x + b`，将其删除表示您要拟合模型y = a * x 。
 #
-# And you have to use the option `cov_type='fixed scale'` to tell
-# `statsmodels` that you really have measurement errors with an absolute
-# scale. If you do not, `statsmodels` will treat the weights as relative
-# weights between the data points and internally re-scale them so that the
-# best-fit model will have `chi**2 / ndf = 1`.
+# 而且您必须使用选项`cov_type ='fixed scale'来告诉`statsmodels`您确实存在绝对比例
+# 的测量误差。 如果不这样做，则“ statsmodels”会将权重视为数据点之间的相对权重，并在
+# 内部对其进行重新缩放，以便最适合的模型将具有“ chi ** 2 / ndf = 1”。
+
 
 exog = sm.add_constant(data['x'])
 endog = data['y']
@@ -98,10 +88,10 @@ wls = sm.WLS(endog, exog, weights)
 results = wls.fit(cov_type='fixed scale')
 print(results.summary())
 
-# ### Check against scipy.optimize.curve_fit
+# ### 在此检查 scipy.optimize.curve_fit
 
-# You can use `scipy.optimize.curve_fit` to get the best-fit parameters
-# and parameter errors.
+# 您可以使用 `scipy.optimize.curve_fit` 来获得最合适的参数和参数误差。
+
 from scipy.optimize import curve_fit
 
 
@@ -111,19 +101,18 @@ def f(x, a, b):
 
 xdata = data['x']
 ydata = data['y']
-p0 = [0, 0]  # initial parameter estimate
+p0 = [0, 0]  # 初始参数估计
 sigma = data['y_err']
 popt, pcov = curve_fit(f, xdata, ydata, p0, sigma, absolute_sigma=True)
 perr = np.sqrt(np.diag(pcov))
 print('a = {0:10.3f} +- {1:10.3f}'.format(popt[0], perr[0]))
 print('b = {0:10.3f} +- {1:10.3f}'.format(popt[1], perr[1]))
 
-# ### Check against self-written cost function
+# ### 再次检查 自己编写的损失函数
 
-# You can also use `scipy.optimize.minimize` and write your own cost
-# function.
-# This does not give you the parameter errors though ... you'd have
-# to estimate the HESSE matrix separately ...
+# 你也可以使用 `scipy.optimize.minimize` 甚至编写自己的损失函数。
+
+# 但是，这不会输出参数误差...您必须分别估算 HESSE 矩阵...
 from scipy.optimize import minimize
 
 
@@ -140,8 +129,8 @@ popt = result.x
 print('a = {0:10.3f}'.format(popt[0]))
 print('b = {0:10.3f}'.format(popt[1]))
 
-# ## Non-linear models
+# ## 非线性模型
 
-# TODO: we could use the examples from here:
+# TODO: 在此我们使用这个示例:
 # http://probfit.readthedocs.org/en/latest/api.html#probfit.costfunc.Chi2R
 # egression

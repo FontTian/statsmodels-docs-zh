@@ -7,12 +7,11 @@
 # flake8: noqa
 # DO NOT EDIT
 
-# # Plot Interaction of Categorical Factors
+# # 绘制类别因子的交互作用
 
-# In this example, we will visualize the interaction between categorical
-# factors. First, we will create some categorical data are initialized. Then
-# plotted using the interaction_plot function which internally re-codes the
-# x-factor categories to integers.
+# 在此示例中，我们将类别因子之间的交互作用进行可视化。 首先，我们将创建一些
+# 已初始化的分类数据。 然后使用 interaction_plot 函数进行绘制，该函数将
+#  x-因子 类别重新编码为整数。
 
 import numpy as np
 import matplotlib.pyplot as plt
