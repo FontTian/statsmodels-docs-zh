@@ -123,5 +123,5 @@ https://pypi.org/project/statsmodels/
 
 二进制文件可以安装在Anaconda中
 
-conda install statsmodels
+conda install statsmodels 
 
