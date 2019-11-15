@@ -7,7 +7,7 @@
 # flake8: noqa
 # DO NOT EDIT
 
-# # Regression Plots
+# # 回归图
 
 from statsmodels.compat import lzip
 import numpy as np
@@ -15,13 +15,11 @@ import matplotlib.pyplot as plt
 import statsmodels.api as sm
 from statsmodels.formula.api import ols
 
-# ## Duncan's Prestige Dataset
+# ## Duncan 的威望数据集
 
-# ### Load the Data
+# ### 加载数据
 
-# We can use a utility function to load any R dataset available from the
-# great <a href="https://vincentarelbundock.github.io/Rdatasets/">Rdatasets
-# package</a>.
+# 我们可以使用一个实用函数来加载任何可用的R数据集 <a href="https://vincentarelbundock.github.io/Rdatasets/">R 数据集包</a>.
 
 prestige = sm.datasets.get_rdataset("Duncan", "carData", cache=True).data
 
@@ -31,13 +29,11 @@ prestige_model = ols("prestige ~ income + education", data=prestige).fit()
 
 print(prestige_model.summary())
 
-# ### Influence plots
+# ### 影响图
 
-# Influence plots show the (externally) studentized residuals vs. the
-# leverage of each observation as measured by the hat matrix.
+# 影响图显示了（外部）学生化残差与每个观察结果（通过帽子矩阵测得）的比率。
 #
-# Externally studentized residuals are residuals that are scaled by their
-# standard deviation where
+# 外部学生化残差是按其标准偏差缩放的残差，其中
 #
 # $$var(\hat{\epsilon}_i)=\hat{\sigma}^2_i(1-h_{ii})$$
 #
@@ -46,45 +42,33 @@ print(prestige_model.summary())
 # $$\hat{\sigma}^2_i=\frac{1}{n - p - 1 \;\;}\sum_{j}^{n}\;\;\;\forall
 # \;\;\; j \neq i$$
 #
-# $n$ is the number of observations and $p$ is the number of regressors.
-# $h_{ii}$ is the $i$-th diagonal element of the hat matrix
+# $n$ 是观测数 $p$ 是回归数.
+# $h_{ii}$ 是帽子矩阵的第 $i$-th 对角元素
 #
 # $$H=X(X^{\;\prime}X)^{-1}X^{\;\prime}$$
 #
-# The influence of each point can be visualized by the criterion keyword
-# argument. Options are Cook's distance and DFFITS, two measures of
-# influence.
+# 每个点的影响可以通过标准关键字参数来可视化。 选项包括 Cook 距离和 DFFITS，这是两种影响力的度量。
 
 fig, ax = plt.subplots(figsize=(12, 8))
 fig = sm.graphics.influence_plot(prestige_model, ax=ax, criterion="cooks")
 
-# As you can see there are a few worrisome observations. Both contractor
-# and reporter have low leverage but a large residual. <br />
-# RR.engineer has small residual and large leverage. Conductor and
-# minister have both high leverage and large residuals, and, <br />
-# therefore, large influence.
+# 如您所见，有一些令人担忧的观察。 承包商和记者的杠杆率均较低，但残差较大。 <br /> RR.工程师具有
+# 较小的残差和较大的杠杆率。指挥官和牧师既有很高的杠杆率又有很大的残差，<br /> 因此影响很大 
 
-# ### Partial Regression Plots
+# ### 偏回归图
 
-# Since we are doing multivariate regressions, we cannot just look at
-# individual bivariate plots to discern relationships. <br />
-# Instead, we want to look at the relationship of the dependent variable
-# and independent variables conditional on the other <br />
-# independent variables. We can do this through using partial regression
-# plots, otherwise known as added variable plots. <br />
+# 由于我们正在进行多元回归，因此我们不能只看单个二元图来识别关系。 <br />相反，我们希望查看以其他自变量
+# 为条件的因变量和自变量之间的关系，我们可以通过使用偏回归图（也称为添加变量图）来实现 <br />
 #
-# In a partial regression plot, to discern the relationship between the
-# response variable and the $k$-th variable, we compute <br />
-# the residuals by regressing the response variable versus the independent
-# variables excluding $X_k$. We can denote this by <br />
-# $X_{\sim k}$. We then compute the residuals by regressing $X_k$ on
-# $X_{\sim k}$. The partial regression plot is the plot <br />
-# of the former versus the latter residuals. <br />
+# 在偏回归图中,为了辨别响应变量和第 $k$-th 变量之间的关系, 我们 <br /> 通过对响应变量与自变量（不包括 $X_k$）
+# 进行回归来计算残差。我们可以用 <br /> $X_{\sim k}$ 来表示. 然后，我们通过对 $X_{\sim k}$ 回归 $X_k$ 来计算
+# 残差，偏回归图是前者对后者残差的图 <br />
 #
-# The notable points of this plot are that the fitted line has slope
-# $\beta_k$ and intercept zero. The residuals of this plot <br />
-# are the same as those of the least squares fit of the original model
-# with full $X$. You can discern the effects of the <br />
+# 该图的显着点是拟合线的斜率为 $\beta_k$ ，截距为零。 此图的残差<br />与具有完整 $X$ 的原始模型的最小二乘拟合的残差相同。
+# 您可以轻松地辨别<br />各个数据值对系数估计的影响。 如果 obs_labels 为 True，则这些点将使用其观察标签进行注释。 您也可以
+# 看到违反基本假设，例如同方差 和<br /> 线性
+
+# You can discern the effects of the <br />
 # individual data values on the estimation of a coefficient easily. If
 # obs_labels is True, then these points are annotated <br />
 # with their observation label. You can also see the violation of
