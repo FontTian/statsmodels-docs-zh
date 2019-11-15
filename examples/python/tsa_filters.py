@@ -7,7 +7,7 @@
 # flake8: noqa
 # DO NOT EDIT
 
-# # Time Series Filters
+# # 时间序列过滤器
 
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -33,15 +33,13 @@ dta.realgdp.plot(ax=ax)
 legend = ax.legend(loc='upper left')
 legend.prop.set_size(20)
 
-# ### Hodrick-Prescott Filter
-
-# The Hodrick-Prescott filter separates a time-series $y_t$ into a trend
-# $\tau_t$ and a cyclical component $\zeta_t$
+# ### Hodrick-Prescott 过滤器
+# Hodrick-Prescott 过滤器将时间序列 $y_t$ 分为趋势性
+# $\tau_t$ 和周期性 $\zeta_t$ 成分
 #
 # $$y_t = \tau_t + \zeta_t$$
 #
-# The components are determined by minimizing the following quadratic loss
-# function
+# 趋势性和周期性成分是通过最小化下方的二次损失函数来确定的
 #
 # $$\min_{\\{ \tau_{t}\\} }\sum_{t}^{T}\zeta_{t}^{2}+\lambda\sum_{t=1}^{T}
 # \left[\left(\tau_{t}-\tau_{t-1}\right)-\left(\tau_{t-1}-\tau_{t-2}\right)\
@@ -60,23 +58,19 @@ gdp_decomp[["realgdp", "trend"]]["2000-03-31":].plot(
 legend = ax.get_legend()
 legend.prop.set_size(20)
 
-# ### Baxter-King approximate band-pass filter: Inflation and Unemployment
+# ### Baxter-King近似 band-pass 滤波器：通货膨胀和失业
 
-# #### Explore the hypothesis that inflation and unemployment are counter-
-# cyclical.
+# #### 探索通货膨胀和失业是反周期性的假设。
 
-# The Baxter-King filter is intended to explicitly deal with the periodicity
-# of the business cycle. By applying their band-pass filter to a series,
-# they produce a new series that does not contain fluctuations at higher or
-# lower than those of the business cycle. Specifically, the BK filter takes
-# the form of a symmetric moving average
+# Baxter-King 过滤器旨在明确处理业务周期的周期性。 通过将其 band-pass 过滤器应用于一个序列，
+# 他们可以产生一个新的序列，该序列不包含高于或低于业务周期波动的波动。 具体来说，BK 过滤器
+# 采用对称移动平均值的形式
 #
 # $$y_{t}^{*}=\sum_{k=-K}^{k=K}a_ky_{t-k}$$
 #
-# where $a_{-k}=a_k$ and $\sum_{k=-k}^{K}a_k=0$ to eliminate any trend in
-# the series and render it stationary if the series is I(1) or I(2).
+# 其中 $a_{-k}=a_k$ 和 $\sum_{k=-k}^{K}a_k=0$ 消除了序列中的任何趋势，如果该序列是 I(1) 或 I(2).
 #
-# For completeness, the filter weights are determined as follows
+# 为了完整性，过滤器权重的确定如下
 #
 # $$a_{j} = B_{j}+\theta\text{ for }j=0,\pm1,\pm2,\dots,\pm K$$
 #
@@ -84,8 +78,7 @@ legend.prop.set_size(20)
 # $$B_{j} = \frac{1}{\pi j}\left(\sin\left(\omega_{2}j\right)-\sin\left(\o
 # mega_{1}j\right)\right)\text{ for }j=0,\pm1,\pm2,\dots,\pm K$$
 #
-# where $\theta$ is a normalizing constant such that the weights sum to
-# zero.
+# 其中 $\theta$ 是归一化的常数，以使权重之和为零
 #
 # $$\theta=\frac{-\sum_{j=-K^{K}b_{j}}}{2K+1}$$
 #
@@ -93,45 +86,36 @@ legend.prop.set_size(20)
 #
 # $$\omega_{2}=\frac{2\pi}{P_{L}}$$
 #
-# $P_L$ and $P_H$ are the periodicity of the low and high cut-off
-# frequencies. Following Burns and Mitchell's work on US business cycles
-# which suggests cycles last from 1.5 to 8 years, we use $P_L=6$ and
-# $P_H=32$ by default.
+# $P_L$ 和 $P_H$ 是低和高截止频率的周期性。后来 Burns 和 Mitchell 的著作有关于美国商业周期性研究
+# 研究认为该周期性持续时间在 1.5 到 8 年之间, 默认情况下，我们使用 $P_L=6$ 和 $P_H=32$ 来表示：
 
 bk_cycles = sm.tsa.filters.bkfilter(dta[["infl", "unemp"]])
 
-# * We lose K observations on both ends. It is suggested to use K=12 for
-# quarterly data.
+# * 我们在两端都失去了 K 个观测值。 建议对季度数据使用 K = 12。
 
 fig = plt.figure(figsize=(12, 10))
 ax = fig.add_subplot(111)
 bk_cycles.plot(
     ax=ax, style=['r--', 'b-'])
 
-# ### Christiano-Fitzgerald approximate band-pass filter: Inflation and
-# Unemployment
+# ### Christiano-Fitzgerald 近似 band-pass 过滤器: 通货膨胀和失业
 
-# The Christiano-Fitzgerald filter is a generalization of BK and can thus
-# also be seen as weighted moving average. However, the CF filter is
-# asymmetric about $t$ as well as using the entire series. The
-# implementation of their filter involves the
-# calculations of the weights in
+# Christiano-Fitzgerald 过滤器是 BK 过滤器的推广，因此可以看作是加权移动平均值，但是 CF 过滤器以及
+# 整个序列关于 $t$ 不对称。他们的过滤器的实现涉及到权重的计算
 #
 # $$y_{t}^{*}=B_{0}y_{t}+B_{1}y_{t+1}+\dots+B_{T-1-t}y_{T-1}+\tilde
 # B_{T-t}y_{T}+B_{1}y_{t-1}+\dots+B_{t-2}y_{2}+\tilde B_{t-1}y_{1}$$
 #
-# for $t=3,4,...,T-2$, where
+# 由于 $t=3,4,...,T-2$, 其中
 #
 # $$B_{j} = \frac{\sin(jb)-\sin(ja)}{\pi j},j\geq1$$
 #
 # $$B_{0} = \frac{b-a}{\pi},a=\frac{2\pi}{P_{u}},b=\frac{2\pi}{P_{L}}$$
 #
-# $\tilde B_{T-t}$ and $\tilde B_{t-1}$ are linear functions of the
-# $B_{j}$'s, and the values for $t=1,2,T-1,$ and $T$ are also calculated in
-# much the same way. $P_{U}$ and $P_{L}$ are as described above with the
-# same interpretation.
+# $\tilde B_{T-t}$ 和 $\tilde B_{t-1}$ 是 关于 $B_{j}$'s 的线性函数, 且由于 $t=1,2,T-1,$ 和 $T$ 的值
+# 也以相同的方法计算。如上所述， $P_{U}$ 和 $P_{L}$ 具有相同的解释。.
 
-# The CF filter is appropriate for series that may follow a random walk.
+# C F滤波器适用于可能跟随随机游走的序列。
 
 print(sm.tsa.stattools.adfuller(dta['unemp'])[:3])
 
@@ -145,7 +129,7 @@ ax = fig.add_subplot(111)
 cf_cycles.plot(
     ax=ax, style=['r--', 'b-'])
 
-# Filtering assumes *a priori* that business cycles exist. Due to this
-# assumption, many macroeconomic models seek to create models that match the
-# shape of impulse response functions rather than replicating properties of
-# filtered series. See VAR notebook.
+
+# 过滤假设存在业务周期的先验条件。 由于这个假设，许多宏观经济模型试图创建与脉冲响应函数
+# 的形状相匹配的模型，而不是复制滤波后的序列的属性。 请参阅 VAR 的笔记。
+

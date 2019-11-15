@@ -8,12 +8,11 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# # Discrete Choice Models
+# # 离散选择模型
 
-# ## Fair's Affair data
+# ## 博览会的事务数据
 
-# A survey of women only was conducted in 1974 by *Redbook* asking about
-# extramarital affairs.
+# 《红皮书》于1974年对女性进行了一次调查，询问婚外情。
 
 import numpy as np
 import pandas as pd
@@ -40,12 +39,11 @@ affair_mod = logit(
 
 print(affair_mod.summary())
 
-# How well are we predicting?
+# 我们的预测如何？
 
 affair_mod.pred_table()
 
-# The coefficients of the discrete choice model do not tell us much. What
-# we're after is marginal effects.
+# 离散选择模型的系数并不能告诉我们太多。 我们追求的是边际效应。
 
 mfx = affair_mod.get_margeff()
 print(mfx.summary())
@@ -65,7 +63,7 @@ print(resp)
 mfx = affair_mod.get_margeff(atexog=resp)
 print(mfx.summary())
 
-# `predict` expects a `DataFrame` since `patsy` is used to select columns.
+# `predict` 希望得到一个 `DataFrame` 因为 `patsy` 通常选择列
 
 respondent1000 = dta.iloc[[1000]]
 affair_mod.predict(respondent1000)
@@ -74,11 +72,9 @@ affair_mod.fittedvalues[1000]
 
 affair_mod.model.cdf(affair_mod.fittedvalues[1000])
 
-# The "correct" model here is likely the Tobit model. We have an work in
-# progress branch "tobit-model" on github, if anyone is interested in
-# censored regression models.
+# 这里的"correct" 模型可能是 Tobit 模型。 如果有人对审查回归模型感兴趣，我们有一个任务是促使 "tobit-model" 分支在 github 发展。
 
-# ### Exercise: Logit vs Probit
+# ### 练习: Logit vs Probit
 
 fig = plt.figure(figsize=(12, 8))
 ax = fig.add_subplot(111)
@@ -94,11 +90,9 @@ ax.plot(support, stats.logistic.pdf(support), 'r-', label='Logistic')
 ax.plot(support, stats.norm.pdf(support), label='Probit')
 ax.legend()
 
-# Compare the estimates of the Logit Fair model above to a Probit model.
-# Does the prediction table look better? Much difference in marginal
-# effects?
+# 将上面的Logit Fair模型的估计与Probit模型进行比较。 预测表看起来更好吗？ 边际效应有何不同？
 
-# ### Generalized Linear Model Example
+# ### 广义线性模型示例
 
 print(sm.datasets.star98.SOURCE)
 
@@ -120,9 +114,9 @@ print(dta[[
 formula = 'NABOVE + NBELOW ~ LOWINC + PERASIAN + PERBLACK + PERHISP + PCTCHRT '
 formula += '+ PCTYRRND + PERMINTE*AVYRSEXP*AVSALK + PERSPENK*PTRATIO*PCTAF'
 
-# #### Aside: Binomial distribution
+# #### Aside: 二项分布
 
-# Toss a six-sided die 5 times, what's the probability of exactly 2 fours?
+# 将一个六面骰子掷5次，正好2个4的概率是多少？
 
 stats.binom(5, 1. / 6).pmf(2)
 
@@ -134,16 +128,13 @@ glm_mod = glm(formula, dta, family=sm.families.Binomial()).fit()
 
 print(glm_mod.summary())
 
-# The number of trials
+# 试验次数
 
 glm_mod.model.data.orig_endog.sum(1)
 
 glm_mod.fittedvalues * glm_mod.model.data.orig_endog.sum(1)
 
-# First differences: We hold all explanatory variables constant at their
-# means and manipulate the percentage of low income households to assess its
-# impact
-# on the response variables:
+# 第一个差异：我们将所有解释变量保持在其均值不变，并操纵低收入家庭的百分比来评估其对响应变量的影响：
 
 exog = glm_mod.model.data.orig_exog  # get the dataframe
 
@@ -157,15 +148,15 @@ means75 = exog.mean()
 means75['LOWINC'] = exog['LOWINC'].quantile(.75)
 print(means75)
 
-# Again, `predict` expects a `DataFrame` since `patsy` is used to select
-# columns.
+# 再次说明, `predict` 希望得到一个 `DataFrame` 因为 `patsy` 通常选择列
 
 resp25 = glm_mod.predict(pd.DataFrame(means25).T)
 resp75 = glm_mod.predict(pd.DataFrame(means75).T)
 diff = resp75 - resp25
 
-# The interquartile first difference for the percentage of low income
-# households in a school district is:
+# 低收入百分比的四分位差
+  
+# 学区的家庭是：
 
 print("%2.4f%%" % (diff[0] * 100))
 
@@ -180,14 +171,13 @@ ax.scatter(yhat, y)
 y_vs_yhat = sm.OLS(y, sm.add_constant(yhat, prepend=True)).fit()
 fig = abline_plot(model_results=y_vs_yhat, ax=ax)
 
-# #### Plot fitted values vs Pearson residuals
+# #### 绘制拟合值 vs 皮尔逊残差
 
-# Pearson residuals are defined to be
+# 皮尔逊残差被定义为 
 #
 # $$\frac{(y - \mu)}{\sqrt{(var(\mu))}}$$
 #
-# where var is typically determined by the family. E.g., binomial variance
-# is $np(1 - p)$
+# 然而方差通常由家庭所决定，例如，二项式方差是 $np(1 - p)$
 
 fig = plt.figure(figsize=(12, 8))
 ax = fig.add_subplot(111,
@@ -198,16 +188,15 @@ ax.scatter(yhat, stats.zscore(glm_mod.resid_pearson))
 ax.axis('tight')
 ax.plot([0.0, 1.0], [0.0, 0.0], 'k-')
 
-# #### Histogram of standardized deviance residuals with Kernel Density
-# Estimate overlaid
+# #### 具有内核密度的标准偏差残差的直方图
+# 估算值重叠
 
-# The definition of the deviance residuals depends on the family. For the
-# Binomial distribution this is
+# 偏差残差的定义取决于家庭。 这是二项分布：
 #
 # $$r_{dev} = sign\left(Y-\mu\right)*\sqrt{2n(Y\log\frac{Y}{\mu}+(1-Y)\log
 # \frac{(1-Y)}{(1-\mu)}}$$
 #
-# They can be used to detect ill-fitting covariates
+# 它们通常用来检验 ill-fitting 的协方差
 
 resid = glm_mod.resid_deviance
 resid_std = stats.zscore(resid)
@@ -219,7 +208,7 @@ ax = fig.add_subplot(111, title="Standardized Deviance Residuals")
 ax.hist(resid_std, bins=25, density=True)
 ax.plot(kde_resid.support, kde_resid.density, 'r')
 
-# #### QQ-plot of deviance residuals
+# #### 偏差残差的 QQ-图 
 
 fig = plt.figure(figsize=(12, 8))
 ax = fig.add_subplot(111)

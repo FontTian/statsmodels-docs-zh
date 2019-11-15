@@ -7,7 +7,7 @@
 # flake8: noqa
 # DO NOT EDIT
 
-# # Autoregressive Moving Average (ARMA): Sunspots data
+# # 自回归移动平均线（ARMA）：太阳黑子数据
 
 import numpy as np
 from scipy import stats
@@ -18,7 +18,7 @@ import statsmodels.api as sm
 
 from statsmodels.graphics.api import qqplot
 
-# ## Sunspots Data
+# ## 太阳黑子数据
 
 print(sm.datasets.sunspots.NOTE)
 
@@ -46,7 +46,7 @@ print(arma_mod30.params)
 
 print(arma_mod30.aic, arma_mod30.bic, arma_mod30.hqic)
 
-# * Does our model obey the theory?
+# * 我们的模型符合理论吗？
 
 sm.stats.durbin_watson(arma_mod30.resid.values)
 
@@ -73,9 +73,9 @@ data = np.c_[range(1, 41), r[1:], q, p]
 table = pd.DataFrame(data, columns=['lag', "AC", "Q", "Prob(>Q)"])
 print(table.set_index('lag'))
 
-# * This indicates a lack of fit.
+# * 这表明欠拟合
 
-# * In-sample dynamic prediction. How good does our model do?
+# * 样本内动态预测。 我们的模型做得如何？
 
 predict_sunspots = arma_mod30.predict('1990', '2012', dynamic=True)
 print(predict_sunspots)
@@ -92,19 +92,18 @@ def mean_forecast_err(y, yhat):
 
 mean_forecast_err(dta.SUNACTIVITY, predict_sunspots)
 
-# ### Exercise: Can you obtain a better fit for the Sunspots model? (Hint:
-# sm.tsa.AR has a method select_order)
+# ### 练习: 您能否更好的拟合 Sunspots 模型？ （提示：sm.tsa.AR 有一种方法 select_order）
 
-# ### Simulated ARMA(4,1): Model Identification is Difficult
+# ### 模拟ARMA（4,1）：模型识别困难
 
 from statsmodels.tsa.arima_process import ArmaProcess
 
 np.random.seed(1234)
-# include zero-th lag
+# 包括零滞后
 arparams = np.array([1, .75, -.65, -.55, .9])
 maparams = np.array([1, .65])
 
-# Let's make sure this model is estimable.
+# 让我们确保这个模型是可估计的。
 
 arma_t = ArmaProcess(arparams, maparams)
 
@@ -112,7 +111,7 @@ arma_t.isinvertible
 
 arma_t.isstationary
 
-# * What does this mean?
+# * 这是什么意思？
 
 fig = plt.figure(figsize=(12, 8))
 ax = fig.add_subplot(111)
@@ -131,10 +130,8 @@ fig = sm.graphics.tsa.plot_acf(arma_rvs, lags=40, ax=ax1)
 ax2 = fig.add_subplot(212)
 fig = sm.graphics.tsa.plot_pacf(arma_rvs, lags=40, ax=ax2)
 
-# * For mixed ARMA processes the Autocorrelation function is a mixture of
-# exponentials and damped sine waves after (q-p) lags.
-# * The partial autocorrelation function is a mixture of exponentials and
-# dampened sine waves after (p-q) lags.
+# * 对于ARMA混合过程，自相关函数是（q-p）滞后后的指数和阻尼正弦波的混合。
+# * 部分自相关函数是（p-q）滞后后的指数和阻尼正弦波的混合。
 
 arma11 = sm.tsa.ARMA(arma_rvs, (1, 1)).fit(disp=False)
 resid = arma11.resid
@@ -150,22 +147,20 @@ data = np.c_[range(1, 41), r[1:], q, p]
 table = pd.DataFrame(data, columns=['lag', "AC", "Q", "Prob(>Q)"])
 print(table.set_index('lag'))
 
-# ### Exercise: How good of in-sample prediction can you do for another
-# series, say, CPI
+# ### 练习：您对另一个系列（例如CPI）的样本内预测有多好
 
 macrodta = sm.datasets.macrodata.load_pandas().data
 macrodta.index = pd.Index(
     sm.tsa.datetools.dates_from_range('1959Q1', '2009Q3'))
 cpi = macrodta["cpi"]
 
-# #### Hint:
+# #### 提示:
 
 fig = plt.figure(figsize=(12, 8))
 ax = fig.add_subplot(111)
 ax = cpi.plot(ax=ax)
 ax.legend()
 
-# P-value of the unit-root test, resoundingly rejects the null of a unit-
-# root.
+# 单位根检验的 P-value，强烈地拒绝了一个单位根的 null值。
 
 print(sm.tsa.adfuller(cpi)[1])

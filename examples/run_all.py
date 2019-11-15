@@ -1,5 +1,5 @@
 """
-Run all python examples to make sure they do not raise
+运行所有 python 示例以确保不会报错
 """
 import tempfile
 

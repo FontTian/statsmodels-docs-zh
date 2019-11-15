@@ -7,7 +7,7 @@
 # flake8: noqa
 # DO NOT EDIT
 
-# # Autoregressive Moving Average (ARMA): Artificial data
+# # 自回归移动平均值（ARMA）：人工数据
 
 import numpy as np
 import statsmodels.api as sm
@@ -15,22 +15,20 @@ import pandas as pd
 from statsmodels.tsa.arima_process import arma_generate_sample
 np.random.seed(12345)
 
-# Generate some data from an ARMA process:
+# 从ARMA进程生成一些数据：
 
 arparams = np.array([.75, -.25])
 maparams = np.array([.65, .35])
 
-# The conventions of the arma_generate function require that we specify a
-# 1 for the zero-lag of the AR and MA parameters and that the AR parameters
-# be negated.
+# arma_generate 函数的约定要求我们为AR和MA参数的零延迟指定一个1，并否定AR参数。
 
 arparams = np.r_[1, -arparams]
 maparams = np.r_[1, maparams]
 nobs = 250
 y = arma_generate_sample(arparams, maparams, nobs)
 
-#  Now, optionally, we can add some dates information. For this example,
-# we'll use a pandas time series.
+#  现在，可选地，我们可以添加一些日期信息。 在此示例中，我们将使用 pandas 时间序列。
+
 
 dates = sm.tsa.datetools.dates_from_range('1980m1', length=nobs)
 y = pd.Series(y, index=dates)

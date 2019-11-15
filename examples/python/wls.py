@@ -95,10 +95,9 @@ ax.plot(x, iv_u, 'g--', label="WLS")
 ax.plot(x, iv_l, 'g--')
 ax.legend(loc="best")
 
-# ## Feasible Weighted Least Squares (2-stage FWLS)
+# ## 可行的加权最小二乘(2-stage FWLS)
 #
-# Like ,`w`, `w_est` is proportional to the standard deviation, and so
-# must be squared.
+#  比如 `w` 和  `w_est` 是关于标准偏差呈正比的，因此必须平方。
 
 resid1 = res_ols.resid[w == 1.]
 var1 = resid1.var(ddof=int(res_ols.df_model) + 1)

@@ -16,7 +16,7 @@ cpi.index = dates
 res = ARIMA(cpi, (1, 1, 1), freq='Q').fit()
 print(res.summary())
 
-# 我们可以画图查看序列
+# 我们可以画图查看序列 
 cpi.diff().plot()
 
 # 或许查看日志会更好
