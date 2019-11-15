@@ -7,9 +7,7 @@
 # flake8: noqa
 # DO NOT EDIT
 
-# This notebook goes through a couple of examples to show how to use
-# `distributed_estimation`.  We import the `DistributedModel` class and make
-# the exog and endog generators.
+# 这个笔记通过几个示例展示了如何使用 `distributed_estimation`。 我们导入 `DistributedModel` 类并制作 exog 和 endg 生成器。
 
 import numpy as np
 from scipy.stats.distributions import norm
@@ -42,7 +40,7 @@ def _endog_gen(endog, partitions):
         ii += int(n_part)
 
 
-# Next we generate some random data to serve as an example.
+# 接下来，我们生成一些随机数据作为示例。
 
 X = np.random.normal(size=(1000, 25))
 beta = np.random.normal(size=25)
@@ -50,15 +48,13 @@ beta *= np.random.randint(0, 2, size=25)
 y = norm.rvs(loc=X.dot(beta))
 m = 5
 
-# This is the most basic fit, showing all of the defaults, which are to
-# use OLS as the model class, and the debiasing procedure.
+# 这是最基本的拟合，默认设置显示所有（使用 OLS 作为模型类）以及去偏程序。
 
 debiased_OLS_mod = DistributedModel(m)
 debiased_OLS_fit = debiased_OLS_mod.fit(
     zip(_endog_gen(y, m), _exog_gen(X, m)), fit_kwds={"alpha": 0.2})
 
-# Then we run through a slightly more complicated example which uses the
-# GLM model class.
+# 然后，我们运行一个使用GLM模型类的稍微复杂一些的示例。
 
 from statsmodels.genmod.generalized_linear_model import GLM
 from statsmodels.genmod.families import Gaussian
@@ -68,9 +64,8 @@ debiased_GLM_mod = DistributedModel(
 debiased_GLM_fit = debiased_GLM_mod.fit(
     zip(_endog_gen(y, m), _exog_gen(X, m)), fit_kwds={"alpha": 0.2})
 
-# We can also change the `estimation_method` and the `join_method`.  The
-# below example show how this works for the standard OLS case.  Here we
-# using a naive averaging approach instead of the debiasing procedure.
+# 我们还可以更改 “estimation_method” 和 “join_method”。 下面的示例展示了在标准 OLS 情况下如何
+# 工作的。 在这里，我们使用朴素的平均方法来代替去偏过程。
 
 from statsmodels.base.distributed_estimation import _est_regularized_naive, _join_naive
 
@@ -79,9 +74,7 @@ naive_OLS_reg_mod = DistributedModel(
 naive_OLS_reg_params = naive_OLS_reg_mod.fit(
     zip(_endog_gen(y, m), _exog_gen(X, m)), fit_kwds={"alpha": 0.2})
 
-# Finally, we can also change the `results_class` used.  The following
-# example shows how this work for a simple case with an unregularized model
-# and naive averaging.
+# 最后，我们还可以改用 `results_class`。 下面的示例展示了如何使用不规则模型和朴素平均的简单情况。
 
 from statsmodels.base.distributed_estimation import _est_unregularized_naive, DistributedResults
 

@@ -7,19 +7,16 @@
 # flake8: noqa
 # DO NOT EDIT
 
-# # Tutorial
+# # 讲解
 #
-# Let us consider chapter 7 of the excellent treatise on the subject of
-# Exponential Smoothing By Hyndman and Athanasopoulos [1].
-# We will work through all the examples in the chapter as they unfold.
-#
-# [1] [Hyndman, Rob J., and George Athanasopoulos. Forecasting: principles
-# and practice. OTexts, 2014.](https://www.otexts.org/fpp/7)
+# 让我们思考一下 Hyndman 和 Athanasopoulos [1] 的关于指数平滑的优秀论文的第七章
+# 我们通过此章论文的所有示例进行研究
 
-# # Exponential smoothing
+# [1] [Hyndman, Rob J., 和 George Athanasopoulos. 预测: 原则和做法. OTexts, 2014.](https://www.otexts.org/fpp/7)
+
+# # 指数平滑
 #
-# First we load some data. We have included the R data in the notebook for
-# expedience.
+# 首先，我们加载一些数据。 为了方便起见，我们的笔记中包含了 R 数据。
 
 import os
 import numpy as np
@@ -71,8 +68,8 @@ index = pd.DatetimeIndex(start='2005', end='2010-Q4', freq='QS')
 aust = pd.Series(data, index)
 aust.index = pd.DatetimeIndex(aust.index, freq=pd.infer_freq(aust.index))
 
-# ## Simple Exponential Smoothing
-# Lets use Simple Exponential Smoothing to forecast the below oil data.
+# ## 简单指数平滑
+# 让我们使用“简单指数平滑”来预测以下油数据。
 
 ax = oildata.plot()
 ax.set_xlabel("Year")
@@ -80,12 +77,10 @@ ax.set_ylabel("Oil (millions of tonnes)")
 plt.show()
 print("Figure 7.1: Oil production in Saudi Arabia from 1996 to 2007.")
 
-# Here we run three variants of simple exponential smoothing:
-# 1. In ```fit1``` we do not use the auto optimization but instead choose
-# to explicitly provide the model with the $\alpha=0.2$ parameter
-# 2. In ```fit2``` as above we choose an $\alpha=0.6$
-# 3. In ```fit3``` we allow statsmodels to automatically find an optimized
-# $\alpha$ value for us. This is the recommended approach.
+# 在这里，我们运行三种简单的指数平滑方法:
+# 1. 在 ```fit1```中，我们不适用自动优化，而是选择为模型提供 $\alpha=0.2$ 参数
+# 2. 在 ```fit2```中，我们选择 $\alpha=0.6$ 参数，同上
+# 3. 在 ```fit3```中，我们允许 statsmodels 自动为我们找到一个优化的 $\alpha$ 值，这是推荐的方法。
 
 fit1 = SimpleExpSmoothing(oildata).fit(smoothing_level=0.2, optimized=False)
 fcast1 = fit1.forecast(3).rename(r'$\alpha=0.2$')
@@ -105,18 +100,14 @@ fcast3.plot(marker='o', ax=ax, color='green', legend=True)
 fit3.fittedvalues.plot(marker='o', ax=ax, color='green')
 plt.show()
 
-# ## Holt's Method
+# ## Holt's 方法
 #
-# Lets take a look at another example.
-# This time we use air pollution data and the Holt's Method.
-# We will fit three examples again.
-# 1. In ```fit1``` we again choose not to use the optimizer and provide
-# explicit values for $\alpha=0.8$ and $\beta=0.2$
-# 2. In ```fit2``` we do the same as in ```fit1``` but choose to use an
-# exponential model rather than a Holt's additive model.
-# 3. In ```fit3``` we used a damped versions of the Holt's additive model
-# but allow the dampening parameter $\phi$ to be optimized while fixing the
-# values for $\alpha=0.8$ and $\beta=0.2$
+# 让我们来看另一个例子
+# 这次我们使用空气污染数据和 Holt's 方法.
+# 我们将再次拟合三个示例数据.
+# 1. 在 ```fit1```中，我们再次选择不适用优化器，并提供 $\alpha=0.8$ 和 $\beta=0.2$ 确切值
+# 2. 在 ```fit2```中，我们使用与 ```fit1```一样做法（不适用优化器），但我们选择使用指数模型而不是 Holt's 加法模型.
+# 3. 在 ```fit3```中，我们使用一个 Holt's 加法模型的阻尼版本，但在固定值 $\alpha=0.8$ 和 $\beta=0.2$的情况下，允许优化阻尼参数 $\phi$ 
 
 fit1 = Holt(air).fit(smoothing_level=0.8, smoothing_slope=0.2, optimized=False)
 fcast1 = fit1.forecast(5).rename("Holt's linear trend")
@@ -137,14 +128,13 @@ fcast3.plot(ax=ax, color='green', marker="o", legend=True)
 
 plt.show()
 
-# ### Seasonally adjusted data
-# Lets look at some seasonally adjusted livestock data. We fit five Holt's
-# models.
-# The below table allows us to compare results when we use exponential
-# versus additive and damped versus non-damped.
+# ### 季节性调整数据
+# 让我们来看看季节性调整的牲畜数据。 我们拟合五个Holt模型。
 #
-# Note: ```fit4``` does not allow the parameter $\phi$ to be optimized by
-# providing a fixed value of $\phi=0.98$
+# 下表我们可以比较 指数 vs 加法、阻尼 vs 非阻尼的结果。
+#
+# 请注意: 在```fit4```中，不允许通过提供固定值 $\phi=0.98$ 来优化参数 $\phi$
+ 
 
 fit1 = SimpleExpSmoothing(livestock2).fit()
 fit2 = Holt(livestock2).fit()
@@ -165,9 +155,8 @@ results["Additive"] = [fit4.params[p] for p in params] + [fit4.sse]
 results["Multiplicative"] = [fit5.params[p] for p in params] + [fit5.sse]
 results
 
-# ### Plots of Seasonally Adjusted Data
-# The following plots allow us to evaluate the level and slope/trend
-# components of the above table's fits.
+# ### 季节性调整数据图
+# 下图允许我们去评估上表拟合的水平和斜率/趋势成分。
 
 for fit in [fit2, fit4]:
     pd.DataFrame(np.c_[fit.level, fit.slope]).rename(columns={
@@ -179,10 +168,8 @@ print(
     'Figure 7.4: Level and slope components for Holt’s linear trend method and the additive damped trend method.'
 )
 
-# ## Comparison
-# Here we plot a comparison Simple Exponential Smoothing and Holt's
-# Methods for various additive, exponential and damped combinations. All of
-# the models parameters will be optimized by statsmodels.
+# ## 对照
+# 在这里，我们针对各种加法、指数和阻尼组合绘制一张简单指数平滑和Holt 方法的比较图。 statsmodels将优化所有模型参数。
 
 fit1 = SimpleExpSmoothing(livestock2).fit()
 fcast1 = fit1.forecast(9).rename("SES")
@@ -208,22 +195,15 @@ print(
     'Figure 7.5: Forecasting livestock, sheep in Asia: comparing forecasting performance of non-seasonal methods.'
 )
 
-# ## Holt's Winters Seasonal
-# Finally we are able to run full Holt's Winters Seasonal Exponential
-# Smoothing  including a trend component and a seasonal component.
-# statsmodels allows for all the combinations including as shown in the
-# examples below:
-# 1. ```fit1``` additive trend, additive seasonal of period
-# ```season_length=4``` and the use of a Box-Cox transformation.
-# 1. ```fit2``` additive trend, multiplicative seasonal of period
-# ```season_length=4``` and the use of a Box-Cox transformation..
-# 1. ```fit3``` additive damped trend, additive seasonal of period
-# ```season_length=4``` and the use of a Box-Cox transformation.
-# 1. ```fit4``` additive damped trend, multiplicative seasonal of period
-# ```season_length=4``` and the use of a Box-Cox transformation.
+# ## Holt's 冬天季节性
+# 最后，我们能够运行完整的 Holt's 冬天季节性指数平滑，包括趋势和季节成分。 statsmodels允许包括以下示例所示的所有组合：
+
+# 1. 在```fit1```中增加趋势性和季节性周期  ```season_length=4``` 并使用一个 Box-Cox 进行转换.
+# 2. 在```fit2```中增加趋势性和倍增的季节性周期  ```season_length=4``` 并使用一个 Box-Cox 进行转换
+# 3. 在```fit3```中增加阻尼趋势性和季节性周期 ```season_length=4``` 并使用一个 Box-Cox 进行转换
+# 4. 在```fit4```中增加阻尼趋势性和倍增季节性周期 ```season_length=4``` 并使用一个 Box-Cox 进行转换
 #
-# The plot shows the results and forecast for ```fit1``` and ```fit2```.
-# The table allows us to compare the results and parameterizations.
+# 该图展示了`fit1`和`fit2`的结果和预测。 该表比较了结果和参数设置。
 
 fit1 = ExponentialSmoothing(
     aust, seasonal_periods=4, trend='add', seasonal='add').fit(use_boxcox=True)
@@ -270,12 +250,9 @@ print(
 results
 
 # ### The Internals
-# It is possible to get at the internals of the Exponential Smoothing
-# models.
+# 可以了解指数平滑模型的内部。
 #
-# Here we show some tables that allow you to view side by side the
-# original values $y_t$, the level $l_t$, the trend $b_t$, the season $s_t$
-# and the fitted values $\hat{y}_t$.
+# 在这里我们展示一些表格允许你并排查看原始值 $y_t$, 水平 $l_t$, 趋势性 $b_t$, 季节性 $s_t$ 和拟合值 $\hat{y}_t$.
 
 df = pd.DataFrame(
     np.c_[aust, fit1.level, fit1.slope, fit1.season, fit1.fittedvalues],
@@ -289,8 +266,7 @@ df = pd.DataFrame(
     index=aust.index)
 df.append(fit2.forecast(8).rename(r'$\hat{y}_t$').to_frame(), sort=True)
 
-# Finally lets look at the levels, slopes/trends and seasonal components
-# of the models.
+# 最后，让我们看一下模型的水平，斜率/趋势和季节性成分。
 
 states1 = pd.DataFrame(
     np.c_[fit1.level, fit1.slope, fit1.season],
