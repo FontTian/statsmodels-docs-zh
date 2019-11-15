@@ -7,7 +7,7 @@
 # flake8: noqa
 # DO NOT EDIT
 
-# # 对比概述
+# # 对比概述 
 
 import numpy as np
 import statsmodels.api as sm
