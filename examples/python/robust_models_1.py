@@ -8,7 +8,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# # M-Estimators for Robust Linear Modeling
+# # 用于稳健线性建模的 M-估计器
 
 from statsmodels.compat import lmap
 import numpy as np
@@ -17,19 +17,17 @@ import matplotlib.pyplot as plt
 
 import statsmodels.api as sm
 
-# * An M-estimator minimizes the function
+# * M估计器使函数最小化
 #
 # $$Q(e_i, \rho) = \sum_i~\rho \left (\frac{e_i}{s}\right )$$
 #
-# where $\rho$ is a symmetric function of the residuals
+# 其中 $\rho$ 是一个残差的对称函数
 #
-# * The effect of $\rho$ is to reduce the influence of outliers
-# * $s$ is an estimate of scale.
-# * The robust estimates $\hat{\beta}$ are computed by the iteratively re-
-# weighted least squares algorithm
+# *  $\rho$ 的作用是减少异常值的影响，
+# * $s$ 是一个规模估计
+# * 稳健估计 $\hat{\beta}$ 是通过迭代重新加权最小二乘法来计算
 
-# * We have several choices available for the weighting functions to be
-# used
+# * 我们有几种可用的加权函数可供选择
 
 norms = sm.robust.norms
 
@@ -54,7 +52,7 @@ andrew = norms.AndrewWave(a=a)
 plot_weights(support, andrew.weights, ['$-\pi*a$', '0', '$\pi*a$'],
              [-np.pi * a, 0, np.pi * a])
 
-# ### Hampel's 17A
+# ### 安德鲁波 Hampel's 17A
 
 help(norms.Hampel.weights)
 
@@ -63,7 +61,7 @@ support = np.linspace(-3 * c, 3 * c, 1000)
 hampel = norms.Hampel(a=2., b=4., c=c)
 plot_weights(support, hampel.weights, ['3*c', '0', '3*c'], [-3 * c, 0, 3 * c])
 
-# ### Huber's t
+# ### Huber 的 t 范数
 
 help(norms.HuberT.weights)
 
@@ -72,7 +70,7 @@ support = np.linspace(-3 * t, 3 * t, 1000)
 huber = norms.HuberT(t=t)
 plot_weights(support, huber.weights, ['-3*t', '0', '3*t'], [-3 * t, 0, 3 * t])
 
-# ### Least Squares
+# ### 最小二乘法
 
 help(norms.LeastSquares.weights)
 
@@ -108,37 +106,34 @@ support = np.linspace(-3 * c, 3 * c, 1000)
 tukey = norms.TukeyBiweight(c=c)
 plot_weights(support, tukey.weights, ['-3*c', '0', '3*c'], [-3 * c, 0, 3 * c])
 
-# ### Scale Estimators
+# ### 标度估计器
 
-# * Robust estimates of the location
+# * 位置的稳健估计
 
 x = np.array([1, 2, 3, 4, 500])
 
-# * The mean is not a robust estimator of location
+# * 均值不是位置的稳健估计
 
 x.mean()
 
-# * The median, on the other hand, is a robust estimator with a breakdown
-# point of 50%
+# * 另一方面，中位数是一个可靠的估算器，其分解点为50％
 
 np.median(x)
 
-# * Analogously for the scale
-# * The standard deviation is not robust
+# * Analogously for the scale 类似于标准化
+# * 标准偏差不稳健
 
 x.std()
 
-# Median Absolute Deviation
+# 中位数的绝对偏差
 #
 # $$ median_i |X_i - median_j(X_j)|) $$
 
-# Standardized Median Absolute Deviation is a consistent estimator for
-# $\hat{\sigma}$
+# 中位数标准化的绝对偏差是 $\hat{\sigma}$
 #
 # $$\hat{\sigma}=K \cdot MAD$$
 #
-# where $K$ depends on the distribution. For the normal distribution for
-# example,
+# 其中 $K$ 取决于分布.例如，对于正态分布，
 #
 # $$K = \Phi^{-1}(.75)$$
 
@@ -150,8 +145,8 @@ sm.robust.scale.mad(x)
 
 np.array([1, 2, 3, 4, 5.]).std()
 
-# * The default for Robust Linear Models is MAD
-# * another popular choice is Huber's proposal 2
+# * 鲁棒线性模型的默认值为MAD
+# * 另一个受欢迎的选择是 Huber's proposal 2
 
 np.random.seed(12345)
 fat_tails = stats.t(6).rvs(40)
@@ -178,7 +173,7 @@ sm.robust.mad(fat_tails, c=stats.t(6).ppf(.75))
 
 sm.robust.scale.mad(fat_tails)
 
-# ### Duncan's Occupational Prestige data - M-estimation for outliers
+# ### Duncan 的职业威望数据——  异常值的M-估计器
 
 from statsmodels.graphics.api import abline_plot
 from statsmodels.formula.api import ols, rlm
@@ -221,8 +216,7 @@ print(rlm_model.weights)
 
 # ### Hertzprung Russell data for Star Cluster CYG 0B1 - Leverage Points
 
-# * Data is on the luminosity and temperature of 47 stars in the direction
-# of Cygnus.
+# * 数据是关于天鹅座方向的 47 颗恒星的光度和温度。
 
 dta = sm.datasets.get_rdataset("starsCYG", "robustbase", cache=True).data
 
@@ -234,7 +228,7 @@ ax = fig.add_subplot(
     ylabel='log(Light)',
     title='Hertzsprung-Russell Diagram of Star Cluster CYG OB1')
 ax.scatter(*dta.values.T)
-# highlight outliers
+# 突出异常值
 e = Ellipse((3.5, 6), .2, 1, alpha=.25, color='r')
 ax.add_patch(e)
 ax.annotate(
@@ -244,10 +238,10 @@ ax.annotate(
     arrowprops=dict(facecolor='black', shrink=0.05, width=2),
     horizontalalignment='left',
     verticalalignment='bottom',
-    clip_on=True,  # clip to the axes bounding box
+    clip_on=True,  # 缩减轴边界框
     fontsize=16,
 )
-# annotate these with their index
+# 用它们的索引注释这些
 for i, row in dta.loc[dta['log.Te'] < 3.8].iterrows():
     ax.annotate(i, row, row + .01, fontsize=14)
 xlim, ylim = ax.get_xlim(), ax.get_ylim()
@@ -263,7 +257,7 @@ abline_plot(model_results=ols_model, ax=ax)
 rlm_mod = sm.RLM(y, X, sm.robust.norms.TrimmedMean(.5)).fit()
 abline_plot(model_results=rlm_mod, ax=ax, color='red')
 
-# * Why? Because M-estimators are not robust to leverage points.
+# *为什么？ 因为 M-估计量处理杠杆点并不稳健。
 
 infl = ols_model.get_influence()
 
@@ -279,7 +273,7 @@ fdr2 = ols_model.outlier_test('fdr_bh')
 fdr2.sort_values('unadj_p', inplace=True)
 print(fdr2)
 
-# * Let's delete that line
+# * 让我们删除那一行
 
 l = ax.lines[-1]
 l.remove()
@@ -290,10 +284,8 @@ weights[X[X['log.Te'] < 3.8].index.values - 1] = 0
 wls_model = sm.WLS(y, X, weights=weights).fit()
 abline_plot(model_results=wls_model, ax=ax, color='green')
 
-# * MM estimators are good for this type of problem, unfortunately, we
-# do not yet have these yet.
-# * It's being worked on, but it gives a good excuse to look at the R cell
-# magics in the notebook.
+# * MM-估算器可解决此类问题，但很遗憾的是目前我们还没有这些估算器。
+# * 它正在开发当中，但它给出了一个好借口是笔记文档在 R 单元格魔法
 
 yy = y.values[:, None]
 xx = X['log.Te'].values[:, None]
@@ -302,16 +294,16 @@ print(params)
 
 abline_plot(intercept=params[0], slope=params[1], ax=ax, color='red')
 
-# ### Exercise: Breakdown points of M-estimator
+# ### 练习: M-估计器的分解点
 
 np.random.seed(12345)
 nobs = 200
 beta_true = np.array([3, 1, 2.5, 3, -4])
 X = np.random.uniform(-20, 20, size=(nobs, len(beta_true) - 1))
-# stack a constant in front
+# 在前面添加一个常量
 X = sm.add_constant(X, prepend=True)  # np.c_[np.ones(nobs), X]
 mc_iter = 500
-contaminate = .25  # percentage of response variables to contaminate
+contaminate = .25  # 污染的响应变量百分比
 
 all_betas = []
 for i in range(mc_iter):
@@ -325,7 +317,7 @@ all_betas = np.asarray(all_betas)
 se_loss = lambda x: np.linalg.norm(x, ord=2)**2
 se_beta = lmap(se_loss, all_betas - beta_true)
 
-# #### Squared error loss
+# #### 平方误差损失
 
 np.array(se_beta).mean()
 
