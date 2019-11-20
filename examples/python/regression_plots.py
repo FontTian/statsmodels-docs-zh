@@ -68,12 +68,7 @@ fig = sm.graphics.influence_plot(prestige_model, ax=ax, criterion="cooks")
 # 您可以轻松地辨别<br />各个数据值对系数估计的影响。 如果 obs_labels 为 True，则这些点将使用其观察标签进行注释。 您也可以
 # 看到违反基本假设，例如同方差 和<br /> 线性
 
-# You can discern the effects of the <br />
-# individual data values on the estimation of a coefficient easily. If
-# obs_labels is True, then these points are annotated <br />
-# with their observation label. You can also see the violation of
-# underlying assumptions such as homoskedasticity and <br />
-# linearity.
+
 
 fig, ax = plt.subplots(figsize=(12, 8))
 fig = sm.graphics.plot_partregress(
@@ -83,26 +78,25 @@ fix, ax = plt.subplots(figsize=(12, 14))
 fig = sm.graphics.plot_partregress(
     "prestige", "income", ["education"], data=prestige, ax=ax)
 
-# As you can see the partial regression plot confirms the influence of
-# conductor, minister, and RR.engineer on the partial relationship between
-# income and prestige. The cases greatly decrease the effect of income on
-# prestige. Dropping these cases confirms this.
+# 如您所见，偏回归图确认了指挥管、牧师和 RR.工程师对收入和声望之间的局部关系的影响。
+# 这些情况大大降低了收入对声望的影响。 剔除这些情况也可以确认这一点。
 
 subset = ~prestige.index.isin(["conductor", "RR.engineer", "minister"])
 prestige_model2 = ols(
     "prestige ~ income + education", data=prestige, subset=subset).fit()
 print(prestige_model2.summary())
 
-# For a quick check of all the regressors, you can use
-# plot_partregress_grid. These plots will not label the <br />
-# points, but you can use them to identify problems and then use
-# plot_partregress to get more information.
+# 要快速检查所有回归变量，可以使用 plot_partregress_grid。这些图不会标记<br />点，
+# 但是您可以使用它们来识别问题，然后使用 plot_partregress 获取更多信息
 
 fig = plt.figure(figsize=(12, 8))
 fig = sm.graphics.plot_partregress_grid(prestige_model, fig=fig)
 
 # ### Component-Component plus Residual (CCPR) Plots
 
+# 
+# CCPR 图提供了一种通过考虑其他<br />自变量的影响来判断一个回归变量对<br />响应变量的影响的方法。 偏残差图可以被定义为  <br />
+# $\text{Residuals} + B_iX_i \text{ }\text{ }$ 与$ X_i $。 该组件将$ B_iX_i $与<br /> $ X_i $相加以显示拟合线的位置。 如果$ X_i $ <br />与任何其他自变量高度相关，则应格外小心。 如果是这种情况，则图中明显的方差将低估真实方差。
 # The CCPR plot provides a way to judge the effect of one regressor on the
 # <br />
 # response variable by taking into account the effects of the other  <br
