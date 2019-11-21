@@ -7,21 +7,17 @@
 # flake8: noqa
 # DO NOT EDIT
 
-# # Regression diagnostics
+# # 回归诊断
 
-# This example file shows how to use a few of the ``statsmodels``
-# regression diagnostic tests in a real-life context. You can learn about
-# more tests and find out more information abou the tests here on the
-# [Regression Diagnostics
-# page.](https://www.statsmodels.org/stable/diagnostic.html)
-#
-# Note that most of the tests described here only return a tuple of
-# numbers, without any annotation. A full description of outputs is always
-# included in the docstring and in the online ``statsmodels`` documentation.
-# For presentation purposes, we use the ``zip(name,test)`` construct to
-# pretty-print short descriptions in the examples below.
+# 这个示例文件展示了如何在现实环境中使用一些 ``statsmodels'' 回归诊断检验。
+# 您可以在[回归诊断页面]（https://www.statsmodels.org/stable/diagnostic.html）上了解更多检验，并在检验中找到更多信息。
 
-# ## Estimate a regression model
+
+# 请注意，此处大多数检验描述仅返回一个元组数字，无任何注释。 输出的完整描述始终包含在文档字符串和在线 ``statsmodels'' 文档中。
+# 为了便于演示，我们在下面的示例中使用 ``zip(name,test)`` 构造漂亮的简短描述。
+
+
+# ## 估计回归模型
 
 from statsmodels.compat import lzip
 
@@ -31,76 +27,74 @@ import statsmodels.formula.api as smf
 import statsmodels.stats.api as sms
 import matplotlib.pyplot as plt
 
-# Load data
+# 加载数据
 url = 'https://raw.githubusercontent.com/vincentarelbundock/Rdatasets/master/csv/HistData/Guerry.csv'
 dat = pd.read_csv(url)
 
-# Fit regression model (using the natural log of one of the regressors)
+# 拟合回归模型（使用回归变量之一是自然对数）
 results = smf.ols('Lottery ~ Literacy + np.log(Pop1831)', data=dat).fit()
 
-# Inspect the results
+# 检查结果
 print(results.summary())
 
-# ## Normality of the residuals
+# ## 残差的正态性
 
-# Jarque-Bera test:
+# Jarque-Bera 检验:
 
 name = ['Jarque-Bera', 'Chi^2 two-tail prob.', 'Skew', 'Kurtosis']
 test = sms.jarque_bera(results.resid)
 lzip(name, test)
 
-# Omni test:
+# Omni 检验:
 
 name = ['Chi^2', 'Two-tail probability']
 test = sms.omni_normtest(results.resid)
 lzip(name, test)
 
-# ## Influence tests
+# ## 影响力测试
 #
-# Once created, an object of class ``OLSInfluence`` holds attributes and
-# methods that allow users to assess the influence of each observation. For
-# example, we can compute and extract the first few rows of DFbetas by:
+# 一旦创建，``OLSInfluence'' 类的对象将具有允许用户评估每个观察结果的属性和方法。 
+# 例如，我们可以通过以下方式计算和提取 DFbetas 的前几行：
+
 
 from statsmodels.stats.outliers_influence import OLSInfluence
 test_class = OLSInfluence(results)
 test_class.dfbetas[:5, :]
 
-# Explore other options by typing ``dir(influence_test)``
+# 输入 ``dir(influence_test)`` 探索其他选项
 #
-# Useful information on leverage can also be plotted:
+# 也可以绘制有关杠杆的有用信息:
 
 from statsmodels.graphics.regressionplots import plot_leverage_resid2
 fig, ax = plt.subplots(figsize=(8, 6))
 fig = plot_leverage_resid2(results, ax=ax)
 
-# Other plotting options can be found on the [Graphics
-# page.](https://www.statsmodels.org/stable/graphics.html)
+# 其他绘图选项可以在 [图形页面] 上找到。(https://www.statsmodels.org/stable/graphics.html)
 
-# ## Multicollinearity
+# ## 多重共线性
 #
-# Condition number:
+# 条件编号：
 
 np.linalg.cond(results.model.exog)
 
-# ## Heteroskedasticity tests
+# ## 异方差检验
 #
-# Breush-Pagan test:
+# Breush-Pagan 检验:
 
 name = ['Lagrange multiplier statistic', 'p-value',
         'f-value', 'f p-value']
 test = sms.het_breuschpagan(results.resid, results.model.exog)
 lzip(name, test)
 
-# Goldfeld-Quandt test
+# Goldfeld-Quandt 检验
 
 name = ['F statistic', 'p-value']
 test = sms.het_goldfeldquandt(results.resid, results.model.exog)
 lzip(name, test)
 
-# ## Linearity
+# ## 线性度
 #
-# Harvey-Collier multiplier test for Null hypothesis that the linear
-# specification is correct:
+# Harvey-Collier 乘数检验用于零假设，即线性规范正确：
 
 name = ['t value', 'p value']
 test = sms.linear_harvey_collier(results)
