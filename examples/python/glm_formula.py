@@ -7,13 +7,12 @@
 # flake8: noqa
 # DO NOT EDIT
 
-# # Generalized Linear Models (Formula)
+# # 广义线性模型（公式）
 
-# This notebook illustrates how you can use R-style formulas to fit
-# Generalized Linear Models.
+# 此笔记说明了如何使用R样式公式来拟合广义线性模型。
 #
-# To begin, we load the ``Star98`` dataset and we construct a formula and
-# pre-process the data:
+# 首先，我们加载 ``Star98`` 数据集，并构造一个公式并对数据进行预处理：
+
 
 import statsmodels.api as sm
 import statsmodels.formula.api as smf
@@ -28,13 +27,12 @@ endog = dta['NABOVE'] / (dta['NABOVE'] + dta.pop('NBELOW'))
 del dta['NABOVE']
 dta['SUCCESS'] = endog
 
-# Then, we fit the GLM model:
+# 然后，我们拟合GLM模型：
 
 mod1 = smf.glm(formula=formula, data=dta, family=sm.families.Binomial()).fit()
 mod1.summary()
 
-# Finally, we define a function to operate customized data transformation
-# using the formula framework:
+# 最后，我们定义一个函数通过使用公式框架进行自定义数据转换：
 
 
 def double_it(x):
@@ -45,8 +43,7 @@ formula = 'SUCCESS ~ double_it(LOWINC) + PERASIAN + PERBLACK + PERHISP + PCTCHRT
 mod2 = smf.glm(formula=formula, data=dta, family=sm.families.Binomial()).fit()
 mod2.summary()
 
-# As expected, the coefficient for ``double_it(LOWINC)`` in the second
-# model is half the size of the ``LOWINC`` coefficient from the first model:
+# 不出所料，第二个中的 ``double_it（LOWINC）`` 的系数模型是第一个模型的 ``LOWINC'' 系数的一半：
 
 print(mod1.params[1])
 print(mod2.params[1] * 2)

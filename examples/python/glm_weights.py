@@ -7,38 +7,36 @@
 # flake8: noqa
 # DO NOT EDIT
 
-# # Weighted Generalized Linear Models
+# # 加权广义线性模型
 
 import numpy as np
 import pandas as pd
 import statsmodels.formula.api as smf
 import statsmodels.api as sm
 
-# ## Weighted GLM: Poisson response data
+# ## 加权GLM：泊松响应数据
 #
-# ### Load data
+# ### 加载数据
 #
-# In this example, we'll use the affair dataset using a handful of
-# exogenous variables to predict the extra-marital affair rate.
+# 在此示例中，我们将使用少数几个外生变量的婚外恋数据集来预测婚外恋比率。
+# 
 #
-# Weights will be generated to show that `freq_weights` are equivalent to
-# repeating records of data. On the other hand, `var_weights` is equivalent
-# to aggregating data.
+# 权重将被生成以表明 `freq_weights` 等同于重复记录数据。 另一方面， `var_weights` 等效于汇总数据。
 
 print(sm.datasets.fair.NOTE)
 
-# Load the data into a pandas dataframe.
+# 将数据加载到 pandas 数据框中。
 
 data = sm.datasets.fair.load_pandas().data
 
-#  The dependent (endogenous) variable is ``affairs``
+#  因变量（内生变量）是``外遇''
 
 data.describe()
 
 data[:3]
 
-# In the following we will work mostly with Poisson. While using decimal
-# affairs works, we convert them to integers to have a count distribution.
+# 在下文中，我们将主要与Poisson合作。 当使用十进制事务时，我们把它们转换为整数使他们具有计数分布。
+# 
 
 data["affairs"] = np.ceil(data["affairs"])
 data[:3]
@@ -47,19 +45,16 @@ data[:3]
 
 np.bincount(data["affairs"].astype(int))
 
-# ## Condensing and Aggregating observations
+# ## 浓缩和汇总观测
 #
-# We have 6366 observations in our original dataset. When we consider only
-# some selected variables, then we have fewer unique observations. In the
-# following we combine observations in two ways, first we combine
-# observations that have values for all variables identical, and secondly we
-# combine observations that have the same explanatory variables.
+# 我们的原始数据集中有6366个观测值。 当我们只考虑一些选定的变量时，则只有较少的观察值。 
+# 在下文中，我们以两种方式组合观察值，首先，将所有变量值相同的观察值相结合，
+# 其次，我们将解释性变量相同的观察值相结合。
+# 
 
-# ### Dataset with unique observations
+# ### 具有唯一观测值的数据集
 #
-# We use pandas's groupby to combine identical observations and create a
-# new variable `freq` that count how many observation have the values in the
-# corresponding row.
+# 我们使用 pandas 的 groupby 来组合相同的观测值，并创建一个新的变量 `freq` ，该变量计算对应行中有多少观测值。
 
 data2 = data.copy()
 data2['const'] = 1
@@ -70,15 +65,13 @@ dc.rename(columns={'const': 'freq'}, inplace=True)
 print(dc.shape)
 dc.head()
 
-# ### Dataset with unique explanatory variables (exog)
+# ### 具有唯一解释变量的数据集（exog）
 #
-# For the next dataset we combine observations that have the same values
-# of the explanatory variables. However, because the response variable can
-# differ among combined observations, we compute the mean and the sum of the
-# response variable for all combined observations.
-#
-# We use again pandas ``groupby`` to combine observations and to create
-# the new variables. We also flatten the ``MultiIndex`` into a simple index.
+# 对于下一个数据集，我们将合并具有相同解释变量值的观察值。 但是，由于响应变量在组合观测之间可能有所不同，
+# 因此我们计算所有组合观测响应变量的平均值和总和。
+
+# 我们再次使用 pandas 的 ``groupby`` 来组合观察值并创建新变量。 我们还将 ``MultiIndex`` 展平为一个简单的索引。
+
 
 gr = data['affairs rate_marriage age yrs_married'.split()].groupby(
     'rate_marriage age yrs_married'.split())
@@ -97,21 +90,18 @@ df_a.reset_index(inplace=True)
 print(df_a.shape)
 df_a.head()
 
-# After combining observations with have a dataframe `dc` with 467 unique
-# observations, and a dataframe `df_a` with 130 observations with unique
-# values of the explanatory variables.
+# 组合观察值之后，将有467个唯一观察值的数据框 `dc` 和具有130个观察值的解释性变量的唯一值的数据框 `df_a`
+#
 
 print('number of rows: \noriginal, with unique observations, with unique exog')
 data.shape[0], dc.shape[0], df_a.shape[0]
 
-# ## Analysis
+# ## 分析
 #
-# In the following, we compare the GLM-Poisson results of the original
-# data with models of the combined observations where the multiplicity or
-# aggregation is given by weights or exposure.
+# 在下文中，我们将原始数据 GLM-泊松 的结果与组合观测值的模型进行比较，在组合观测值中，多重性或聚集性是由权重或暴露给出的。
 #
 #
-# ### original data
+# ### 原始数据
 
 glm = smf.glm(
     'affairs ~ rate_marriage + age + yrs_married',
@@ -122,14 +112,12 @@ print(res_o.summary())
 
 res_o.pearson_chi2 / res_o.df_resid
 
-# ### condensed data (unique observations with frequencies)
+# ### 压缩数据（具有频率的唯一观测值）
 #
-# Combining identical observations and using frequency weights to take
-# into account the multiplicity of observations produces exactly the same
-# results. Some results attribute will differ when we want to have
-# information about the observation and not about the aggregate of all
-# identical observations. For example, residuals do not take
-# ``freq_weights`` into account.
+# 组合相同的观察值并使用频率权重考虑多个观察值，即可得出完全相同的结果。 
+# 当我们想要获得有关的观测信息而不是所有相同观测的汇总时，某些结果属性将有所不同。
+# 例如，不考虑残差 ``freq_weights`` 的情况。
+
 
 glm = smf.glm(
     'affairs ~ rate_marriage + age + yrs_married',
@@ -141,17 +129,12 @@ print(res_f.summary())
 
 res_f.pearson_chi2 / res_f.df_resid
 
-# ### condensed using ``var_weights`` instead of ``freq_weights``
+# ### 使用 ``var_weights`` 而不是 ``freq_weights`` 来压缩
 #
-# Next, we compare ``var_weights`` to ``freq_weights``. It is a common
-# practice to incorporate ``var_weights`` when the endogenous variable
-# reflects averages and not identical observations.
-# I do not see a theoretical reason why it produces the same results (in
-# general).
-#
-# This produces the same results but ``df_resid``  differs the
-# ``freq_weights`` example because ``var_weights`` do not change the number
-# of effective observations.
+# 下一步，我们将 ``var_weights`` 与 ``freq_weights`` 进行比较。 当内生变量反映平均值而不是相同的观察值时，通常是包括“ var_weights”。
+# 我看不出产生相同结果的理论原因（大体上）。
+
+# 这会产生相同的结果，但 ``df_resid``  与 ``freq_weights`` 示例有所不同，因为 ``var_weights`` 无法改变有效观测值的数量。
 #
 
 glm = smf.glm(
@@ -162,28 +145,22 @@ glm = smf.glm(
 res_fv = glm.fit()
 print(res_fv.summary())
 
-# Dispersion computed from the results is incorrect because of wrong
-# ``df_resid``.
-# It is correct if we use the original ``df_resid``.
+# 由于错误的``df_resid''，从结果计算出的 dispersion 不正确。
+# 如果我们使用原始的df_resid是正确的。
 
 res_fv.pearson_chi2 / res_fv.df_resid, res_f.pearson_chi2 / res_f.df_resid
 
-# ### aggregated or averaged data (unique values of explanatory variables)
+# ### 聚合或平均数据（解释变量的唯一值）
 #
-# For these cases we combine observations that have the same values of the
-# explanatory variables. The corresponding response variable is either a sum
-# or an average.
+# 对于这些情况，我们合并了具有相同解释变量值的观察值。 相应的响应变量是总和或平均值。
 #
-# #### using ``exposure``
+# #### 使用 ``exposure``
 #
-# If our dependent variable is the sum of the responses of all combined
-# observations, then under the Poisson assumption the distribution remains
-# the same but we have varying `exposure` given by the number of individuals
-# that are represented by one aggregated observation.
+# 如果我们的因变量是所有组合观测值的响应之和，则在泊松假设下，分布保持不变，
+# 但是我们通过聚合观测值表示的个体数量给定可变的 `exposure`。
 #
-# The parameter estimates and covariance of parameters are the same with
-# the original data, but log-likelihood, deviance and Pearson chi-squared
-# differ
+# 参数估计值和参数的协方差与原始数据相同，但对数似然，偏差和 Pearson 卡方不同
+# 
 
 glm = smf.glm(
     'affairs_sum ~ rate_marriage + age + yrs_married',
@@ -195,11 +172,9 @@ print(res_e.summary())
 
 res_e.pearson_chi2 / res_e.df_resid
 
-# #### using var_weights
+# #### 使用 var_weights
 #
-# We can also use the mean of all combined values of the dependent
-# variable. In this case the variance will be related to the inverse of the
-# total exposure reflected by one combined observation.
+# 我们还可以使用因变量的所有组合值的平均值。 在这种情况下，方差与一个组合观察所反映的总暴露量的倒数有关。
 
 glm = smf.glm(
     'affairs_mean ~ rate_marriage + age + yrs_married',
@@ -209,36 +184,23 @@ glm = smf.glm(
 res_a = glm.fit()
 print(res_a.summary())
 
-# ### Comparison
+# ### 比较
 #
-# We saw in the summary prints above that ``params`` and ``cov_params``
-# with associated Wald inference agree across versions. We summarize this in
-# the following comparing individual results attributes across versions.
+# 我们在上面的摘要打印中看到，带有相关Wald推断的 ``params'' 和 ``cov_params'' 在各个版本之间是一致的。
+# 在下面比较各个版本的各个结果属性时，我们对此进行了总结。
 #
-# Parameter estimates `params`, standard errors of the parameters `bse`
-# and `pvalues` of the parameters for the tests that the parameters are
-# zeros all agree. However, the likelihood and goodness-of-fit statistics,
-# `llf`, `deviance` and `pearson_chi2` only partially agree. Specifically,
-# the aggregated version do not agree with the results using the original
-# data.
+# 参数估计 `params`，参数 `bse` 的标准误差和参数 `pvalues`（对于参数为零的检验）全部一致。 
+# 但是，似然和拟合优度统计分析。 `llf`，`deviance` 和 `pearson_chi2` 仅部分一致。 
+# 具体而言，汇总版本与使用原始数据的结果不一致。
+# 
+# **警告**: 在以后的版本中， `llf`, `deviance` 和 `pearson_chi2` 可能仍会。改变
 #
-# **Warning**: The behavior of `llf`, `deviance` and `pearson_chi2` might
-# still change in future versions.
-#
-# Both the sum and average of the response variable for unique values of
-# the explanatory variables have a proper likelihood interpretation.
-# However, this interpretation is not reflected in these three statistics.
-# Computationally this might be due to missing adjustments when aggregated
-# data is used. However, theoretically we can think in these cases,
-# especially for `var_weights` of the misspecified case when likelihood
-# analysis is inappropriate and the results should be interpreted as quasi-
-# likelihood estimates. There is an ambiguity in the definition of
-# ``var_weights`` because they can be used for averages with correctly
-# specified likelihood as well as for variance adjustments in the quasi-
-# likelihood case. We are currently not trying to match the likelihood
-# specification. However, in the next section we show that likelihood ratio
-# type tests still produce the same result for all aggregation versions when
-# we assume that the underlying model is correctly specified.
+# 对于解释变量唯一值之和与平均值响应变量都有正确的似然解释。 但是，此解释未反映在这三个统计数据中。
+# 从计算上讲，这可能是由于使用聚合数据时没有调整。 
+# 但是，从理论上讲，我们可以考虑在这些情况下，特别是对于错误指定情况下的 `var_weights` ，（当似然分析不合适时，应将结果解释为准似然估计）。
+#  ``var_weights'' 的定义不明确，因为它们可以用于具有正确指定的似然性的平均值以及在准可能性情况下的方差调整。 我们目前不尝试匹配似然性规范。 
+# 但是，在下一节中，我们表明当假设正确指定了基础模型时，似然比类型检验对于所有聚合版本仍会产生相同的结果。
+
 
 results_all = [res_o, res_f, res_e, res_a]
 names = 'res_o res_f res_e res_a'.split()
@@ -255,7 +217,7 @@ pd.DataFrame(
     columns=names,
     index=['llf', 'deviance', 'pearson chi2'])
 
-# ### Likelihood Ratio type tests
+# ### 似然比类型检验
 #
 # We saw above that likelihood and related statistics do not agree between
 # the aggregated and original, individual data. We illustrate in the
