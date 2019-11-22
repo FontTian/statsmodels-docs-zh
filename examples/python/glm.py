@@ -7,42 +7,36 @@
 # flake8: noqa
 # DO NOT EDIT
 
-# # Generalized Linear Models
+# # 广义线性模型
 
 import numpy as np
 import statsmodels.api as sm
 from scipy import stats
 from matplotlib import pyplot as plt
 
-# ## GLM: Binomial response data
+# ## GLM: 二项式响应数据
 #
-# ### Load data
+# ### 加载数据
 #
-#  In this example, we use the Star98 dataset which was taken with
-# permission
-#  from Jeff Gill (2000) Generalized linear models: A unified approach.
-# Codebook
-#  information can be obtained by typing:
+# 在此示例中，我们使用 Star98 的数据集，该数据集来自 Jeff Gill（2000）的许可下获取的广义线性模型：统一方法。 可以通过键入以下内容获得码本信息：
+
 
 print(sm.datasets.star98.NOTE)
 
-# Load the data and add a constant to the exogenous (independent)
-# variables:
+# 加载数据，并将常数项添加到外生（独立）变量中：
 
 data = sm.datasets.star98.load()
 data.exog = sm.add_constant(data.exog, prepend=False)
 
-#  The dependent variable is N by 2 (Success: NABOVE, Failure: NBELOW):
+#  因变量是 N by 2 (Success: NABOVE, Failure: NBELOW):
 
 print(data.endog[:5, :])
 
-#  The independent variables include all the other variables described
-# above, as
-#  well as the interaction terms:
+#  自变量包括上述所有其他变量以及交互项：
 
 print(data.exog[:2, :])
 
-# ### Fit and summary
+# ### Fit 和 summary
 
 glm_binom = sm.GLM(data.endog, data.exog, family=sm.families.Binomial())
 res = glm_binom.fit()
@@ -54,9 +48,7 @@ print('Total number of trials:', data.endog[0].sum())
 print('Parameters: ', res.params)
 print('T-values: ', res.tvalues)
 
-# First differences: We hold all explanatory variables constant at their
-# means and manipulate the percentage of low income households to assess its
-# impact on the response variables:
+# 第一个差异：我们将所有解释变量保持在其均值不变，并操纵低收入家庭的百分比来评估其对响应变量的影响：
 
 means = data.exog.mean(axis=0)
 means25 = means.copy()
@@ -67,15 +59,13 @@ resp_25 = res.predict(means25)
 resp_75 = res.predict(means75)
 diff = resp_75 - resp_25
 
-# The interquartile first difference for the percentage of low income
-# households in a school district is:
+# 学区中低收入家庭的百分比的四分位差是:
 
 print("%2.4f%%" % (diff * 100))
 
 # ### Plots
 #
-#  We extract information that will be used to draw some interesting
-# plots:
+# 我们提取信息用于绘制一些有趣图:
 
 nobs = res.nobs
 y = data.endog[:, 0] / data.endog.sum(1)
@@ -105,7 +95,7 @@ ax.set_title('Residual Dependence Plot')
 ax.set_ylabel('Pearson Residuals')
 ax.set_xlabel('Fitted values')
 
-# Histogram of standardized deviance residuals:
+# 标准化偏差残差直方图:
 
 from scipy import stats
 
@@ -116,39 +106,35 @@ resid_std = stats.zscore(resid)
 ax.hist(resid_std, bins=25)
 ax.set_title('Histogram of standardized deviance residuals')
 
-# QQ Plot of Deviance Residuals:
+# 偏差残差QQ图:
 
 from statsmodels import graphics
 graphics.gofplots.qqplot(resid, line='r')
 
-# ## GLM: Gamma for proportional count response
+# ## GLM: 比例计数响应的 Gamma
 #
-# ### Load data
+# ### 加载数据
 #
-#  In the example above, we printed the ``NOTE`` attribute to learn about
-# the
-#  Star98 dataset. statsmodels datasets ships with other useful
-# information. For
-#  example:
+# 在上面的示例中，我们输出了 ``NOTE`` 属性来了解 Star98 数据集。 statsmodels 数据集附带了其他有用信息。 例如：
 
 print(sm.datasets.scotland.DESCRLONG)
 
-#  Load the data and add a constant to the exogenous variables:
+#  加载数据并给外生变量添加常数项:
 
 data2 = sm.datasets.scotland.load()
 data2.exog = sm.add_constant(data2.exog, prepend=False)
 print(data2.exog[:5, :])
 print(data2.endog[:5])
 
-# ### Fit and summary
+# ### Fit 和 summary
 
 glm_gamma = sm.GLM(data2.endog, data2.exog, family=sm.families.Gamma())
 glm_results = glm_gamma.fit()
 print(glm_results.summary())
 
-# ## GLM: Gaussian distribution with a noncanonical link
+# ## GLM: 具有非规范链接的高斯分布
 #
-# ### Artificial data
+# ### 人工数据
 
 nobs2 = 100
 x = np.arange(nobs2)
@@ -157,7 +143,7 @@ X = np.column_stack((x, x**2))
 X = sm.add_constant(X, prepend=False)
 lny = np.exp(-(.03 * x + .0001 * x**2 - 1.0)) + .001 * np.random.rand(nobs2)
 
-# ### Fit and summary
+# ### Fit 和 summary
 
 gauss_log = sm.GLM(lny, X, family=sm.families.Gaussian(sm.families.links.log))
 gauss_log_results = gauss_log.fit()

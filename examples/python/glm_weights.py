@@ -219,18 +219,15 @@ pd.DataFrame(
 
 # ### 似然比类型检验
 #
-# We saw above that likelihood and related statistics do not agree between
-# the aggregated and original, individual data. We illustrate in the
-# following that likelihood ratio test and difference in deviance agree
-# across versions, however Pearson chi-squared does not.
+# 我们从上看到，聚合数据和原始的个体数据之间的似然和相关统计数据不一致。 下面我们将说明
+# 似然比检验和偏差差异在各个版本中是一致的，但是Pearson卡方却不同的情况。
 #
-# As before: This is not sufficiently clear yet and could change.
+# 和以前一样：这还不够清楚，可能会改变。
 #
-# As a test case we drop the `age` variable and compute the likelihood
-# ratio type statistics as difference between reduced or constrained and
-# full or unconstrained model.
+# 作为测试用例，我们删除 `age` 变量，并计算似然比类型统计量作为缩小或约束模型与完全或非约束模型之间的差异。
 
-# #### original observations and frequency weights
+
+# #### 原始观测值和频率权重
 
 glm = smf.glm(
     'affairs ~ rate_marriage + yrs_married',
@@ -249,10 +246,10 @@ res_f2 = glm.fit()
 #print(res_f2.summary())
 res_f2.pearson_chi2 - res_f.pearson_chi2, res_f2.deviance - res_f.deviance, res_f2.llf - res_f.llf
 
-# #### aggregated data: ``exposure`` and ``var_weights``
+# #### 聚合数据: ``exposure`` 和 ``var_weights``
 #
-# Note: LR test agrees with original observations, ``pearson_chi2``
-# differs and has the wrong sign.
+# 警告: LR 检验与原始观测值一致的情形， ``pearson_chi2`` 却有所不同且有错误标识。
+
 
 glm = smf.glm(
     'affairs_sum ~ rate_marriage + yrs_married',
@@ -270,10 +267,9 @@ glm = smf.glm(
 res_a2 = glm.fit()
 res_a2.pearson_chi2 - res_a.pearson_chi2, res_a2.deviance - res_a.deviance, res_a2.llf - res_a.llf
 
-# ### Investigating Pearson chi-square statistic
+# ### 探讨 Pearson卡方统计
 #
-# First, we do some sanity checks that there are no basic bugs in the
-# computation of `pearson_chi2` and `resid_pearson`.
+# 首先，我们进行一些合理性检验，以确保在计算 `pearson_chi2` 和 `resid_pearson` 时没有基本的错误。
 
 res_e2.pearson_chi2, res_e.pearson_chi2, (res_e2.resid_pearson
                                           **2).sum(), (res_e.resid_pearson
@@ -294,16 +290,12 @@ res_e2._results.resid_response.mean(), res_e2.model.family.variance(
 (res_e2._results.resid_response**2).sum(), (res_e._results.resid_response
                                             **2).sum()
 
-# One possible reason for the incorrect sign is that we are subtracting
-# quadratic terms that are divided by different denominators. In some
-# related cases, the recommendation in the literature is to use a common
-# denominator. We can compare pearson chi-squared statistic using the same
-# variance assumption in the full and reduced model.
+# 错误标识的一种可能原因是我们要减去的二次项被不同分母作除法。在某些相关情况下，文献中的建议是使用公分母。
+# 我们可以在完全模型和简化模型中使用相同方差假设来比较皮尔逊卡方统计量。
+# 
 #
-# In this case we obtain the same pearson chi2 scaled difference between
-# reduced and full model across all versions. (Issue
-# [#3616](https://github.com/statsmodels/statsmodels/issues/3616) is
-# intended to track this further.)
+# 在这种情况下，我们在所有版本的简化模型和完整模型之间都获得了相同的皮尔逊卡方标度差异。 (问题 [#3616](https://github.com/statsmodels/statsmodels/issues/3616) is
+# 将做进一步的追踪。)
 
 ((res_e2._results.resid_response**2 - res_e._results.resid_response**2) /
  res_e2.model.family.variance(res_e2.mu)).sum()
@@ -317,10 +309,9 @@ res_e2._results.resid_response.mean(), res_e2.model.family.variance(
 ((res_o2._results.resid_response**2 - res_o._results.resid_response**2) /
  res_o2.model.family.variance(res_o2.mu)).sum()
 
-# ## Remainder
+# ## 其余内容
 #
-# The remainder of the notebook just contains some additional checks and
-# can be ignored.
+# 笔记的其余部分包含一些其他检查，可以忽略。
 
 np.exp(res_e2.model.exposure)[:5], np.asarray(df_a['affairs_count'])[:5]
 

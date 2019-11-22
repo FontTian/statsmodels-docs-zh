@@ -7,45 +7,43 @@
 # flake8: noqa
 # DO NOT EDIT
 
-# # Generalized Least Squares
+# # 广义最小二乘法
 
 import statsmodels.api as sm
 
-# The Longley dataset is a time series dataset:
+# Longley 数据集是时间序列数据集:
 
 data = sm.datasets.longley.load()
 data.exog = sm.add_constant(data.exog)
 print(data.exog[:5])
 
 #
-#  Let's assume that the data is heteroskedastic and that we know
-#  the nature of the heteroskedasticity.  We can then define
-#  `sigma` and use it to give us a GLS model
+#  让我们假设数据是异方差的，并且我们知道异方差的性质。 然后，我们可以定义 `sigma` 并
+#  使用它为我们提供 GLS 模型
 #
-#  First we will obtain the residuals from an OLS fit
+#  首先，我们将从 OLS 拟合中获得残差
 
 ols_resid = sm.OLS(data.endog, data.exog).fit().resid
 
-# Assume that the error terms follow an AR(1) process with a trend:
+# 假设误差项服从带有趋势的 AR(1) 流程:
 #
 # $\epsilon_i = \beta_0 + \rho\epsilon_{i-1} + \eta_i$
 #
-# where $\eta \sim N(0,\Sigma^2)$
+# 其中 $\eta \sim N(0,\Sigma^2)$
 #
-# and that $\rho$ is simply the correlation of the residual a consistent
-# estimator for rho is to regress the residuals on the lagged residuals
+# 并且 $\rho$ 只是残差相关性，rho 的一致估计器是对滞后残差进行的回归
 
 resid_fit = sm.OLS(ols_resid[1:], sm.add_constant(ols_resid[:-1])).fit()
 print(resid_fit.tvalues[1])
 print(resid_fit.pvalues[1])
 
-#  While we do not have strong evidence that the errors follow an AR(1)
-#  process we continue
+#  尽管我们没有强有力的证据表明误差项遵循 AR（1）流程，但我们继续
+
 
 rho = resid_fit.params[1]
 
-# As we know, an AR(1) process means that near-neighbors have a stronger
-#  relation so we can give this structure by using a toeplitz matrix
+# 众所周知，AR(1) 过程意味着近邻具有更强的关系，因此我们可以通过使用一个 toeplitz 矩阵给出此结构
+
 
 from scipy.linalg import toeplitz
 
@@ -53,28 +51,22 @@ toeplitz(range(5))
 
 order = toeplitz(range(len(ols_resid)))
 
-# so that our error covariance structure is actually rho**order
-#  which defines an autocorrelation structure
+# 因此我们的误差协方差结构实际上是rho **阶，它定义了自相关结构
 
 sigma = rho**order
 gls_model = sm.GLS(data.endog, data.exog, sigma=sigma)
 gls_results = gls_model.fit()
 
-# Of course, the exact rho in this instance is not known so it it might
-# make more sense to use feasible gls, which currently only has experimental
-# support.
+# 当然，在这种情况下确切的 rho 是未知的，因此使用可行的 gls 可能更有意义，而 gls 目前只有试验性支持。
 #
-# We can use the GLSAR model with one lag, to get to a similar result:
+# 我们可以使用带有一次滞后的 GLSAR 模型，以获得类似的结果：
 
 glsar_model = sm.GLSAR(data.endog, data.exog, 1)
 glsar_results = glsar_model.iterative_fit(1)
 print(glsar_results.summary())
 
-# Comparing gls and glsar results, we see that there are some small
-#  differences in the parameter estimates and the resulting standard
-#  errors of the parameter estimate. This might be do to the numerical
-#  differences in the algorithm, e.g. the treatment of initial conditions,
-#  because of the small number of observations in the longley dataset.
+# 比较 gls 和 glsar 结果，我们发现参数估计值和参数估计值的标准误差之间存在一些细微差异。
+# 这可能与算法中的数值差异有关，例如：由于 Longley 数据集中的观测值较少，因此无法对初始条件进行处理。
 
 print(gls_results.params)
 print(glsar_results.params)
