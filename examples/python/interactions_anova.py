@@ -7,12 +7,12 @@
 # flake8: noqa
 # DO NOT EDIT
 
-# # Interactions and ANOVA
+# # 交互作用 和 ANOVA
 
-# Note: This script is based heavily on Jonathan Taylor's class notes
+# 请注意: 这个脚本主要是基于 Jonathan Taylor 的课堂笔记
 # http://www.stanford.edu/class/stats191/interactions.html
 #
-# Download and format data:
+# 下载并格式化数据:
 
 from statsmodels.compat import urlopen
 import numpy as np
@@ -27,7 +27,7 @@ from statsmodels.stats.anova import anova_lm
 
 try:
     salary_table = pd.read_csv('salary.table')
-except:  # recent pandas can read URL without urlopen
+except:  # 最近 pandas 可以在没有 urlopen 的情况下读取 URL
     url = 'http://stats191.stanford.edu/data/salary.table'
     fh = urlopen(url)
     salary_table = pd.read_table(fh)
@@ -38,7 +38,7 @@ M = salary_table.M
 X = salary_table.X
 S = salary_table.S
 
-# Take a look at the data:
+# 观察数据:
 
 plt.figure(figsize=(6, 6))
 symbols = ['D', '^']
@@ -51,43 +51,43 @@ for values, group in factor_groups:
 plt.xlabel('Experience')
 plt.ylabel('Salary')
 
-# Fit a linear model:
+# 拟合线性模型:
 
 formula = 'S ~ C(E) + C(M) + X'
 lm = ols(formula, salary_table).fit()
 print(lm.summary())
 
-# Have a look at the created design matrix:
+# 查看创建的设计矩阵:
 
 lm.model.exog[:5]
 
-# Or since we initially passed in a DataFrame, we have a DataFrame
-# available in
+# 或者是由于我们最初传入了一个 DataFrame，所以会有一个 DataFrame 可用
+
 
 lm.model.data.orig_exog[:5]
 
-# We keep a reference to the original untouched data in
+# 我们对原始不变的数据保持关注：
 
 lm.model.data.frame[:5]
 
-# Influence statistics
+# 影响力分析
 
 infl = lm.get_influence()
 print(infl.summary_table())
 
-# or get a dataframe
+# 或得到一个 DataFrame
 
 df_infl = infl.summary_frame()
 
 df_infl[:5]
 
-# Now plot the residuals within the groups separately:
+# 现在分别绘制各组的组内残差：
 
 resid = lm.resid
 plt.figure(figsize=(6, 6))
 for values, group in factor_groups:
     i, j = values
-    group_num = i * 2 + j - 1  # for plotting purposes
+    group_num = i * 2 + j - 1  # 用于绘图
     x = [group_num] * len(group)
     plt.scatter(
         x,
@@ -99,12 +99,12 @@ for values, group in factor_groups:
 plt.xlabel('Group')
 plt.ylabel('Residuals')
 
-# Now we will test some interactions using anova or f_test
+# 现在我们使用 方差分析 或 f_检验 测量交互作用
 
 interX_lm = ols("S ~ C(E) * X + C(M)", salary_table).fit()
 print(interX_lm.summary())
 
-# Do an ANOVA check
+# 方差分析检查
 
 from statsmodels.stats.api import anova_lm
 
@@ -117,11 +117,11 @@ print(interM_lm.summary())
 table2 = anova_lm(lm, interM_lm)
 print(table2)
 
-# The design matrix as a DataFrame
+# 将设计矩阵设置为 DataFrame
 
 interM_lm.model.data.orig_exog[:5]
 
-# The design matrix as an ndarray
+# 将设计矩阵设置为 ndarray
 
 interM_lm.model.exog
 interM_lm.model.exog_names
@@ -142,7 +142,7 @@ for values, group in factor_groups:
 plt.xlabel('X')
 plt.ylabel('standardized resids')
 
-# Looks like one observation is an outlier.
+# 看起来观察值是一个异常值。
 
 drop_idx = abs(resid).argmax()
 print(drop_idx)  # zero-based index
@@ -168,7 +168,7 @@ table4 = anova_lm(lm32, interM_lm32)
 print(table4)
 print('\n')
 
-#  Replot the residuals
+#  重绘残差
 
 try:
     resid = interM_lm32.get_influence().summary_frame()['standard_resid']
@@ -189,7 +189,7 @@ for values, group in factor_groups:
 plt.xlabel('X[~[32]]')
 plt.ylabel('standardized resids')
 
-#  Plot the fitted values
+#  绘制拟合值
 
 lm_final = ols('S ~ X + C(E)*C(M)', data=salary_table.drop([drop_idx])).fit()
 mf = lm_final.model.data.orig_exog
@@ -206,7 +206,7 @@ for values, group in factor_groups:
         color=colors[i - 1],
         s=144,
         edgecolors='black')
-    # drop NA because there is no idx 32 in the final model
+    # 由于剔除了 NA 值，所以最终的模型中没有 idx 32 
     plt.plot(
         mf.X[idx].dropna(),
         lm_final.fittedvalues[idx].dropna(),
@@ -215,12 +215,10 @@ for values, group in factor_groups:
 plt.xlabel('Experience')
 plt.ylabel('Salary')
 
-# From our first look at the data, the difference between Master's and PhD
-# in the management group is different than in the non-management group.
-# This is an interaction between the two qualitative variables management,M
-# and education,E. We can visualize this by first removing the effect of
-# experience, then plotting the means within each of the 6 groups using
-# interaction.plot.
+# 从我们的数据来看，管理组织的硕士学位和博士学位差异不同于非管理组织
+# 这是两个定性变量管理（M）和教育（E）之间的交互作用，我们可以通过先
+# 移除经验的影响，然后使用 interaction.plot 函数来绘制6组中每组的均值。
+
 
 U = S - X * interX_lm32.params['X']
 
@@ -234,11 +232,11 @@ interaction_plot(
     markersize=10,
     ax=plt.gca())
 
-# ## Minority Employment Data
+# ## 少数族裔就业数据
 
 try:
     jobtest_table = pd.read_table('jobtest.table')
-except:  # do not have data already
+except:  # 还没有数据
     url = 'http://stats191.stanford.edu/data/jobtest.table'
     jobtest_table = pd.read_table(url)
 
@@ -343,23 +341,23 @@ fig = abline_plot(
     ax=ax,
     color='green')
 
-# is there any effect of MINORITY on slope or intercept?
+# MINORITY 对斜率或截距有什么影响？
 table5 = anova_lm(min_lm, min_lm4)
 print(table5)
 
-# is there any effect of MINORITY on intercept
+# MINORITY 对截距 intercept 的影响
 table6 = anova_lm(min_lm, min_lm3)
 print(table6)
 
-# is there any effect of MINORITY on slope
+# MINORITY 对斜率 slope 的影响
 table7 = anova_lm(min_lm, min_lm2)
 print(table7)
 
-# is it just the slope or both?
+# 只是对斜率有影响还是两者兼而有之？
 table8 = anova_lm(min_lm2, min_lm4)
 print(table8)
 
-# ## One-way ANOVA
+# ## 单尾 ANOVA
 
 try:
     rehab_table = pd.read_csv('rehab.table')
@@ -379,7 +377,7 @@ print(rehab_lm.model.data.orig_exog)
 
 print(rehab_lm.summary())
 
-# ## Two-way ANOVA
+# ## 双尾 ANOVA
 
 try:
     kidney_table = pd.read_table('./kidney.table')
@@ -387,11 +385,11 @@ except:
     url = 'http://stats191.stanford.edu/data/kidney.table'
     kidney_table = pd.read_csv(url, delim_whitespace=True)
 
-# Explore the dataset
+# 探索数据集
 
 kidney_table.head(10)
 
-# Balanced panel
+# 平衡面板
 
 kt = kidney_table
 plt.figure(figsize=(8, 6))
@@ -404,8 +402,7 @@ fig = interaction_plot(
     ms=10,
     ax=plt.gca())
 
-# You have things available in the calling namespace available in the
-# formula evaluation namespace
+# 您可以在公式评估名称空间中的调用名称空间并找到可用的东西
 
 kidney_lm = ols('np.log(Days+1) ~ C(Duration) * C(Weight)', data=kt).fit()
 
@@ -424,15 +421,13 @@ print(
         ols('np.log(Days+1) ~ C(Weight)', data=kt).fit(),
         ols('np.log(Days+1) ~ C(Duration) + C(Weight, Sum)', data=kt).fit()))
 
-# ## Sum of squares
+# ## 平方和
 #
-#  Illustrates the use of different types of sums of squares (I,II,II)
-#  and how the Sum contrast can be used to produce the same output between
-#  the 3.
+# 说明了使用不同类型的平方和(I,II,III) 以及如何使用 Sum 对比度在3之间产生相同的输出。 
 #
-#  Types I and II are equivalent under a balanced design.
+#  类型 I 和 II 在平衡设计下是等效的。
 #
-#  Do not use Type III with non-orthogonal contrast - ie., Treatment
+#  请勿使用非正交对比度的类型 III 即 Treatment
 
 sum_lm = ols(
     'np.log(Days+1) ~ C(Duration, Sum) * C(Weight, Sum)', data=kt).fit()

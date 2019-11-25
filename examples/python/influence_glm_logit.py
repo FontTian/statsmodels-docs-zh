@@ -7,19 +7,17 @@
 # flake8: noqa
 # DO NOT EDIT
 
-# # Influence Measures for GLM Logit
+# # GLM Logit 的影响度量
 #
 #
-# Based on draft version for GLMInfluence, which will also apply to
-# discrete Logit, Probit and Poisson, and eventually be extended to cover
-# most models outside of time series analysis.
+# 基于 GLMInfluence 的草稿版本，该版本也将适用于离散的 Logit，Probit 和 Poisson，
+# 最终将扩展为涵盖除时间序列分析之外的大多数模型。
 #
-# The example for logistic regression was used by Pregibon (1981)
-# "Logistic Regression diagnostics" and is based on data by Finney (1947).
+# Logistic 回归将使用 Pregibon（1981）的“Logistic 回归诊断” 作为示例，并基于 Finney（1947）的数据。
 #
-# GLMInfluence includes the basic influence measures but still misses some
-# measures described in Pregibon (1981), for example those related to
-# deviance and effects on confidence intervals.
+# GLMInfluence 包括基本的影响度量，但仍缺少 Pregibon（1981）中描述的一些度量，
+# 例如：与偏差和置信区间的影响相关的度量。
+# 
 
 import os.path
 import numpy as np
@@ -45,23 +43,18 @@ print(res.summary())
 
 # ## get the influence measures
 #
-# GLMResults has a `get_influence` method similar to OLSResults, that
-# returns and instance of the GLMInfluence class. This class has methods and
-# (cached) attributes to inspect influence and outlier measures.
+# GLMResults 具有类似于 OLSResults 的 get_influence 方法，该方法返回 GLMInfluence 类的实例。 
+# 此类具有方法和（缓存的）属性来检查影响力和异常值。
+# 
 #
-# This measures are based on a one-step approximation to the the results
-# for deleting one observation. One-step approximations are usually accurate
-# for small changes but underestimate the magnitude of large changes. Event
-# though large changes are underestimated, they still show clearly the
-# effect of influential observations
+# 此度量基于通过删除一个观测值的一步近似法的结果。 对于小变化，一步近似法通常是准确的，但会低估大变化的幅度。 
+# 尽管低估了大的变化，但仍然清楚地展示了影响力的观察结果
+# 
 #
-# In this example observation 4 and 18 have a large standardized residual
-# and large Cook's distance, but not a large leverage. Observation 13 has
-# the largest leverage but only small Cook's distance and not a large
-# studentized residual.
+# 在此示例中，观测值 4 和 18 具有较大的标准化残差和 Cook-距离，但杠杆作用并不大。 
+# 观测值 13 具有最大的杠杆作用，但 Cook-距离很小，且没有很大的学生残差。
 #
-# Only the two observations 4 and 18 have a large impact on the parameter
-# estimates.
+# 只有两个观测值 4 和 18 对参数估计有很大的影响。
 
 infl = res.get_influence(observed=False)
 
