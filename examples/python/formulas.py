@@ -74,47 +74,40 @@ print(res.summary())
 res = ols(formula='Lottery ~ Literacy + Wealth + C(Region)', data=df).fit()
 print(res.params)
 
-# Patsy's mode advanced features for categorical variables are discussed
-# in: [Patsy: Contrast Coding Systems for categorical
-# variables](contrasts.html)
+# 在以下主题中讨论了 Patsy 分类变量的模式高级功能：[Patsy：分类变量的对比度编码系统]（contrasts.html）
+
 
 # ## Operators
 #
-# We have already seen that "~" separates the left-hand side of the model
-# from the right-hand side, and that "+" adds new columns to the design
-# matrix.
+# 我们已经看到 "~" 将模型的左侧与右侧分开，而 "+" 将新列添加到设计矩阵中。
 #
-# ### Removing variables
+# ### 剔除变量
 #
-# The "-" sign can be used to remove columns/variables. For instance, we
-# can remove the intercept from a model by:
+# "-" 符号可用于删除列/变量。 例如，我们可以通过以下方式从模型中删除截距：
+
 
 res = ols(formula='Lottery ~ Literacy + Wealth + C(Region) -1 ', data=df).fit()
 print(res.params)
 
-# ### Multiplicative interactions
+# ### 乘法交互项
 #
-# ":" adds a new column to the design matrix with the interaction of the
-# other two columns. "*" will also include the individual columns that were
-# multiplied together:
+# ":" 通过其他两列的交互的新列添加到设计矩阵中。 "*" 还将包括相乘在一起的各个列：
 
 res1 = ols(formula='Lottery ~ Literacy : Wealth - 1', data=df).fit()
 res2 = ols(formula='Lottery ~ Literacy * Wealth - 1', data=df).fit()
 print(res1.params, '\n')
 print(res2.params)
 
-# Many other things are possible with operators. Please consult the [patsy
-# docs](https://patsy.readthedocs.org/en/latest/formulas.html) to learn
-# more.
+# 运算符还可以实现许多其他功能。 请参阅 [patsy docs](https://patsy.readthedocs.org/en/latest/formulas.html) 了解跟多信息。
 
-# ## Functions
+# ## 函数
 #
-# You can apply vectorized functions to the variables in your model:
+# 您可以将向量化函数应用于模型中的变量:
 
 res = smf.ols(formula='Lottery ~ np.log(Literacy)', data=df).fit()
 print(res.params)
 
-# Define a custom function:
+# 定义一个自定义函数:
 
 
 def log_plus_1(x):
@@ -124,17 +117,14 @@ def log_plus_1(x):
 res = smf.ols(formula='Lottery ~ log_plus_1(Literacy)', data=df).fit()
 print(res.params)
 
-# Any function that is in the calling namespace is available to the
-# formula.
+# 公式中可以调用名称空间中的任何函数。
 
-# ## Using formulas with models that do not (yet) support them
+# ## 将公式应用于尚不支持它们的模型
 #
-# Even if a given `statsmodels` function does not support formulas, you
-# can still use `patsy`'s formula language to produce design matrices. Those
-# matrices
-# can then be fed to the fitting function as `endog` and `exog` arguments.
+# 即使给定的 `statsmodels` 函数不支持公式，您仍然可以使用 'patsy' 的公式语言来生成设计矩阵。
+# 然后可以将这些矩阵作为 `endog` 和 `exog` 参数提供给拟合函数。
 #
-# To generate ``numpy`` arrays:
+# 生成 ``numpy`` 数组:
 
 import patsy
 f = 'Lottery ~ Literacy * Wealth'
@@ -142,7 +132,7 @@ y, X = patsy.dmatrices(f, df, return_type='matrix')
 print(y[:5])
 print(X[:5])
 
-# To generate pandas data frames:
+# 生成 pandas 数据框:
 
 f = 'Lottery ~ Literacy * Wealth'
 y, X = patsy.dmatrices(f, df, return_type='dataframe')
