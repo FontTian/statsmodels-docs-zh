@@ -7,7 +7,7 @@
 # flake8: noqa
 # DO NOT EDIT
 
-# # 极大似然估计 (广义模型)
+# # 极大似然估计 (通用模型)
 
 # 本教程说明了如何在 statsmodels 中快速实现新的极大似然模型。 我们举两个例子：
 #
@@ -53,7 +53,7 @@ class MyProbit(GenericLikelihoodModel):
 sm_probit_manual = MyProbit(endog, exog).fit()
 print(sm_probit_manual.summary())
 
-# 将 Probit 的实现与 ``statsmodels``' 的 "canned" 的实现相比较:
+# 将 Probit 的结果与 ``statsmodels``' 的 "canned" 的结果相比较:
 
 sm_probit_canned = sm.Probit(endog, exog).fit()
 
