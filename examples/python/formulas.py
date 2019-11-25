@@ -7,82 +7,69 @@
 # flake8: noqa
 # DO NOT EDIT
 
-# # Formulas: Fitting models using R-style formulas
+# # 公式: 使用 R-style 公式拟合模型
 
-# Since version 0.5.0, ``statsmodels`` allows users to fit statistical
-# models using R-style formulas. Internally, ``statsmodels`` uses the
-# [patsy](http://patsy.readthedocs.org/) package to convert formulas and
-# data to the matrices that are used in model fitting. The formula framework
-# is quite powerful; this tutorial only scratches the surface. A full
-# description of the formula language can be found in the ``patsy`` docs:
+# 从0.5.0版开始，statsmodels 允许用户使用 R-style 公式拟合统计模型。 在内部， ``statsmodels`` 使用 [patsy]包（http://patsy.readthedocs.org/）
+# 将公式和数据转换为模型拟合中可使用的矩阵。 公式框架非常强大； 本教程仅涉及表面知识。 公式语言的完整说明可以在 ``patsy`` 文档中找到：
 #
-# * [Patsy formula language description](http://patsy.readthedocs.org/)
+# * [Patsy 公式语言描述](http://patsy.readthedocs.org/)
 #
-# ## Loading modules and functions
+# ## 加载模块和函数
 
 import numpy as np  # noqa:F401  needed in namespace for patsy
 import statsmodels.api as sm
 
 # #### Import convention
 
-# You can import explicitly from statsmodels.formula.api
+# 你可以直接从 statsmodels.formula.api 导入
 
 from statsmodels.formula.api import ols
 
-# Alternatively, you can just use the `formula` namespace of the main
-# `statsmodels.api`.
+# 另外，您可以只使用主要 `statsmodels.api` 的 `formula` 命名空间。
 
 sm.formula.ols
 
-# Or you can use the following convention
+# 或者您可以使用以下规定
 
 import statsmodels.formula.api as smf
 
-# These names are just a convenient way to get access to each model's
-# `from_formula` classmethod. See, for instance
+# 这些名称只是访问每个模型的 `from_formula` 类方法的便捷方法。 参见，例如
 
 sm.OLS.from_formula
 
-# All of the lower case models accept ``formula`` and ``data`` arguments,
-# whereas upper case ones take ``endog`` and ``exog`` design matrices.
-# ``formula`` accepts a string which describes the model in terms of a
-# ``patsy`` formula. ``data`` takes a [pandas](https://pandas.pydata.org/)
-# data frame or any other data structure that defines a ``__getitem__`` for
-# variable names like a structured array or a dictionary of variables.
-#
-# ``dir(sm.formula)`` will print a list of available models.
-#
-# Formula-compatible models have the following generic call signature:
-# ``(formula, data, subset=None, *args, **kwargs)``
+# 所有小写的模型都接受 ``formula`` 和 ``data`` 参数，而大写的模型则采用 ``endog`` 和 ``exog`` 设计矩阵。 
+# ``formula`` 接受一个以 ``patsy'' 公式描述模型的字符串。  ``data`` 接受[pandas]（https://pandas.pydata.org/）
+# 数据框或为变量名称（如结构化数组或变量字典）定义 __getitem__ 的任何其他数据结构。
 
 #
-# ## OLS regression using formulas
+# ``dir(sm.formula)`` 将会输出可用的列表
 #
-# To begin, we fit the linear model described on the [Getting
-# Started](gettingstarted.html) page. Download the data, subset columns, and
-# list-wise delete to remove missing observations:
+# 公式兼容的模型具有以下通用呼叫签名: ``(formula, data, subset=None, *args, **kwargs)``
+
+#
+# ## 使用公式进行 OLS 回归
+#
+# 首先，我们拟合在[入门]（gettingstarted.html）页面上描述的线性模型。 下载数据，子集列和按列表删除以剔除缺少的观测值：
+
 
 dta = sm.datasets.get_rdataset("Guerry", "HistData", cache=True)
 
 df = dta.data[['Lottery', 'Literacy', 'Wealth', 'Region']].dropna()
 df.head()
 
-# Fit the model:
+# 拟合模型:
 
 mod = ols(formula='Lottery ~ Literacy + Wealth + Region', data=df)
 res = mod.fit()
 print(res.summary())
 
-# ## Categorical variables
+# ## 分类变量
 #
-# Looking at the summary printed above, notice that ``patsy`` determined
-# that elements of *Region* were text strings, so it treated *Region* as a
-# categorical variable. `patsy`'s default is also to include an intercept,
-# so we automatically dropped one of the *Region* categories.
+# 查看 summary 上面输出，请注意，``patsy`` 确定 *Region* 的元素是文本字符串，因此将 *Region* 视为分类变量。
+# Patsy 的默认设置还包括截距，因此我们自动剔除 *Region* 分类的一个种族。
 #
-# If *Region* had been an integer variable that we wanted to treat
-# explicitly as categorical, we could have done so by using the ``C()``
-# operator:
+# 如果 *Region* 是我们视为类别的整数变量，则可以使用 ``C()`` 运算符来实现：
+
 
 res = ols(formula='Lottery ~ Literacy + Wealth + C(Region)', data=df).fit()
 print(res.params)
