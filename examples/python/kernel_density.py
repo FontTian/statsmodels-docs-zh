@@ -7,32 +7,23 @@
 # flake8: noqa
 # DO NOT EDIT
 
-# # Kernel Density Estimation
+# # 核密度估计
 #
-# Kernel density estimation is the process of estimating an unknown
-# probability density function using a *kernel function* $K(u)$. While a
-# histogram counts the number of data points in somewhat arbitrary regions,
-# a kernel density estimate is a function defined as the sum of a kernel
-# function on every data point. The kernel function typically exhibits the
-# following properties:
+# 核密度估计是使用 *核函数* $K(u)$ 估计一个未知概率密度函数的过程。 直方图可以对任意区域中数据点的数量进行计数，
+# 而核密度估计是定义每个数据点的核函数之和的函数。 核函数通常具有以下属性：
 #
-# 1. Symmetry such that $K(u) = K(-u)$.
-# 2. Normalization such that $\int_{-\infty}^{\infty} K(u) \ du = 1$ .
-# 3. Monotonically decreasing such that $K'(u) < 0$ when $u > 0$.
-# 4. Expected value equal to zero such that $\mathrm{E}[K] = 0$.
+# 1. 对称，使得 $K(u) = K(-u)$.
+# 2. 标准化，使得 $\int_{-\infty}^{\infty} K(u) \ du = 1$ .
+# 3. 当 $u > 0$时，单调递减，使得 $K'(u) < 0$ 
+# 4. 期望值等于 0，使得 $\mathrm{E}[K] = 0$.
 #
-# For more information about kernel density estimation, see for instance
-# [Wikipedia - Kernel density
-# estimation](https://en.wikipedia.org/wiki/Kernel_density_estimation).
+# 有关核密度估计的更多信息，请参见示例 [维基百科-核密度估计](https://en.wikipedia.org/wiki/Kernel_density_estimation).
 #
-# A univariate kernel density estimator is implemented in
-# `sm.nonparametric.KDEUnivariate`.
-# In this example we will show the following:
+# 单变量核密度估计在 `sm.nonparametric.KDEUnivariate` 中实现。 在此示例中，我们将展示如下内容：
 #
-# * Basic usage, how to fit the estimator.
-# * The effect of varying the bandwidth of the kernel using the `bw`
-# argument.
-# * The various kernel functions available using the `kernel` argument.
+# * 基本用法，如何拟合估计器。
+# * 使用 `bw` 参数改变核带宽的影响。
+# * 使用 `kernel` 参数可以使用各种核函数。
 
 import numpy as np
 from scipy import stats
@@ -40,19 +31,19 @@ import statsmodels.api as sm
 import matplotlib.pyplot as plt
 from statsmodels.distributions.mixture_rvs import mixture_rvs
 
-# ## A univariate example
+# ## 单变量示例
 
 np.random.seed(
-    12345)  # Seed the random number generator for reproducible results
+    12345)  # 设置随机数生成器种子，使结果可重现
 
-# We create a bimodal distribution: a mixture of two normal distributions
-# with locations at `-1` and `1`.
+# 创建一个双峰分布：两个正态分布的混合体，其位置分别为 `-1` 和 `1`。
 
-# Location, scale and weight for the two distributions
+
+# 两种分布的位置、比例和权重
 dist1_loc, dist1_scale, weight1 = -1, .5, .25
 dist2_loc, dist2_scale, weight2 = 1, .5, .75
 
-# Sample from a mixture of distributions
+# 混合分布样本
 obs_dist = mixture_rvs(
     prob=[weight1, weight2],
     size=250,
@@ -60,13 +51,12 @@ obs_dist = mixture_rvs(
     kwargs=(dict(loc=dist1_loc, scale=dist1_scale),
             dict(loc=dist2_loc, scale=dist2_scale)))
 
-# The simplest non-parametric technique for density estimation is the
-# histogram.
+# 密度估计最简单的非参数技术是直方图。
 
 fig = plt.figure(figsize=(12, 5))
 ax = fig.add_subplot(111)
 
-# Scatter plot of data samples and histogram
+# 数据样本的散点图和直方图
 ax.scatter(
     obs_dist,
     np.abs(np.random.randn(obs_dist.size)),
@@ -80,24 +70,22 @@ lines = ax.hist(obs_dist, bins=20, edgecolor='k', label='Histogram')
 ax.legend(loc='best')
 ax.grid(True, zorder=-5)
 
-# ## Fitting with the default arguments
+# ## 以默认参数拟合
 
-# The histogram above is discontinuous. To compute a continuous
-# probability density function,
-# we can use kernel density estimation.
+# 上面的直方图是不连续的。如要计算一个连续概率密度函数，我们可以使用核密度估计。
 #
-# We initialize a univariate kernel density estimator using
-# `KDEUnivariate`.
+# 我们使用 `KDEUnivariate` 来初始化单变量内核密度估计器。
+
 
 kde = sm.nonparametric.KDEUnivariate(obs_dist)
-kde.fit()  # Estimate the densities
+kde.fit()  # 估计密度
 
-# We present a figure of the fit, as well as the true distribution.
+# 绘制一张符合真实分布的拟合图
 
 fig = plt.figure(figsize=(12, 5))
 ax = fig.add_subplot(111)
 
-# Plot the histrogram
+# 绘制直方图
 ax.hist(
     obs_dist,
     bins=20,
@@ -107,16 +95,16 @@ ax.hist(
     edgecolor='k',
     alpha=0.5)
 
-# Plot the KDE as fitted using the default arguments
+# 使用默认参数绘制 KDE 拟合图
 ax.plot(kde.support, kde.density, lw=3, label='KDE from samples', zorder=10)
 
-# Plot the true distribution
+# 绘制真实分布图
 true_values = (
     stats.norm.pdf(loc=dist1_loc, scale=dist1_scale, x=kde.support) * weight1 +
     stats.norm.pdf(loc=dist2_loc, scale=dist2_scale, x=kde.support) * weight2)
 ax.plot(kde.support, true_values, lw=3, label='True distribution', zorder=15)
 
-# Plot the samples
+# 绘制样本散点图
 ax.scatter(
     obs_dist,
     np.abs(np.random.randn(obs_dist.size)) / 40,
@@ -129,19 +117,18 @@ ax.scatter(
 ax.legend(loc='best')
 ax.grid(True, zorder=-5)
 
-# In the code above, default arguments were used. We can also vary the
-# bandwidth of the kernel, as we will now see.
+# 在上面的代码中，使用了默认参数。 如我们所见，我们还可以改变内核的带宽。
 
-# ## Varying the bandwidth using the `bw` argument
+# ## 使用 `bw` 参数改变带宽
 
-# The bandwidth of the kernel can be adjusted using the `bw` argument.
-# In the following example, a bandwidth of `bw=0.2` seems to fit the data
-# well.
+# 内核的带宽可以使用 `bw` 参数来调整。
+# 在下面的示例中，`bw=0.2` 的带宽很好地拟合了数据。
+
 
 fig = plt.figure(figsize=(12, 5))
 ax = fig.add_subplot(111)
 
-# Plot the histrogram
+# 绘制直方图
 ax.hist(
     obs_dist,
     bins=25,
@@ -151,7 +138,7 @@ ax.hist(
     normed=True,
     alpha=0.5)
 
-# Plot the KDE for various bandwidths
+# 绘制各种带宽的 KDE 图
 for bandwidth in [0.1, 0.2, 0.4]:
     kde.fit(bw=bandwidth)  # Estimate the densities
     ax.plot(
@@ -163,10 +150,10 @@ for bandwidth in [0.1, 0.2, 0.4]:
         zorder=10,
         label='KDE from samples, bw = {}'.format(round(bandwidth, 2)))
 
-# Plot the true distribution
+# 绘制真实分布
 ax.plot(kde.support, true_values, lw=3, label='True distribution', zorder=15)
 
-# Plot the samples
+# 绘制样本散点图
 ax.scatter(
     obs_dist,
     np.abs(np.random.randn(obs_dist.size)) / 50,
@@ -180,31 +167,30 @@ ax.legend(loc='best')
 ax.set_xlim([-3, 3])
 ax.grid(True, zorder=-5)
 
-# ## Comparing kernel functions
+# ## 比较各种核函数
 
-# In the example above, a Gaussian kernel was used. Several other kernels
-# are also available.
+# 在上面的示例中，使用了 Gaussian 内核。 其他几个内核也可用。
 
 from statsmodels.nonparametric.kde import kernel_switch
 list(kernel_switch.keys())
 
-# ### The available kernel functions
+# ### 可用的内核函数
 
-# Create a figure
+# 创建一个空白画布
 fig = plt.figure(figsize=(12, 5))
 
-# Enumerate every option for the kernel
+# 为内核列举每个选项
 for i, (ker_name, ker_class) in enumerate(kernel_switch.items()):
 
-    # Initialize the kernel object
+    # 初始化内核对象
     kernel = ker_class()
 
-    # Sample from the domain
+    # 来自 domain 的样本
     domain = kernel.domain or [-3, 3]
     x_vals = np.linspace(*domain, num=2**10)
     y_vals = kernel(x_vals)
 
-    # Create a subplot, set the title
+    # 创建一个子图并设置标题
     ax = fig.add_subplot(2, 4, i + 1)
     ax.set_title('Kernel function "{}"'.format(ker_name))
     ax.plot(x_vals, y_vals, lw=3, label='{}'.format(ker_name))
@@ -214,29 +200,28 @@ for i, (ker_name, ker_class) in enumerate(kernel_switch.items()):
 
 plt.tight_layout()
 
-# ### The available kernel functions on three data points
+# ### 三个数据点上可用的内核函数
 
-# We now examine how the kernel density estimate will fit to three equally
-# spaced data points.
+# 现在我们检查核密度估计如何拟合三个等距的数据点。
 
-# Create three equidistant points
+# 创建三个等距点
 data = np.linspace(-1, 1, 3)
 kde = sm.nonparametric.KDEUnivariate(data)
 
-# Create a figure
+# 创建一个空白画布
 fig = plt.figure(figsize=(12, 5))
 
-# Enumerate every option for the kernel
+# 为内核列举每个选项
 for i, kernel in enumerate(kernel_switch.keys()):
 
-    # Create a subplot, set the title
+    # 创建一个子图并设置标题
     ax = fig.add_subplot(2, 4, i + 1)
     ax.set_title('Kernel function "{}"'.format(kernel))
 
-    # Fit the model (estimate densities)
+    # 拟合模型(密度估计))
     kde.fit(kernel=kernel, fft=False, gridsize=2**10)
 
-    # Create the plot
+    # 绘图
     ax.plot(
         kde.support, kde.density, lw=3, label='KDE from samples', zorder=10)
     ax.scatter(data, np.zeros_like(data), marker='x', color='red')
@@ -245,9 +230,10 @@ for i, kernel in enumerate(kernel_switch.keys()):
 
 plt.tight_layout()
 
-# ## A more difficult case
+# ## 更加复杂的情况
 #
-# The fit is not always perfect. See the example below for a harder case.
+# 拟合并不总是完美的。 请参阅下面的示例来了解更加复杂的情况。
+
 
 obs_dist = mixture_rvs([.25, .75],
                        size=250,
@@ -262,7 +248,7 @@ fig = plt.figure(figsize=(12, 5))
 ax = fig.add_subplot(111)
 ax.hist(obs_dist, bins=20, normed=True, edgecolor='k', zorder=4, alpha=0.5)
 ax.plot(kde.support, kde.density, lw=3, zorder=7)
-# Plot the samples
+# 绘制样本散点图
 ax.scatter(
     obs_dist,
     np.abs(np.random.randn(obs_dist.size)) / 50,
@@ -273,10 +259,9 @@ ax.scatter(
     alpha=0.5)
 ax.grid(True, zorder=-5)
 
-# ## The KDE is a distribution
+# ## KDE 发行版
 #
-# Since the KDE is a distribution, we can access attributes and methods
-# such as:
+# 由于 KDE 是发行版，所以我们可以访问 KDE 的属性和方法
 #
 # - `entropy`
 # - `evaluate`
@@ -296,7 +281,7 @@ kde.entropy
 
 kde.evaluate(-1)
 
-# ### Cumulative distribution, it's inverse, and the survival function
+# ### 累积分布，逆和生存函数
 
 fig = plt.figure(figsize=(12, 5))
 ax = fig.add_subplot(111)
@@ -308,7 +293,7 @@ ax.plot(kde.support, kde.sf, lw=3, label='Survival function')
 ax.legend(loc='best')
 ax.grid(True, zorder=-5)
 
-# ### The Cumulative Hazard Function
+# ### 累积 Hazard 函数
 
 fig = plt.figure(figsize=(12, 5))
 ax = fig.add_subplot(111)
