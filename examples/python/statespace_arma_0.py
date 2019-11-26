@@ -7,11 +7,9 @@
 # flake8: noqa
 # DO NOT EDIT
 
-# # Autoregressive Moving Average (ARMA): Sunspots data
+# # 自回归移动平均(ARMA): 太阳黑子数据
 
-# This notebook replicates the existing ARMA notebook using the
-# `statsmodels.tsa.statespace.SARIMAX` class rather than the
-# `statsmodels.tsa.ARMA` class.
+# 这个笔记使用 `statsmodels.tsa.statespace.SARIMAX` 类复制 ARMA 的笔记，而不是 `statsmodels.tsa.ARMA` 类。
 
 import numpy as np
 from scipy import stats
@@ -22,7 +20,7 @@ import statsmodels.api as sm
 
 from statsmodels.graphics.api import qqplot
 
-# ## Sunspots Data
+# ## 太阳黑子数据
 
 print(sm.datasets.sunspots.NOTE)
 
@@ -52,7 +50,7 @@ print(arma_mod30.params)
 
 print(arma_mod30.aic, arma_mod30.bic, arma_mod30.hqic)
 
-# * Does our model obey the theory?
+# * 我们的模型是否符合理论要求？
 
 sm.stats.durbin_watson(arma_mod30.resid)
 
@@ -79,9 +77,9 @@ data = np.c_[range(1, 41), r[1:], q, p]
 table = pd.DataFrame(data, columns=['lag', "AC", "Q", "Prob(>Q)"])
 print(table.set_index('lag'))
 
-# * This indicates a lack of fit.
+# * 这表明模型欠拟合.
 
-# * In-sample dynamic prediction. How good does our model do?
+# * 样本内动态预测，我们的模型效果如何?
 
 predict_sunspots = arma_mod30.predict(start='1990', end='2012', dynamic=True)
 

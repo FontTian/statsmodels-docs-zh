@@ -7,8 +7,7 @@
 # flake8: noqa
 # DO NOT EDIT
 
-# ## State space models - concentrating the scale out of the likelihood
-# function
+# ## 状态空间模型 - 比例浓缩在似然函数之外
 
 import numpy as np
 import pandas as pd
@@ -17,13 +16,11 @@ import statsmodels.api as sm
 dta = sm.datasets.macrodata.load_pandas().data
 dta.index = pd.PeriodIndex(start='1959Q1', end='2009Q3', freq='Q')
 
-# ### Introduction
+# ### 介绍
 #
-# (much of this is based on Harvey (1989); see especially section 3.4)
+# (其中大多是基于 Harvey (1989)， 请参阅第 3.4 节)
 #
-# State space models can generically be written as follows (here we focus
-# on time-invariant state space models, but similar results apply also to
-# time-varying models):
+# 状态空间模型一般可编写如下 (我们关注的是时间固定的状态空间模型，但类似的结果适用于时间可变模型):
 #
 # $$
 # \begin{align}
@@ -32,30 +29,21 @@ dta.index = pd.PeriodIndex(start='1959Q1', end='2009Q3', freq='Q')
 # \end{align}
 # $$
 #
-# Often, some or all of the values in the matrices $Z, H, T, R, Q$ are
-# unknown and must be estimated; in statsmodels, estimation is often done by
-# finding the parameters that maximize the likelihood function. In
-# particular, if we collect the parameters in a vector $\psi$, then each of
-# these matrices can be thought of as functions of those parameters, for
-# example $Z = Z(\psi)$, etc.
+# 通常，矩阵 $Z, H, T, R, Q$ 中的某些或全部值是未知的，必须进行估计； 在统计模型中，估计通常是通过找到
+# 极大似然函数的参数来完成的。 特别是，如果我们将参数汇集在向量 $\psi$ 中，则可以每个矩阵视为函数的参数，
+# 例如 $Z = Z(\psi)$ 等。
 #
-# Usually, the likelihood function is maximized numerically, for example
-# by applying quasi-Newton "hill-climbing" algorithms, and this becomes more
-# and more difficult the more parameters there are. It turns out that in
-# many cases we can reparameterize the model as $[\psi_*', \sigma_*^2]'$,
-# where $\sigma_*^2$ is the "scale" of the model (usually, it replaces one
-# of the error variance terms) and it is possible to find the maximum
-# likelihood estimate of $\sigma_*^2$ analytically, by differentiating the
-# likelihood function. This implies that numerical methods are only required
-# to estimate the parameters $\psi_*$, which has dimension one less than
-# that of $\psi$.
+# 通常，似然函数是数值上的最大化，例如通过应用拟牛顿"爬山"算法，随着参数的增加，变得越来越困难。 事实证明，
+# 在许多情况下，我们可以将模型重新参数化为 $[\psi_*', \sigma_*^2]'$ ，其中 $\sigma_*^2$ 是模型的“比例”
+# （通常替换为 误差方差项之一），并且可以通过对似然函数求微分来解析地找到 $\sigma_*^2$ 的极大似然估计。 
+# 这意味着仅需要数值方法来估计参数 $\psi_*$，该参数的维数比 $\psi_*$ 小一。
 
-# ### Example: local level model
+
+# ### 示例: local level model
 #
-# (see, for example, section 4.2 of Harvey (1989))
+# (请参见示例，Harvey (1989) 的第 4.2 节)
 #
-# As a specific example, consider the local level model, which can be
-# written as:
+# 作为一个具体示例，请考虑本地模型，可以将它写作:
 #
 # $$
 # \begin{align}
@@ -65,14 +53,11 @@ dta.index = pd.PeriodIndex(start='1959Q1', end='2009Q3', freq='Q')
 # \end{align}
 # $$
 #
-# In this model, $Z, T,$ and $R$ are all fixed to be equal to $1$, and
-# there are two unknown parameters, so that $\psi = [\sigma_\varepsilon^2,
-# \sigma_\eta^2]$.
+# 在这个模型中, $Z, T,$ 和 $R$ 均固定等于 $1$, 且有两个未知参数，所以 $\psi = [\sigma_\varepsilon^2,\sigma_\eta^2]$。
 
-# #### Typical approach
+# #### 经典方法
 #
-# First, we show how to define this model without concentrating out the
-# scale, using statsmodels' state space library:
+# 首先，我们展示如何使用 statsmodels 的状态空间库来定义此模型，无需浓缩比例：
 
 
 class LocalLevel(sm.tsa.statespace.MLEModel):
@@ -100,51 +85,36 @@ class LocalLevel(sm.tsa.statespace.MLEModel):
         self['obs_cov', 0, 0] = params[1]
 
 
-# There are two parameters in this model that must be chosen: `var.level`
-# $(\sigma_\eta^2)$ and `var.irregular` $(\sigma_\varepsilon^2)$. We can use
-# the built-in `fit` method to choose them by numerically maximizing the
-# likelihood function.
+# 在这个模型中必须选择两个参数: `var.level` $(\sigma_\eta^2)$ 和 `var.irregular` $(\sigma_\varepsilon^2)$. 
+# 我们可以通过数值最大化似然函数内置的 `fit` 方法来选择两个参数。
 #
-# In our example, we are applying the local level model to consumer price
-# index inflation.
+# 在我们的示例中，我们将本地模型应用于消费者物价指数通胀。
 
 mod = LocalLevel(dta.infl)
 res = mod.fit(disp=False)
 print(res.summary())
 
-# We can look at the results from the numerical optimizer in the results
-# attribute `mle_retvals`:
+# 我们可以通过结果属性 `mle_retvals` 来查看数值优化器的结果：
 
 print(res.mle_retvals)
 
-# #### Concentrating out the scale
+# #### 浓缩比例
 
-# Now, there are two ways to reparameterize this model as above:
+# 现在，有两种方法可以将上面的模型重新参数化:
 #
-# 1. The first way is to set $\sigma_*^2 \equiv \sigma_\varepsilon^2$ so
-# that $\psi_* = \psi / \sigma_\varepsilon^2 = [1, q_\eta]$ where $q_\eta =
-# \sigma_\eta^2 / \sigma_\varepsilon^2$.
-# 2. The second way is to set $\sigma_*^2 \equiv \sigma_\eta^2$ so that
-# $\psi_* = \psi / \sigma_\eta^2 = [h, 1]$ where $h = \sigma_\varepsilon^2 /
-# \sigma_\eta^2$.
+# 1. 第一种方法是设置 $\sigma_*^2 \equiv \sigma_\varepsilon^2$ ，来使 $\psi_* = \psi / \sigma_\varepsilon^2 = [1, q_\eta]$ 其中 $q_\eta = \sigma_\eta^2 / \sigma_\varepsilon^2$.
+# 2. 第二种方法是设置t $\sigma_*^2 \equiv \sigma_\eta^2$ 来使 $\psi_* = \psi / \sigma_\eta^2 = [h, 1]$ 其中 $h = \sigma_\varepsilon^2 / \sigma_\eta^2$.
 #
-# In the first case, we only need to numerically maximize the likelihood
-# with respect to $q_\eta$, and in the second case we only need to
-# numerically maximize the likelihood with respect to $h$.
+# 在第一种情况下，我们只需要在数值上最大化关于 $q_\eta$ 的似然，在第二种情况下，我们只需要在数值上最大化关于 $h$ 的似然。
 #
-# Either approach would work well in most cases, and in the example below
-# we will use the second method.
+# 两种方法在大多数情况下都可以很好地运行，在下面的示例中，我们将使用第二种方法。
 
-# To reformulate the model to take advantage of the concentrated
-# likelihood function, we need to write the model in terms of the parameter
-# vector $\psi_* = [g, 1]$. Because this parameter vector defines
-# $\sigma_\eta^2 \equiv 1$, we now include a new line `self['state_cov', 0,
-# 0] = 1` and the only unknown parameter is $h$. Because our parameter $h$
-# is no longer a variance, we renamed it here to be `ratio.irregular`.
+# 重新构建模型以便于似然函数收敛，我们需要将参数向量 $\psi_* = [g, 1]$ 写入模型。 因为这个参数向量定义了$ \ sigma_ \ eta ^ 2 \ equiv 1 $，
+# 所以现在我们囊括一条新线 `self ['state_cov'，0，0] = 1`，且 $h$ 是唯一未知的参数。 因为我们的参数 $h$ 不是方差，所以将它重命名为 `ratio.irregular`。
+# 
 #
-# The key piece that is required to formulate the model so that the scale
-# can be computed from the Kalman filter recursions (rather than selected
-# numerically) is setting the flag `self.ssm.filter_concentrated = True`.
+# 建立模型以便从Kalman过滤器递归（而不是从数字上选择）中计算比例所需的关键是设置“ self.ssm.filter_concentrated = True”。
+
 
 
 class LocalLevelConcentrated(sm.tsa.statespace.MLEModel):
@@ -173,33 +143,24 @@ class LocalLevelConcentrated(sm.tsa.statespace.MLEModel):
         self['obs_cov', 0, 0] = params[0]
 
 
-# Again, we can use the built-in `fit` method to find the maximum
-# likelihood estimate of $h$.
+# 同样，我们可以使用内置的 `fit` 方法来找到 $h$ 的极大似然估计。
+
 
 mod_conc = LocalLevelConcentrated(dta.infl)
 res_conc = mod_conc.fit(disp=False)
 print(res_conc.summary())
 
-# The estimate of $h$ is provided in the middle table of parameters
-# (`ratio.irregular`), while the estimate of the scale is provided in the
-# upper table. Below, we will show that these estimates are consistent with
-# those from the previous approach.
+# 在参数的中间表(`ratio.irregular`)中提供了 $h$ 的估计值，而上表提供比例估计值。下面我们将展示这些估计与以往方法的估计一致。
 
-# And we can again look at the results from the numerical optimizer in the
-# results attribute `mle_retvals`. It turns out that two fewer iterations
-# were required in this case, since there was one fewer parameter to select.
-# Moreover, since the numerical maximization problem was easier, the
-# optimizer was able to find a value that made the gradient for this
-# parameter slightly closer to zero than it was above.
+
+# 而且我们可以再次从结果属性 `mle_retvals` 中查看数值优化的结果，事实证明，在这个示例中只需选择较少的参数，因此仅需进行两次迭代。
+# 此外，由于数值最大化问题更容易，因此优化器能够找到一个值，该值使得该参数的梯度比上面的梯度更加接近零。
 
 print(res_conc.mle_retvals)
 
-# #### Comparing estimates
+# #### 比较估计
 #
-# Recall that $h = \sigma_\varepsilon^2 / \sigma_\eta^2$ and the scale is
-# $\sigma_*^2 = \sigma_\eta^2$. Using these definitions, we can see that
-# both models produce nearly identical results:
-
+# 重新调用 $h = \sigma_\varepsilon^2 / \sigma_\eta^2$ 且比例是 $\sigma_*^2 = \sigma_\eta^2$. 使用这些定义，我们可以看到两个模型产生的结果几乎相同：
 print('Original model')
 print('var.level     = %.5f' % res.params[0])
 print('var.irregular = %.5f' % res.params[1])
@@ -208,24 +169,20 @@ print('\nConcentrated model')
 print('scale         = %.5f' % res_conc.scale)
 print('h * scale     = %.5f' % (res_conc.params[0] * res_conc.scale))
 
-# ### Example: SARIMAX
+# ### 示例: SARIMAX
 #
-# By default in SARIMAX models, the variance term is chosen by numerically
-# maximizing the likelihood function, but an option has been added to allow
-# concentrating the scale out.
+# SARIMAX 模型的默认设置, 通过对似然函数的数值最大化来选择方差项，增加了一个比例浓缩选项。
 
-# Typical approach
+# 经典方法
 mod_ar = sm.tsa.SARIMAX(dta.cpi, order=(1, 0, 0), trend='ct')
 res_ar = mod_ar.fit(disp=False)
 
-# Estimating the model with the scale concentrated out
+# 比例浓缩的估计模型
 mod_ar_conc = sm.tsa.SARIMAX(
     dta.cpi, order=(1, 0, 0), trend='ct', concentrate_scale=True)
 res_ar_conc = mod_ar_conc.fit(disp=False)
 
-# These two approaches produce about the same loglikelihood and
-# parameters, although the model with the concentrated scale was able to
-# improve the fit very slightly:
+# 这两种方法产生了相同的对数似然和参数，但浓缩比例的模型能够稍微改善拟合度：
 
 print('Loglikelihood')
 print('- Original model:     %.4f' % res_ar.llf)
@@ -236,8 +193,7 @@ print('- Original model:     %.4f, %.4f, %.4f, %.4f' % tuple(res_ar.params))
 print('- Concentrated model: %.4f, %.4f, %.4f, %.4f' %
       (tuple(res_ar_conc.params) + (res_ar_conc.scale, )))
 
-# This time, about 1/3 fewer iterations of the optimizer are required
-# under the concentrated approach:
+# 此时，浓缩方法使得优化器的迭代次数减少了约 1/3：
 
 print('Optimizer iterations')
 print('- Original model:     %d' % res_ar.mle_retvals['iterations'])
