@@ -7,16 +7,16 @@
 # flake8: noqa
 # DO NOT EDIT
 
-# # VARMAX models
+# # VARMAX 模型
 #
-# This is a brief introduction notebook to VARMAX models in statsmodels.
-# The VARMAX model is generically specified as:
+# 这是 statsmodels 库中的 VARMAX 模型的简要介绍笔记.
+# VARMAX 模型通常可以指定为:
 # $$
 # y_t = \nu + A_1 y_{t-1} + \dots + A_p y_{t-p} + B x_t + \epsilon_t +
 # M_1 \epsilon_{t-1} + \dots M_q \epsilon_{t-q}
 # $$
 #
-# where $y_t$ is a $\text{k_endog} \times 1$ vector.
+# 其中 $y_t$ 是一个 $\text{k_endog} \times 1$ 向量.
 
 import numpy as np
 import pandas as pd
@@ -30,24 +30,19 @@ endog = dta.loc['1960-04-01':'1978-10-01',
 
 # ## Model specification
 #
-# The `VARMAX` class in statsmodels allows estimation of VAR, VMA, and
-# VARMA models (through the `order` argument), optionally with a constant
-# term (via the `trend` argument). Exogenous regressors may also be included
-# (as usual in statsmodels, by the `exog` argument), and in this way a time
-# trend may be added. Finally, the class allows measurement error (via the
-# `measurement_error` argument) and allows specifying either a diagonal or
-# unstructured innovation covariance matrix (via the `error_cov_type`
-# argument).
+# statsmodels库中的 `VARMAX` 类可以（通过 `order` 参数）来估计 VAR，VMA 和 VARMA 模型，
+# 还可以（通过`trend`参数）来设置是否有常数项；（在statsmodels 库通常可以通过设置 `exog` 参数）
+# 来导入外生变量，并且，以此方式可以增加一个时间趋势。 最后，该类可以（通过 "measurement_error" 参数）
+# 来设置是否可以有测量误差，并（通过 "error_cov_type" 参数）来设置是否允许指定对角线或非结构化更新协方差矩阵。
 
-# ## Example 1: VAR
+
+# ## 例 1: VAR
 #
-# Below is a simple VARX(2) model in two endogenous variables and an
-# exogenous series, but no constant term. Notice that we needed to allow for
-# more iterations than the default (which is `maxiter=50`) in order for the
-# likelihood estimation to converge. This is not unusual in VAR models which
-# have to estimate a large number of parameters, often on a relatively small
-# number of time series: this model, for example, estimates 27 parameters
-# off of 75 observations of 3 variables.
+# 下面是一个简单的 VARX(2) 模型，其中包含两个内生变量和一个外生序列，但没有常数项。
+# 注意，为了使似然估计收敛，我们需要比默认值（ `maxiter=50`) 更多的迭代次数。
+# 这在 VAR 模型中很常见，VAR 模型必须估计大量的参数，通常以一个相对较短的时间序列：
+# 例如，这个模型需要从 3 个变量的 75 个观测值中估计 27 个参数。
+
 
 exog = endog['dln_consump']
 mod = sm.tsa.VARMAX(
@@ -55,33 +50,26 @@ mod = sm.tsa.VARMAX(
 res = mod.fit(maxiter=1000, disp=False)
 print(res.summary())
 
-# From the estimated VAR model, we can plot the impulse response functions
-# of the endogenous variables.
+# 从估计的 VAR 模型中，可以绘制内生变量的脉冲响应函数。
 
 ax = res.impulse_responses(10, orthogonalized=True).plot(figsize=(13, 3))
 ax.set(
     xlabel='t', title='Responses to a shock to `dln_inv`')
 
-# ## Example 2: VMA
+# ## 例 2: VMA
 #
-# A vector moving average model can also be formulated. Below we show a
-# VMA(2) on the same data, but where the innovations to the process are
-# uncorrelated. In this example we leave out the exogenous regressor but now
-# include the constant term.
+# 也可以构建矢量移动平均（VMA）模型。下面我们将以相同的数据展示 VMA(2) 模型， 但进程的更新是不相关的。 
+# 在这个示例中，我们剔除了一个外生回归变量，但包含常数项。
 
 mod = sm.tsa.VARMAX(
     endog[['dln_inv', 'dln_inc']], order=(0, 2), error_cov_type='diagonal')
 res = mod.fit(maxiter=1000, disp=False)
 print(res.summary())
 
-# ## Caution: VARMA(p,q) specifications
+# ## 注意: VARMA(p,q) 规范
 #
-# Although the model allows estimating VARMA(p,q) specifications, these
-# models are not identified without additional restrictions on the
-# representation matrices, which are not built-in. For this reason, it is
-# recommended that the user proceed with error (and indeed a warning is
-# issued when these models are specified). Nonetheless, they may in some
-# circumstances provide useful information.
+# 尽管该模型允许估计 VARMA(p,q) 规范，但不是内置没有附加限制的表示矩阵的情况下，这些模型是无法识别的。 
+# 因此，即使报错也建议用户继续执行程序（在指定模型时确实会发出警告）。 但它们可能在某些情况下提供有用的信息。
 
 mod = sm.tsa.VARMAX(endog[['dln_inv', 'dln_inc']], order=(1, 1))
 res = mod.fit(maxiter=1000, disp=False)

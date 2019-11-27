@@ -7,43 +7,30 @@
 # flake8: noqa
 # DO NOT EDIT
 
-# # Dynamic factors and coincident indices
+# # 动态因子和一致同步指标（一致指数）
 #
-# Factor models generally try to find a small number of unobserved
-# "factors" that influence a substantial portion of the variation in a larger
-# number of observed variables, and they are related to dimension-reduction
-# techniques such as principal components analysis. Dynamic factor models
-# explicitly model the transition dynamics of the unobserved factors, and so
-# are often applied to time-series data.
+# 因子模型通常试图找到少量未观测到的 "factors"，这些因子的影响给大量观测变量带来了很大的变化，并且它们与降维技术
+# （例如主成分分析）有关。 动态因子模型明确地建模中未观察到的因子的转换动力，因此经常应用于时间序列数据。
 #
-# Macroeconomic coincident indices are designed to capture the common
-# component of the "business cycle"; such a component is assumed to
-# simultaneously affect many macroeconomic variables. Although the
-# estimation and use of coincident indices (for example the [Index of
-# Coincident Economic Indicators](http://www.newyorkfed.org/research/regiona
-# l_economy/coincident_summary.html)) pre-dates dynamic factor models, in
-# several influential papers Stock and Watson (1989, 1991) used a dynamic
-# factor model to provide a theoretical foundation for them.
+# 宏观经济同步指数旨在捕捉 "商业周期性" 的共同组成部分； 假定这一组成部分会同时影响许多宏观经济变量。 
+# 尽管对一致指数的估计和使用（例如[一致经济指标指数]（http://www.newyorkfed.org/research/regiona l_economy / coincident_summary.html））
+# 早于动态因子模型，但在某些方面具有影响力的论文 Stock 和 Watson（1989，1991）使用动态因子模型为其提供了理论基础。
 #
-# Below, we follow the treatment found in Kim and Nelson (1999), of the
-# Stock and Watson (1991) model, to formulate a dynamic factor model,
-# estimate its parameters via maximum likelihood, and create a coincident
-# index.
+# 下面，我们遵循在 Stock 和 Watson（1991）模型中 Kim 和 Nelson（1999）中发现的处理方法，来制定一个动态因子模型，
+# 通过极大似然估计它的参数，并创建一致指数。
 
-# ## Macroeconomic data
+
+# ## 宏观经济数据
 #
-# The coincident index is created by considering the comovements in four
-# macroeconomic variables (versions of thse variables are available on
-# [FRED](https://research.stlouisfed.org/fred2/); the ID of the series used
-# below is given in parentheses):
+# 一致指数是通过考虑四个宏观经济变量的联动而创建的（这些变量可在[FRED]（https://research.stlouisfed.org/fred2/）上找到；
+# 下面使用的系列的ID在括号内给出） ：
 #
-# - Industrial production (IPMAN)
-# - Real aggregate income (excluding transfer payments) (W875RX1)
-# - Manufacturing and trade sales (CMRMTSPL)
-# - Employees on non-farm payrolls (PAYEMS)
+# -工业生产（IPMAN）
+# -实际总收入（不包括转帐付款）（W875RX1）
+# -制造和贸易销售（CMRMTSPL）
+# -非农业工资单上的员工（PAYEMS）
 #
-# In all cases, the data is at the monthly frequency and has been
-# seasonally adjusted; the time-frame considered is 1972 - 2005.
+# 在所有情况下，数据均为每月一次，并经过季节性调整； 所考虑的时间范围是1972年-2005年。
 
 import numpy as np
 import pandas as pd
@@ -54,7 +41,7 @@ np.set_printoptions(precision=4, suppress=True, linewidth=120)
 
 from pandas_datareader.data import DataReader
 
-# Get the datasets from FRED
+# 从 FRED 中导入数据
 start = '1979-01-01'
 end = '2014-12-01'
 indprod = DataReader('IPMAN', 'fred', start=start, end=end)
@@ -64,14 +51,12 @@ emp = DataReader('PAYEMS', 'fred', start=start, end=end)
 # dta = pd.concat((indprod, income, sales, emp), axis=1)
 # dta.columns = ['indprod', 'income', 'sales', 'emp']
 
-# **Note**: in a recent update on FRED (8/12/15) the time series CMRMTSPL
-# was truncated to begin in 1997; this is probably a mistake due to the fact
-# that CMRMTSPL is a spliced series, so the earlier period is from the
-# series HMRMT and the latter period is defined by CMRMT.
+# **注意**：在 FRED（15/12/8）的最近更新中，CMRMTSPL 时间序列是从 1997 年开始； 
+# 由于 CMRMTSPL 是一个拼接序列，这可能是一个错误，因此较早的时间段来自 HMRMT 系列，
+# 而较后的时间段由 CMRMT 定义。
 #
-# This has since (02/11/16) been corrected, however the series could also
-# be constructed by hand from HMRMT and CMRMT, as shown below (process taken
-# from the notes in the Alfred xls file).
+# 自（02/11/16）以来，这一问题已得到纠正，但是该系列也可以由HMRMT和CMRMT手动构建，
+# 如下所示（过程摘自Alfred xls文件中的注释）。
 
 # HMRMT = DataReader('HMRMT', 'fred', start='1967-01-01', end=end)
 # CMRMT = DataReader('CMRMT', 'fred', start='1997-01-01', end=end)
@@ -79,10 +64,10 @@ emp = DataReader('PAYEMS', 'fred', start=start, end=end)
 # HMRMT_growth = HMRMT.diff() / HMRMT.shift()
 # sales = pd.Series(np.zeros(emp.shape[0]), index=emp.index)
 
-# # Fill in the recent entries (1997 onwards)
+# # 填写最近的输入（从 1997 年开始）
 # sales[CMRMT.index] = CMRMT
 
-# # Backfill the previous entries (pre 1997)
+# # 回填以前的输入 (1997 年之前)
 # idx = sales.loc[:'1997-01-01'].index
 # for t in range(len(idx)-1, 0, -1):
 #     month = idx[t]
@@ -96,13 +81,10 @@ dta.columns = ['indprod', 'income', 'sales', 'emp']
 dta.loc[:, 'indprod':'emp'].plot(
     subplots=True, layout=(2, 2), figsize=(15, 6))
 
-# Stock and Watson (1991) report that for their datasets, they could not
-# reject the null hypothesis of a unit root in each series (so the series
-# are integrated), but they did not find strong evidence that the series
-# were co-integrated.
+# Stock 和 Watson（1991）报告说，对于他们的数据集，他们不能拒绝每个系列中单位根的零假设（因此该系列是集成的），
+# 但是他们没有找到有力的证据证明该系列是联合集成的。
 #
-# As a result, they suggest estimating the model using the first
-# differences (of the logs) of the variables, demeaned and standardized.
+# 结果是他们认为应该使用均值标准化的变量的（日志的）第一差异来估计模型。
 
 # Create log-differenced series
 dta['dln_indprod'] = (np.log(dta.indprod)).diff() * 100
@@ -110,7 +92,7 @@ dta['dln_income'] = (np.log(dta.income)).diff() * 100
 dta['dln_sales'] = (np.log(dta.sales)).diff() * 100
 dta['dln_emp'] = (np.log(dta.emp)).diff() * 100
 
-# De-mean and standardize
+# 均值和标准化
 dta['std_indprod'] = (
     dta['dln_indprod'] - dta['dln_indprod'].mean()) / dta['dln_indprod'].std()
 dta['std_income'] = (
@@ -120,9 +102,9 @@ dta['std_sales'] = (
 dta['std_emp'] = (
     dta['dln_emp'] - dta['dln_emp'].mean()) / dta['dln_emp'].std()
 
-# ## Dynamic factors
+# ## 动态因子
 #
-# A general dynamic factor model is written as:
+# 一般动态因子模型可以写成:
 #
 # $$
 # \begin{align}
@@ -134,28 +116,22 @@ dta['std_emp'] = (
 # \end{align}
 # $$
 #
-# where $y_t$ are observed data, $f_t$ are the unobserved factors
-# (evolving as a vector autoregression), $x_t$ are (optional) exogenous
-# variables, and $u_t$ is the error, or "idiosyncratic", process ($u_t$ is
-# also optionally allowed to be autocorrelated). The $\Lambda$ matrix is
-# often referred to as the matrix of "factor loadings". The variance of the
-# factor error term is set to the identity matrix to ensure identification
-# of the unobserved factors.
+# 其中 $y_t$ 是观测到的数据，$f_t$ 是未观测到的因子（演变为向量自回归）， $x_t$ 是（可选）外生变量，
+# $u_t$ 是误差或"idiosyncratic“ 过程（$u_t$ 也可以选择自相关）。 $\Lambda$ 矩阵通常称为 "因子负荷" 矩阵。 
+# 将因子误差项的方差设置为单位矩阵，以确保未观测到的因子的身份。
+# 
 #
-# This model can be cast into state space form, and the unobserved factor
-# estimated via the Kalman filter. The likelihood can be evaluated as a
-# byproduct of the filtering recursions, and maximum likelihood estimation
-# used to estimate the parameters.
+# 可以将该模型转换为状态空间形式，并通过 Kalman 滤波器估算未观测到的因子。 
+# 似然性可被评估为滤波递归的副产品，并使用极大似然估计来估计参数。
 
 # ## Model specification
 #
-# The specific dynamic factor model in this application has 1 unobserved
-# factor which is assumed to follow an AR(2) process. The innovations
-# $\varepsilon_t$ are assumed to be independent (so that $\Sigma$ is a
-# diagonal matrix) and the error term associated with each equation,
-# $u_{i,t}$ is assumed to follow an independent AR(2) process.
+# 
+# 在这个应用程序中的特定动态因子模型有1个未观测到的因子，我们假定它遵循AR（2）过程。
+# 更新 $\varepsilon_t$ 是独立的（因此 $\Sigma$ 是对角矩阵），并且假定与每个方程
+# 相关的误差项 $u_{i,t}$ 遵循独立的AR（2） 处理。
 #
-# Thus the specification considered here is:
+# 因此，在这里规范可以认为是:
 #
 # $$
 # \begin{align}
@@ -167,33 +143,24 @@ dta['std_emp'] = (
 # \end{align}
 # $$
 #
-# where $i$ is one of: `[indprod, income, sales, emp ]`.
+# 其中 $i$ 是 `[indprod, income, sales, emp ]` 的其中之一.
 #
-# This model can be formulated using the `DynamicFactor` model built-in to
-# statsmodels. In particular, we have the following specification:
+# 可以使用 statsmodels 内置的 `DynamicFactor` 模型来构建该模型。 特别是我们应该遵循以下规范：
 #
-# - `k_factors = 1` - (there is 1 unobserved factor)
-# - `factor_order = 2` - (it follows an AR(2) process)
-# - `error_var = False` - (the errors evolve as independent AR processes
-# rather than jointly as a VAR - note that this is the default option, so it
-# is not specified below)
-# - `error_order = 2` - (the errors are autocorrelated of order 2: i.e.
-# AR(2) processes)
-# - `error_cov_type = 'diagonal'` - (the innovations are uncorrelated;
-# this is again the default)
+# - `k_factors = 1` - (表示有1个未观测到的因子)
+# - `factor_order = 2` - (它遵循 AR(2) 进程)
+# - `error_var = False` - (误差演变为独立的 AR 进程，而不是作为一个 VAR ，注意这是默认选项，没有特别指定)
+# - `error_order = 2` - (误差是 2 级自相关: 即 AR(2) 进程)
+# - `error_cov_type = 'diagonal'` - (更新不相关，这也是默认设置)
 #
-# Once the model is created, the parameters can be estimated via maximum
-# likelihood; this is done using the `fit()` method.
+# 一旦创建好了模型，就可以通过极大似然来估计参数。 通过 `fit()` 方法来拟合。
 #
-# **Note**: recall that we have demeaned and standardized the data; this
-# will be important in interpreting the results that follow.
+# **注意**: 记得对数据进行去均值标准化，这对于解释随后的结果非常重要。
 #
-# **Aside**: in their empirical example, Kim and Nelson (1999) actually
-# consider a slightly different model in which the employment variable is
-# allowed to also depend on lagged values of the factor - this model does
-# not fit into the built-in `DynamicFactor` class, but can be accommodated by
-# using a subclass to implement the required new parameters and restrictions
-# - see Appendix A, below.
+# **另外**: 在他们的经验示例中，Kim 和 Nelson（1999）实际上考虑了一个略有不同的模型，在该模型中，
+# 允许就业变量也取决于因素的滞后值-该模型不适用于内置模型 `DynamicFactor` 类，但是可以通过使用子类来实现
+# 所需的新参数和限制来容纳它-请参见下面的附录A。
+
 
 # ## Parameter estimation
 #
@@ -205,42 +172,34 @@ dta['std_emp'] = (
 # for more information). The resulting parameters are then used as starting
 # parameters in the standard LBFGS optimization method.
 
-# Get the endogenous data
+# 获取 endogenous 数据
 endog = dta.loc['1979-02-01':, 'std_indprod':'std_emp']
 
-# Create the model
+# 创建模型
 mod = sm.tsa.DynamicFactor(endog, k_factors=1, factor_order=2, error_order=2)
 initial_res = mod.fit(method='powell', disp=False)
 res = mod.fit(initial_res.params, disp=False)
 
-# ## Estimates
+# ## 估计
 #
-# Once the model has been estimated, there are two components that we can
-# use for analysis or inference:
+# 一旦模型构建完成，就有两个组件可以用于分析和推断。
 #
-# - The estimated parameters
-# - The estimated factor
+# - 估计参数
+# - 估计因子
 
-# ### Parameters
+# ### 参数
 #
-# The estimated parameters can be helpful in understanding the
-# implications of the model, although in models with a larger number of
-# observed variables and / or unobserved factors they can be difficult to
-# interpret.
-#
-# One reason for this difficulty is due to identification issues between
-# the factor loadings and the unobserved factors. One easy-to-see
-# identification issue is the sign of the loadings and the factors: an
-# equivalent model to the one displayed below would result from reversing
-# the signs of all factor loadings and the unobserved factor.
-#
-# Here, one of the easy-to-interpret implications in this model is the
-# persistence of the unobserved factor: we find that exhibits substantial
-# persistence.
+# 尽管在模型中有大量观测到的变量/或未观察到的因子可能难以解释，但估计的参数可能有助于模型的理解。
+
+# 造成这一难点的原因之一是由于因子负荷和未观测到的因子之间的问题。另一个原因是显而易见的因子负荷符号的问题：
+# 将所有因子负荷符号和未观察到的因子进行旋转，可以得到与下面显示的等效的模型。
+
+# 在此，此模型中易于解释的含义之一是未观察到的因子的持久性：我们发现它表现出相当大的持久性。
+
 
 print(res.summary(separate_params=False))
 
-# ### Estimated factors
+# ### 估计因子
 #
 # While it can be useful to plot the unobserved factors, it is less useful
 # here than one might think for two reasons:

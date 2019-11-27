@@ -7,26 +7,20 @@
 # flake8: noqa
 # DO NOT EDIT
 
-# # Trends and cycles in unemployment
+# # 失业趋势和周期
 #
-# Here we consider three methods for separating a trend and cycle in
-# economic data. Supposing we have a time series $y_t$, the basic idea is to
-# decompose it into these two components:
+# 在这里，我们考虑三种方法来分解经济数据的趋势性和周期性。 假设我们有一个时间序列 $y_t$，将其分解为以下两个成分：
 #
 # $$
 # y_t = \mu_t + \eta_t
 # $$
 #
-# where $\mu_t$ represents the trend or level and $\eta_t$ represents the
-# cyclical component. In this case, we consider a *stochastic* trend, so
-# that $\mu_t$ is a random variable and not a deterministic function of
-# time. Two of methods fall under the heading of "unobserved components"
-# models, and the third is the popular Hodrick-Prescott (HP) filter.
-# Consistent with e.g. Harvey and Jaeger (1993), we find that these models
-# all produce similar decompositions.
+# 其中 $\mu_t$ 代表趋势性或水平，而 $\eta_t$ 代表周期性成分。 在这个示例中，我们考虑一个 *stochastic* 趋势，
+# 因此 $\mu_t$ 是随机变量，而不是时间的确定性函数。 两种方法属于“未观察到的组件”模型的标题，第三种是受大家欢迎
+# 的 Hodrick-Prescott (HP) 过滤器。 与（示例）一致， Harvey 和 Jaeger (1993)，我们发现这些模型都产生相似的分解。
 #
-# This notebook demonstrates applying these models to separate trend from
-# cycle in the U.S. unemployment rate.
+# 本笔记本演示了如何应用这些模型将美国失业率的周期性与趋势性分开。
+
 
 import numpy as np
 import pandas as pd
@@ -36,21 +30,18 @@ import matplotlib.pyplot as plt
 from pandas_datareader.data import DataReader
 endog = DataReader('UNRATE', 'fred', start='1954-01-01')
 
-# ### Hodrick-Prescott (HP) filter
+# ### Hodrick-Prescott (HP) 过滤器
 #
-# The first method is the Hodrick-Prescott filter, which can be applied to
-# a data series in a very straightforward method. Here we specify the
-# parameter $\lambda=129600$ because the unemployment rate is observed
-# monthly.
+# 第一种方法是 Hodrick-Prescott 过滤器，以一种直接了当的方法将其应用于数据序列。
+# 这里我们指定参数 $\lambda=129600$ 是因为每月观察一次失业率。
+
 
 hp_cycle, hp_trend = sm.tsa.filters.hpfilter(endog, lamb=129600)
 
-# ### Unobserved components and ARIMA model (UC-ARIMA)
+# ### 未观测到组件 和 ARIMA 模型 (UC-ARIMA)
 #
-# The next method is an unobserved components model, where the trend is
-# modeled as a random walk and the cycle is modeled with an ARIMA model - in
-# particular, here we use an AR(4) model. The process for the time series
-# can be written as:
+# 下一种方法是未观察的组件模型，其中趋势性建模是随机移动的，并使用 ARIMA 模型对周期进行建模-特别是在这里，我们使用AR（4）模型。 
+# 时间序列可以写成：
 #
 # $$
 # \begin{align}
@@ -60,8 +51,7 @@ hp_cycle, hp_trend = sm.tsa.filters.hpfilter(endog, lamb=129600)
 # \end{align}
 # $$
 #
-# where $\phi(L)$ is the AR(4) lag polynomial and $\epsilon_t$ and $\nu_t$
-# are white noise.
+# 其中 $\phi(L)$ 是 AR(4) 滞后多项式，且 $\epsilon_t$ 和 $\nu_t$ 是白色噪音.
 
 mod_ucarima = sm.tsa.UnobservedComponents(endog, 'rwalk', autoregressive=4)
 # Here the powell method is used, since it achieves a
@@ -69,10 +59,9 @@ mod_ucarima = sm.tsa.UnobservedComponents(endog, 'rwalk', autoregressive=4)
 res_ucarima = mod_ucarima.fit(method='powell', disp=False)
 print(res_ucarima.summary())
 
-# ### Unobserved components with stochastic cycle (UC)
+# ### 随机周期性未观察到的组件 (UC)
 #
-# The final method is also an unobserved components model, but where the
-# cycle is modeled explicitly.
+# 最后的一种方法是一个未观察到组件的模型，但是其中周期性是明确建模的。
 #
 # $$
 # \begin{align}
@@ -94,22 +83,19 @@ mod_uc = sm.tsa.UnobservedComponents(
     stochastic_cycle=True,
     damped_cycle=True,
 )
-# Here the powell method gets close to the optimum
+# 在这里，powell 方法接近最优
 res_uc = mod_uc.fit(method='powell', disp=False)
-# but to get to the highest loglikelihood we do a
-# second round using the L-BFGS method.
+
+# 但是为了达到最高对数似然率，我们使用 L-BFGS 方法进行第二轮拟合。
 res_uc = mod_uc.fit(res_uc.params, disp=False)
 print(res_uc.summary())
 
-# ### Graphical comparison
+# ### 图形比较
 #
-# The output of each of these models is an estimate of the trend component
-# $\mu_t$ and an estimate of the cyclical component $\eta_t$. Qualitatively
-# the estimates of trend and cycle are very similar, although the trend
-# component from the HP filter is somewhat more variable than those from the
-# unobserved components models. This means that relatively mode of the
-# movement in the unemployment rate is attributed to changes in the
-# underlying trend rather than to temporary cyclical movements.
+# 这些模型的每一个的输出是趋势性 $\mu_t$ 的估计和周期性 $\eta_t$ 的估计。从质量上来说，趋势性和周期性的估计非常相似，
+# 尽管来自 H P过滤器的趋势性组件比来自未观察到的组件模型的趋势性组件更加可变。 这意味着失业率的相对波动模式是由于基本
+# 趋势的变化，而不是暂时的周期性变化。
+# 
 
 fig, axes = plt.subplots(
     2, figsize=(13, 5))
