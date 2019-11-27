@@ -8,7 +8,7 @@
 
 线性模型具有独立且均匀分布的误差，以及具有异方差或自相关的误差。该模块允许通过
 普通最小二乘（OLS），加权最小二乘（WLS），广义最小二乘（GLS）和具有自相关AR（p）
-误差的可行广义最小二乘进行估计。
+误差的通用广义最小二乘进行估计。
 
 有关命令和参数，请查看 `模块参考`_ 。
 
@@ -92,34 +92,26 @@ GLS 是除 RecursiveLS、RollingWLS 和 RollingOLS 之外的其他回归类的�
 这对于所有回归类模型常见的和详细的描述
 
 pinv_wexog : array
-    The `p` x `n` Moore-Penrose pseudoinverse of the whitened design matrix.
-    It is approximately equal to
-    :math:`\left(X^{T}\Sigma^{-1}X\right)^{-1}X^{T}\Psi`, where
-    :math:`\Psi` is defined such that :math:`\Psi\Psi^{T}=\Sigma^{-1}`.
+    白色设计矩阵 `p` x `n` Moore-Penrose 的伪逆，约等于 :math:`\left(X^{T}\Sigma^{-1}X\right)^{-1}X^{T}\Psi`, 其中
+    :math:`\Psi` 可以被定义为 :math:`\Psi\Psi^{T}=\Sigma^{-1}`.
 cholsimgainv : array
-    The `n` x `n` upper triangular matrix :math:`\Psi^{T}` that satisfies
-    :math:`\Psi\Psi^{T}=\Sigma^{-1}`.
+    满足 :math:`\Psi\Psi^{T}=\Sigma^{-1}` 的 `n` x `n` 的上三角矩阵 :math:`\Psi^{T}` 
 df_model : float
-    The model degrees of freedom. This is equal to `p` - 1, where `p` is the
-    number of regressors. Note that the intercept is not counted as using a
-    degree of freedom here.
+    模型的自由度。 等于 `p`-1，其中 `p` 是回归数。 请注意，此处截距不算作一个自由度。
 df_resid : float
-    The residual degrees of freedom. This is equal `n - p` where `n` is the
-    number of observations and `p` is the number of parameters. Note that the
-    intercept is counted as using a degree of freedom here.
+    残差的自由度。 这等于 `n - p` ，其中 `n` 是观测数，而 `p` 是参数的数量。 请注意，此处截距被视为一个自由度。
 llf : float
-    The value of the likelihood function of the fitted model.
+    拟合模型的似然函数的值.
 nobs : float
-    The number of observations `n`
+    观测数 `n`
 normalized_cov_params : array
-    A `p` x `p` array equal to :math:`(X^{T}\Sigma^{-1}X)^{-1}`.
+    一个等于 :math:`(X^{T}\Sigma^{-1}X)^{-1}` 的 `p` x `p` 数组.
 sigma : array
-    The `n` x `n` covariance matrix of the error terms:
-    :math:`\mu\sim N\left(0,\Sigma\right)`.
+    误差项 :math:`\mu\sim N\left(0,\Sigma\right)` 的 `n` x `n` 协方差矩阵。
 wexog : array
-    The whitened design matrix :math:`\Psi^{T}X`.
+    白色设计矩阵 :math:`\Psi^{T}X`.
 wendog : array
-    The whitened response variable :math:`\Psi^{T}Y`.
+    白色响应变量 :math:`\Psi^{T}Y`.
 
 模块参考
 ----------------
