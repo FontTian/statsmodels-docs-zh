@@ -7,23 +7,19 @@
 # flake8: noqa
 # DO NOT EDIT
 
-# # Quantile regression
+# # 分位数回归
 
 #
-# This example page shows how to use ``statsmodels``' ``QuantReg`` class
-# to replicate parts of the analysis published in
+# 这个示例页面展示了如何使用 ``statsmodels.QuantReg`` 类来复制分析发行的部分
 #
-# * Koenker, Roger and Kevin F. Hallock. "Quantile Regressioin". Journal
-# of Economic Perspectives, Volume 15, Number 4, Fall 2001, Pages 143–156
+# * Koenker, Roger 和 Kevin F. Hallock. "分位数回归"。 经济观点杂志，第15卷，第4期，2001秋季，第143-156页
 #
-# We are interested in the relationship between income and expenditures on
-# food for a sample of working class Belgian households in 1857 (the Engel
-# data).
+# 我们对 1857 年比利时工人阶级家庭收入和食物支出之间的关系感兴趣（Engel数据）。
+
+
+# ## 设置
 #
-# ## Setup
-#
-# We first need to load some modules and to retrieve the data.
-# Conveniently, the Engel dataset is shipped with ``statsmodels``.
+# 首先，我们需要加载一些模块并导入数据。 方便的是 ``statsmodels'' 附带了 Engel 数据集.
 
 import numpy as np
 import pandas as pd
@@ -34,24 +30,22 @@ import matplotlib.pyplot as plt
 data = sm.datasets.engel.load_pandas().data
 data.head()
 
-# ## Least Absolute Deviation
+# ## 最小绝对偏差
 #
-# The LAD model is a special case of quantile regression where q=0.5
+# LAD模型是分位数回归的一种特殊情况，其中 q=0.5
 
 mod = smf.quantreg('foodexp ~ income', data)
 res = mod.fit(q=.5)
 print(res.summary())
 
-# ## Visualizing the results
+# ## 可视化结果
 #
-# We estimate the quantile regression model for many quantiles between .05
-# and .95, and compare best fit line from each of these models to Ordinary
-# Least Squares results.
+# 我们估计了介于.05和.95之间的许多分位数的分位数回归模型，
+# 并将这些模型中的每一个的最佳拟合线与普通最小二乘结果进行比较。
 
-# ### Prepare data for plotting
+# ### 准备绘图数据
 #
-# For convenience, we place the quantile regression results in a Pandas
-# DataFrame, and the OLS results in a dictionary.
+# 为了方便起见，我们将分位数回归结果存到 Pandas.DataFrame 中，将 OLS 结果存在字典中。
 
 quantiles = np.arange(.05, .96, .1)
 
@@ -76,16 +70,13 @@ ols = dict(
 print(models)
 print(ols)
 
-# ### First plot
+# ### 第一张图
 #
-# This plot compares best fit lines for 10 quantile regression models to
-# the least squares fit. As Koenker and Hallock (2001) point out, we see
-# that:
+# 这个图将 10 个分位数回归模型的最佳拟合线与最小二乘拟合相比较。 正如 Koenker 和 Hallock（2001）指出的那样，我们看到：
 #
-# 1. Food expenditure increases with income
-# 2. The *dispersion* of food expenditure increases with income
-# 3. The least squares estimates fit low income observations quite poorly
-# (i.e. the OLS line passes over most low income households)
+# 1. 食物支出随着收入增加而增加
+# 2. 食物支出的 *分散性* 随着收入增加而增加
+# 3. .最小二乘估计值对低收入观察的拟合效果很糟糕 (即 OLS 模型传入了大多数低收入家庭的数据)
 
 x = np.arange(data.income.min(), data.income.max(), 50)
 get_y = lambda a, b: a + b * x
@@ -107,15 +98,11 @@ ax.set_xlabel('Income', fontsize=16)
 ax.set_ylabel(
     'Food expenditure', fontsize=16)
 
-# ### Second plot
+# ### 第二张图
 #
-# The dotted black lines form 95% point-wise confidence band around 10
-# quantile regression estimates (solid black line). The red lines represent
-# OLS regression results along with their 95% confidence interval.
-#
-# In most cases, the quantile regression point estimates lie outside the
-# OLS confidence interval, which suggests that the effect of income on food
-# expenditure may not be constant across the distribution.
+# 黑色虚线在 10 个分位数回归估计周围形成了 95% 的逐点置信区间（黑色实线）。 红线代表 OLS 回归结果及其 95% 置信区间。
+
+#在大多数情况下，分位数回归点估计值位于 OLS 置信区间之外，这表明收入对食物支出的影响在整个分布范围内可能不是固定的。
 
 n = models.shape[0]
 p1 = plt.plot(models.q, models.b, color='black', label='Quantile Reg.')
