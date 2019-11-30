@@ -7,7 +7,7 @@
 # flake8: noqa
 # DO NOT EDIT
 
-# # Ordinary Least Squares
+# # 普通最小二乘法
 
 import numpy as np
 import statsmodels.api as sm
@@ -16,9 +16,9 @@ from statsmodels.sandbox.regression.predstd import wls_prediction_std
 
 np.random.seed(9876789)
 
-# ## OLS estimation
+# ## OLS 估计
 #
-# Artificial data:
+# 人工数据:
 
 nsample = 100
 x = np.linspace(0, 10, 100)
@@ -26,27 +26,27 @@ X = np.column_stack((x, x**2))
 beta = np.array([1, 0.1, 10])
 e = np.random.normal(size=nsample)
 
-# Our model needs an intercept so we add a column of 1s:
+# 我们的模型需要一个截距，所以我们添加 1 列:
 
 X = sm.add_constant(X)
 y = np.dot(X, beta) + e
 
-# Fit and summary:
+# Fit 和 summary:
 
 model = sm.OLS(y, X)
 results = model.fit()
 print(results.summary())
 
-# Quantities of interest can be extracted directly from the fitted model.
-# Type ``dir(results)`` for a full list. Here are some examples:
+# 有利的数量可以直接从拟合模型中提取。
+# 输入 ``dir(results)`` 以获得完整列表。 这里有些例子：
+
 
 print('Parameters: ', results.params)
 print('R2: ', results.rsquared)
 
-# ## OLS non-linear curve but linear in parameters
+# ## OLS 非线性曲线但参数线性
 #
-# We simulate artificial data with a non-linear relationship between x and
-# y:
+# 我们在x和y之间模拟出非线性关系的人工数据：
 
 nsample = 50
 sig = 0.5
@@ -57,20 +57,19 @@ beta = [0.5, 0.5, -0.02, 5.]
 y_true = np.dot(X, beta)
 y = y_true + sig * np.random.normal(size=nsample)
 
-# Fit and summary:
+# Fit 和 summary:
 
 res = sm.OLS(y, X).fit()
 print(res.summary())
 
-# Extract other quantities of interest:
+# 提取其他有利的数量:
 
 print('Parameters: ', res.params)
 print('Standard errors: ', res.bse)
 print('Predicted values: ', res.predict())
 
-# Draw a plot to compare the true relationship to OLS predictions.
-# Confidence intervals around the predictions are built using the
-# ``wls_prediction_std`` command.
+# 绘制一张来进行真实关系与 OLS 预测的比较。 使用 ``wls_prediction_std`` 命令建立预测的置信区间。
+
 
 prstd, iv_l, iv_u = wls_prediction_std(res)
 
@@ -83,10 +82,9 @@ ax.plot(x, iv_u, 'r--')
 ax.plot(x, iv_l, 'r--')
 ax.legend(loc='best')
 
-# ## OLS with dummy variables
+# ## 带虚拟变量的 OLS
 #
-# We generate some artificial data. There are 3 groups which will be
-# modelled using dummy variables. Group 0 is the omitted/benchmark category.
+# 我们生成一些人工数据。使用虚拟变量对 3 个组进行建模。 组 0 是省略/基准类别。
 
 nsample = 50
 groups = np.zeros(nsample, int)
@@ -96,7 +94,7 @@ groups[40:] = 2
 
 dummy = sm.categorical(groups, drop=True)
 x = np.linspace(0, 20, nsample)
-# drop reference category
+# 删除参考类别
 X = np.column_stack((x, dummy[:, 1:]))
 X = sm.add_constant(X, prepend=False)
 
@@ -105,19 +103,19 @@ y_true = np.dot(X, beta)
 e = np.random.normal(size=nsample)
 y = y_true + e
 
-# Inspect the data:
+# 检查数据:
 
 print(X[:5, :])
 print(y[:5])
 print(groups)
 print(dummy[:5, :])
 
-# Fit and summary:
+# Fit 和 summary:
 
 res2 = sm.OLS(y, X).fit()
 print(res2.summary())
 
-# Draw a plot to compare the true relationship to OLS predictions:
+# 绘制一张来进行真实关系与 OLS 预测的比较:
 
 prstd, iv_l, iv_u = wls_prediction_std(res2)
 
@@ -130,27 +128,24 @@ ax.plot(x, iv_u, 'r--')
 ax.plot(x, iv_l, 'r--')
 legend = ax.legend(loc="best")
 
-# ## Joint hypothesis test
+# ## 联合假设检验
 #
-# ### F test
+# ### F 检验
 #
-# We want to test the hypothesis that both coefficients on the dummy
-# variables are equal to zero, that is, $R \times \beta = 0$. An F test
-# leads us to strongly reject the null hypothesis of identical constant in
-# the 3 groups:
+# 我们要检验虚拟变量的两个系数都等于零的假设，即 $R \times \beta = 0$。 F 检验让我们直接的拒绝 3 个组是相同常数的零假设
+
 
 R = [[0, 1, 0, 0], [0, 0, 1, 0]]
 print(np.array(R))
 print(res2.f_test(R))
 
-# You can also use formula-like syntax to test hypotheses
+# 您还可以使用类似于公式的语法来检验假设
 
 print(res2.f_test("x2 = x3 = 0"))
 
-# ### Small group effects
+# ### 小组效应
 #
-# If we generate artificial data with smaller group effects, the T test
-# can no longer reject the Null hypothesis:
+# 如果我们生成具有小组效应的人工数据，则 T 检验将无法拒绝零假设：
 
 beta = [1., 0.3, -0.0, 10]
 y_true = np.dot(X, beta)
@@ -162,19 +157,18 @@ print(res3.f_test(R))
 
 print(res3.f_test("x2 = x3 = 0"))
 
-# ### Multicollinearity
+# ### 多重共线性
 #
-# The Longley dataset is well known to have high multicollinearity. That
-# is, the exogenous predictors are highly correlated. This is problematic
-# because it can affect the stability of our coefficient estimates as we
-# make minor changes to model specification.
+# 众所周知，Longley 数据集存在高度多重共线性。 即，外生预测变量高度相关。 这是有问题的，
+# 因为当我们对模型进行细微改变时，它会影响系数估计的稳定性。
+
 
 from statsmodels.datasets.longley import load_pandas
 y = load_pandas().endog
 X = load_pandas().exog
 X = sm.add_constant(X)
 
-# Fit and summary:
+# Fit 和 summary:
 
 ols_model = sm.OLS(y, X)
 ols_results = ols_model.fit()
@@ -182,9 +176,8 @@ print(ols_results.summary())
 
 # #### Condition number
 #
-# One way to assess multicollinearity is to compute the condition number.
-# Values over 20 are worrisome (see Greene 4.9). The first step is to
-# normalize the independent variables to have unit length:
+# 评估多重共线性的一种方法是计算条件数。超过 20 就存在问题（请参阅Greene 4.9）。 第一步是将自变量标准化为单位长度：
+
 
 norm_x = X.values
 for i, name in enumerate(X):
@@ -193,17 +186,16 @@ for i, name in enumerate(X):
     norm_x[:, i] = X[name] / np.linalg.norm(X[name])
 norm_xtx = np.dot(norm_x.T, norm_x)
 
-# Then, we take the square root of the ratio of the biggest to the
-# smallest eigen values.
+# 然后，我们取最大特征值与最小特征值之比的平方根。
 
 eigs = np.linalg.eigvals(norm_xtx)
 condition_number = np.sqrt(eigs.max() / eigs.min())
 print(condition_number)
 
-# #### Dropping an observation
+# #### 剔除一个观测值
 #
-# Greene also points out that dropping a single observation can have a
-# dramatic effect on the coefficient estimates:
+# Greene 指出，剔除单个观测值可能会对系数估计产生较大影响：
+
 
 ols_results2 = sm.OLS(y.iloc[:14], X.iloc[:14]).fit()
 print("Percentage change %4.2f%%\n" * 7 % tuple([
@@ -211,14 +203,12 @@ print("Percentage change %4.2f%%\n" * 7 % tuple([
     (ols_results2.params - ols_results.params) / ols_results.params * 100
 ]))
 
-# We can also look at formal statistics for this such as the DFBETAS -- a
-# standardized measure of how much each coefficient changes when that
-# observation is left out.
+# 我们可以考虑对 DFBETAS 的优等统计——一种忽视观测值的每个系数变化多少的标准化手段。
+
 
 infl = ols_results.get_influence()
 
-# In general we may consider DBETAS in absolute value greater than
-# $2/\sqrt{N}$ to be influential observations
+# 通常我们认为绝对值大于 $2/\sqrt{N}$ 的 DBETAS 时，对观测寄过是有影响的。
 
 2. / len(X)**.5
 
