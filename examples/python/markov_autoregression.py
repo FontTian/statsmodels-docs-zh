@@ -7,7 +7,7 @@
 # flake8: noqa
 # DO NOT EDIT
 
-# ## Markov switching autoregression models
+# ## 马尔可夫转换自回归模型
 
 # This notebook provides an example of the use of Markov switching models
 # in statsmodels to replicate a number of results presented in Kim and
