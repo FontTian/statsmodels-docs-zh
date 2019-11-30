@@ -19,9 +19,9 @@
 import numpy as np  # noqa:F401  needed in namespace for patsy
 import statsmodels.api as sm
 
-# #### Import convention
+# #### 导入规范
 
-# 你可以直接从 statsmodels.formula.api 导入
+# 或者直接从 statsmodels.formula.api 导入 ols
 
 from statsmodels.formula.api import ols
 
