@@ -7,17 +7,14 @@
 # flake8: noqa
 # DO NOT EDIT
 
-# ## 马尔可夫转换自回归模型
+# ## 马尔可夫切换自回归模型
 
-# This notebook provides an example of the use of Markov switching models
-# in statsmodels to replicate a number of results presented in Kim and
-# Nelson (1999). It applies the Hamilton (1989) filter the Kim (1994)
-# smoother.
+# 这份笔记提供了一个在 statsmodels 中使用 Markov 切换模型来复制 Kim 和 Nelson（1999）中得到结果的示例。 
+# 它应用了 Hamilton（1989）来过滤 Kim（1994）平滑器。
+
 #
-# This is tested against the Markov-switching models from E-views 8, which
-# can be found at http://www.eviews.com/EViews8/ev8ecswitch_n.html#MarkovAR
-# or the Markov-switching models of Stata 14 which can be found at
-# http://www.stata.com/manuals14/tsmswitch.pdf.
+# 这个检验反对 Markov 切换模型 来源于 E-views 8，可以在 http://www.eviews.com/EViews8/ev8ecswitch_n.html#MarkovAR
+# 或者 Stata 14 的 Markov-switching 模型中找到 http://www.stata.com/manuals14/tsmswitch.pdf。
 
 import numpy as np
 import pandas as pd
@@ -32,11 +29,11 @@ from datetime import datetime
 usrec = DataReader(
     'USREC', 'fred', start=datetime(1947, 1, 1), end=datetime(2013, 4, 1))
 
-# ### Hamilton (1989) switching model of GNP
+# ###  GNP 的 Hamilton (1989) 切换模型
 #
-# This replicates Hamilton's (1989) seminal paper introducing Markov-
-# switching models. The model is an autoregressive model of order 4 in which
-# the mean of the process switches between two regimes. It can be written:
+# 这是 Hamilton (1989) 的开创性的论文，介绍了马尔可夫切换模型。该模型是 4 阶自回归模型，
+# 平均值在两个状态之间切换的过程。 可以写成：
+
 #
 # $$
 # y_t = \mu_{S_t} + \phi_1 (y_{t-1} - \mu_{S_{t-1}}) + \phi_2 (y_{t-2} -
@@ -44,8 +41,7 @@ usrec = DataReader(
 # \mu_{S_{t-4}}) + \varepsilon_t
 # $$
 #
-# Each period, the regime transitions according to the following matrix of
-# transition probabilities:
+# 每个周期，状态转换是根据下面的转换概率矩阵来进行的转换：
 #
 # $$ P(S_t = s_t | S_{t-1} = s_{t-1}) =
 # \begin{bmatrix}
@@ -54,8 +50,7 @@ usrec = DataReader(
 # \end{bmatrix}
 # $$
 #
-# where $p_{ij}$ is the probability of transitioning *from* regime $i$,
-# *to* regime $j$.
+# 其中 $p_{ij}$ 是过渡概率从状态 $i$ 到 $j$ 的转换
 #
 # The model class is `MarkovAutoregression` in the time-series part of
 # `statsmodels`. In order to create the model, we must specify the number of
