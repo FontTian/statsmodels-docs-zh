@@ -7,12 +7,11 @@
 # flake8: noqa
 # DO NOT EDIT
 
-# # SARIMAX: Model selection, missing data
+# # SARIMAX: 模型选择, 缺失值
 
-# The example mirrors Durbin and Koopman (2012), Chapter 8.4 in
-# application of Box-Jenkins methodology to fit ARMA models. The novel
-# feature is the ability of the model to work on datasets with missing
-# values.
+# 这个示例反映了 Durbin 和 Koopman（2012）第 8.4 章，应用 Box-Jenkins 方法论来拟合 ARMA 模型。 
+# 这种方法论的新颖特点是模型能够处理带有缺少值的数据集。
+
 
 import numpy as np
 import pandas as pd
@@ -24,7 +23,7 @@ import requests
 from io import BytesIO
 from zipfile import ZipFile
 
-# Download the dataset
+# 加载数据集
 dk = requests.get('http://www.ssfpack.com/files/DK-data.zip').content
 f = BytesIO(dk)
 zipped = ZipFile(f)
@@ -36,34 +35,29 @@ df = pd.read_table(
     engine='python',
     names=['internet', 'dinternet'])
 
-# ### Model Selection
+# ### 模型选择
 #
-# As in Durbin and Koopman, we force a number of the values to be missing.
+# 在 Durbin 和 Koopman 模型中，我们需要面对许多缺失值。
 
-# Get the basic series
+
+# 基础系列
 dta_full = df.dinternet[1:].values
 dta_miss = dta_full.copy()
 
-# Remove datapoints
+# 删除数据点
 missing = np.r_[6, 16, 26, 36, 46, 56, 66, 72, 73, 74, 75, 76, 86, 96] - 1
 dta_miss[missing] = np.nan
 
-# Then we can consider model selection using the Akaike information
-# criteria (AIC), but running the model for each variant and selecting the
-# model with the lowest AIC value.
+# 然后，我们可以考虑使用 Akaike 信息标准（AIC）进行模型选择，但为每个变体运行模型和选择带有最低 AIC 值的模型
 #
-# There are a couple of things to note here:
+# 有几件事要注意：
 #
-# - When running such a large batch of models, particularly when the
-# autoregressive and moving average orders become large, there is the
-# possibility of poor maximum likelihood convergence. Below we ignore the
-# warnings since this example is illustrative.
-# - We use the option `enforce_invertibility=False`, which allows the
-# moving average polynomial to be non-invertible, so that more of the models
-# are estimable.
-# - Several of the models do not produce good results, and their AIC value
-# is set to NaN. This is not surprising, as Durbin and Koopman note
-# numerical problems with the high order models.
+# -在运行如此大量的模型时，尤其是当自回归和多阶移动平均变大时，极大似然的收敛可能会很差。 
+#  由于只是说明性的示例，因此我们忽略警告。
+
+# -我们使用 `enforce_invertibility=False` 选项，这个选项可以使移动平均多项式不可逆，为的就是可以估计更多模型。
+
+# -某些模型效果不佳，其 AIC 值设置为 NaN。 这并不奇怪，因为 Durbin 和 Koopman 指出了高阶模型的数值问题。
 
 import warnings
 
@@ -72,13 +66,13 @@ aic_miss = pd.DataFrame(np.zeros((6, 6), dtype=float))
 
 warnings.simplefilter('ignore')
 
-# Iterate over all ARMA(p,q) models with p,q in [0,6]
+# 在 [0,6] 之间，迭代所有的 ARMA(p,q) 模型
 for p in range(6):
     for q in range(6):
         if p == 0 and q == 0:
             continue
 
-        # Estimate the model with no missing datapoints
+        # 估计没有缺少数据点的模型
         mod = sm.tsa.statespace.SARIMAX(
             dta_full, order=(p, 0, q), enforce_invertibility=False)
         try:
@@ -87,7 +81,7 @@ for p in range(6):
         except:
             aic_full.iloc[p, q] = np.nan
 
-        # Estimate the model with missing datapoints
+        # 估计缺少数据点的模型
         mod = sm.tsa.statespace.SARIMAX(
             dta_miss, order=(p, 0, q), enforce_invertibility=False)
         try:
@@ -96,9 +90,8 @@ for p in range(6):
         except:
             aic_miss.iloc[p, q] = np.nan
 
-# For the models estimated over the full (non-missing) dataset, the AIC
-# chooses ARMA(1,1) or ARMA(3,0). Durbin and Koopman suggest the ARMA(1,1)
-# specification is better due to parsimony.
+# 对于在完整（非缺失）数据集上估计的模型，AIC 选择 ARMA(1,1) 或 ARMA(3,0)。Durbin 和 Koopman 
+# 认为 ARMA(1,1) 模型的规范性会更好，因为模型更加简约。
 #
 # $$
 # \text{Replication of:}\\
@@ -119,7 +112,7 @@ for p in range(6):
 # \end{array}
 # $$
 #
-# For the models estimated over missing dataset, the AIC chooses ARMA(1,1)
+# 对于缺失数据集上估计的模型，AIC 选择 ARMA(1,1)
 #
 # $$
 # \text{Replication of:}\\
@@ -140,31 +133,32 @@ for p in range(6):
 # \end{array}
 # $$
 #
-# **Note**: the AIC values are calculated differently than in Durbin and
-# Koopman, but show overall similar trends.
+# **注意**：AIC 值的计算方法与 Durbin 和 Koopman 中的计算方法不同，但总体上显示出相似的趋势。 
 
-# ### Postestimation
+
+# ### 后估计
 #
-# Using the ARMA(1,1) specification selected above, we perform in-sample
-# prediction and out-of-sample forecasting.
+# 上面我们选择了 ARMA(1,1) 模型的规范，我们做了样本内预测和样本外预测。
+
 
 # Statespace
 mod = sm.tsa.statespace.SARIMAX(dta_miss, order=(1, 0, 1))
 res = mod.fit(disp=False)
 print(res.summary())
 
-# In-sample one-step-ahead predictions, and out-of-sample forecasts
+# 样本内逐步预测和样本外预测
+
 nforecast = 20
 predict = res.get_prediction(end=mod.nobs + nforecast)
 idx = np.arange(len(predict.predicted_mean))
 predict_ci = predict.conf_int(alpha=0.5)
 
-# Graph
+# 绘图
 fig, ax = plt.subplots(figsize=(12, 6))
 ax.xaxis.grid()
 ax.plot(dta_miss, 'k.')
 
-# Plot
+# 图
 ax.plot(idx[:-nforecast], predict.predicted_mean[:-nforecast], 'gray')
 ax.plot(
     idx[-nforecast:],
