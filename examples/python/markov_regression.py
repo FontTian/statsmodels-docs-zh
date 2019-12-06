@@ -7,35 +7,30 @@
 # flake8: noqa
 # DO NOT EDIT
 
-# ## Markov switching dynamic regression models
+# ## Markov 切换动态回归模型
 
-# This notebook provides an example of the use of Markov switching models
-# in statsmodels to estimate dynamic regression models with changes in
-# regime. It follows the examples in the Stata Markov switching
-# documentation, which can be found at
-# http://www.stata.com/manuals14/tsmswitch.pdf.
+# 这个笔记提供了一个在 statsmodels 中使用 Markov 切换模型来估计政权变化的动态回归模型的示例。 
+# 它遵循 Stata 的 Markov切换模型文档中的示例，该文档可在http://www.stata.com/manuals14/tsmswitch.pdf上找到。
+
 
 import numpy as np
 import pandas as pd
 import statsmodels.api as sm
 import matplotlib.pyplot as plt
 
-# NBER recessions
+# NBER 经济衰退
 from pandas_datareader.data import DataReader
 from datetime import datetime
 usrec = DataReader(
     'USREC', 'fred', start=datetime(1947, 1, 1), end=datetime(2013, 4, 1))
 
-# ### Federal funds rate with switching intercept
-#
-# The first example models the federal funds rate as noise around a
-# constant intercept, but where the intercept changes during different
-# regimes. The model is simply:
+# ### 带有转换截距的联邦基金利率
+# 第一个示例将联邦基金利率建模为固定截距周围的噪声，但截距在不同政权下会发生变化。 该模型很简单：
 #
 # $$r_t = \mu_{S_t} + \varepsilon_t \qquad \varepsilon_t \sim N(0,
 # \sigma^2)$$
 #
-# where $S_t \in \{0, 1\}$, and the regime transitions according to
+# 其中 $S_t \in \{0, 1\}$, 且政权转换依据
 #
 # $$ P(S_t = s_t | S_{t-1} = s_{t-1}) =
 # \begin{bmatrix}
@@ -44,54 +39,46 @@ usrec = DataReader(
 # \end{bmatrix}
 # $$
 #
-# We will estimate the parameters of this model by maximum likelihood:
-# $p_{00}, p_{10}, \mu_0, \mu_1, \sigma^2$.
+# 我们将通过极大似然来估计这个模型的参数: $p_{00}, p_{10}, \mu_0, \mu_1, \sigma^2$.
 #
-# The data used in this example can be found at https://www.stata-
-# press.com/data/r14/usmacro.
+# 可在 https://www.stata-press.com/data/r14/usmacro 中找到这个示例使用的数据
 
 # Get the federal funds rate data
 from statsmodels.tsa.regime_switching.tests.test_markov_regression import fedfunds
 dta_fedfunds = pd.Series(
     fedfunds, index=pd.date_range('1954-07-01', '2010-10-01', freq='QS'))
 
-# Plot the data
+# 绘图
 dta_fedfunds.plot(title='Federal funds rate', figsize=(12, 3))
 
-# Fit the model
-# (a switching mean is the default of the MarkovRegession model)
+# 拟合模型
+# (切换均值是 MarkovRegession 模型的默认值)
 mod_fedfunds = sm.tsa.MarkovRegression(dta_fedfunds, k_regimes=2)
 res_fedfunds = mod_fedfunds.fit()
 
 res_fedfunds.summary()
 
-# From the summary output, the mean federal funds rate in the first regime
-# (the "low regime") is estimated to be $3.7$ whereas in the "high regime"
-# it is $9.6$. Below we plot the smoothed probabilities of being in the high
-# regime. The model suggests that the 1980's was a time-period in which a
-# high federal funds rate existed.
+# 从 summary 的输出来看，第一个政权（“低政权”）的平均联邦资金利率估计为3.7美元，而在“高政权”中为9.6美元。 
+# 下面我们绘制处于高政权的平滑概率。 该模型表明，1980 年代是联邦基金利率高企的时期。
+
 
 res_fedfunds.smoothed_marginal_probabilities[1].plot(
     title='Probability of being in the high regime', figsize=(12, 3))
 
-# From the estimated transition matrix we can calculate the expected
-# duration of a low regime versus a high regime.
+# 从估计的过渡矩阵中，我们可以计算出低状态与高状态的预期持续时间。
 
 print(res_fedfunds.expected_durations)
 
-# A low regime is expected to persist for about fourteen years, whereas
-# the high regime is expected to persist for only about five years.
+# 弱势政权预计将持续约十四年，而强势政权预计将仅持续约五年。
 
-# ### Federal funds rate with switching intercept and lagged dependent
-# variable
+# ### 带有切换截距且滞后因变量的联邦基金利率
 #
-# The second example augments the previous model to include the lagged
-# value of the federal funds rate.
+# 第二个示例扩展了之前的模型，包括滞后值的联邦基金利率。
 #
 # $$r_t = \mu_{S_t} + r_{t-1} \beta_{S_t} + \varepsilon_t \qquad
 # \varepsilon_t \sim N(0, \sigma^2)$$
 #
-# where $S_t \in \{0, 1\}$, and the regime transitions according to
+# 其中 $S_t \in \{0, 1\}$, 且政权转换依据
 #
 # $$ P(S_t = s_t | S_{t-1} = s_{t-1}) =
 # \begin{bmatrix}
@@ -100,46 +87,37 @@ print(res_fedfunds.expected_durations)
 # \end{bmatrix}
 # $$
 #
-# We will estimate the parameters of this model by maximum likelihood:
-# $p_{00}, p_{10}, \mu_0, \mu_1, \beta_0, \beta_1, \sigma^2$.
+# 我们将通过极大似然来估计这个模型的参数: $p_{00}, p_{10}, \mu_0, \mu_1, \beta_0, \beta_1, \sigma^2$.
 
-# Fit the model
+# 拟合模型
 mod_fedfunds2 = sm.tsa.MarkovRegression(
     dta_fedfunds.iloc[1:], k_regimes=2, exog=dta_fedfunds.iloc[:-1])
 res_fedfunds2 = mod_fedfunds2.fit()
 
 res_fedfunds2.summary()
 
-# There are several things to notice from the summary output:
+# summary 输出的几个注意事项:
 #
-# 1. The information criteria have decreased substantially, indicating
-# that this model has a better fit than the previous model.
-# 2. The interpretation of the regimes, in terms of the intercept, have
-# switched. Now the first regime has the higher intercept and the second
-# regime has a lower intercept.
+# 1.信息标准已大大降低，表明此模型比以前的模型更适合。
+# 2.政权的解释是截距切换。 现在，第一个政权的截距较高，第二个政权的截距较低。
 #
-# Examining the smoothed probabilities of the high regime state, we now
-# see quite a bit more variability.
+# 检查“高政权”的平滑概率，我们现在看到更多的可变性。
 
 res_fedfunds2.smoothed_marginal_probabilities[0].plot(
     title='Probability of being in the high regime', figsize=(12, 3))
 
-# Finally, the expected durations of each regime have decreased quite a
-# bit.
+# 最后，每个政权的预期持续时间已大大减少。
 
 print(res_fedfunds2.expected_durations)
 
-# ### Taylor rule with 2 or 3 regimes
+# ### 具有2 或 3 政权的 Taylor 规则
 #
-# We now include two additional exogenous variables - a measure of the
-# output gap and a measure of inflation - to estimate a switching Taylor-
-# type rule with both 2 and 3 regimes to see which fits the data better.
-#
-# Because the models can be often difficult to estimate, for the 3-regime
-# model we employ a search over starting parameters to improve results,
-# specifying 20 random search repetitions.
+# 现在，包括两个附加的外生变量-一个输出差异度量和一个通货膨胀的度量——估计具有 2 和 3 政权转换 Taylor 规则，看看哪个更好的拟合了数据。
 
-# Get the additional data
+# 由于模型通常难以估计，因此对于3 政权模型，我们对初始参数进行搜索以改善效果，并指定 20 个随机搜索重复。
+
+
+# 获取其他数据
 from statsmodels.tsa.regime_switching.tests.test_markov_regression import ogap, inf
 dta_ogap = pd.Series(
     ogap, index=pd.date_range('1954-07-01', '2010-10-01', freq='QS'))
@@ -148,12 +126,12 @@ dta_inf = pd.Series(
 
 exog = pd.concat((dta_fedfunds.shift(), dta_ogap, dta_inf), axis=1).iloc[4:]
 
-# Fit the 2-regime model
+# 拟合 2-regime 模型
 mod_fedfunds3 = sm.tsa.MarkovRegression(
     dta_fedfunds.iloc[4:], k_regimes=2, exog=exog)
 res_fedfunds3 = mod_fedfunds3.fit()
 
-# Fit the 3-regime model
+# 拟合 3-regime 模型
 np.random.seed(12345)
 mod_fedfunds4 = sm.tsa.MarkovRegression(
     dta_fedfunds.iloc[4:], k_regimes=3, exog=exog)
@@ -163,9 +141,9 @@ res_fedfunds3.summary()
 
 res_fedfunds4.summary()
 
-# Due to lower information criteria, we might prefer the 3-state model,
-# with an interpretation of low-, medium-, and high-interest rate regimes.
-# The smoothed probabilities of each regime are plotted below.
+# 由于较低的信息标准，我们可能更喜欢 3-state 模型，可以解释低，中和高利率政权。
+# 每个政权的平滑概率如下图所示。
+
 
 fig, axes = plt.subplots(3, figsize=(10, 7))
 
@@ -183,31 +161,29 @@ ax.set(title='Smoothed probability of a high-interest rate regime')
 
 fig.tight_layout()
 
-# ### Switching variances
+# ### 切换方差
 #
-# We can also accommodate switching variances. In particular, we consider
-# the model
+# 我们也可以允许切换方差，特别是，我们认为模型是
 #
 # $$
 # y_t = \mu_{S_t} + y_{t-1} \beta_{S_t} + \varepsilon_t \quad
 # \varepsilon_t \sim N(0, \sigma_{S_t}^2)
 # $$
 #
-# We use maximum likelihood to estimate the parameters of this model:
+# 我们将通过极大似然来估计这个模型的参数:
 # $p_{00}, p_{10}, \mu_0, \mu_1, \beta_0, \beta_1, \sigma_0^2, \sigma_1^2$.
 #
-# The application is to absolute returns on stocks, where the data can be
-# found at https://www.stata-press.com/data/r14/snp500.
+# 这个方案是股票的绝对收益，我们可以在 https://www.stata-press.com/data/r14/snp500 找到数据。
 
-# Get the federal funds rate data
+# 获取联邦基金利率数据
 from statsmodels.tsa.regime_switching.tests.test_markov_regression import areturns
 dta_areturns = pd.Series(
     areturns, index=pd.date_range('2004-05-04', '2014-5-03', freq='W'))
 
-# Plot the data
+# 绘图
 dta_areturns.plot(title='Absolute returns, S&P500', figsize=(12, 3))
 
-# Fit the model
+# 拟合模型
 mod_areturns = sm.tsa.MarkovRegression(
     dta_areturns.iloc[1:],
     k_regimes=2,
@@ -217,10 +193,9 @@ res_areturns = mod_areturns.fit()
 
 res_areturns.summary()
 
-# The first regime is a low-variance regime and the second regime is a
-# high-variance regime. Below we plot the probabilities of being in the low-
-# variance regime. Between 2008 and 2012 there does not appear to be a clear
-# indication of one regime guiding the economy.
+# 第一方案是低方差方案，第二方案是高方差方案。下面我们绘制了处于低方差政权的概率。 在2008年至2012年之间，
+# 似乎没有明显迹象表明有一个政权可以指导经济。
+
 
 res_areturns.smoothed_marginal_probabilities[0].plot(
     title='Probability of being in a low-variance regime', figsize=(12, 3))
