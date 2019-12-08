@@ -7,18 +7,14 @@
 # flake8: noqa
 # DO NOT EDIT
 
-# # statsmodels Principal Component Analysis
+# # statsmodels 主成分分析
 
-# *Key ideas:* Principal component analysis, world bank data, fertility
+# *Key ideas:* 主成分分析, 世界银行数据，生育率
 #
-# In this notebook, we use principal components analysis (PCA) to analyze
-# the time series of fertility rates in 192 countries, using data obtained
-# from the World Bank.  The main goal is to understand how the trends in
-# fertility over time differ from country to country.  This is a slightly
-# atypical illustration of PCA because the data are time series.  Methods
-# such as functional PCA have been developed for this setting, but since the
-# fertility data are very smooth, there is no real disadvantage to using
-# standard PCA in this case.
+# 在这个笔记中我们使用主成分分析（PCA），使用从世界银行获得的数据来分析192个国家中的生育率时间序列。
+# 主要目标是了解不同国家之间生育率随时间的变化趋势。 这是 PCA 的非典型例证，因为数据是时间序列。已经
+# 针对这个设置开发了 PCA 的实用方法，但是由于生育率数据非常平滑，因此在这个示例中使用标准PCA并没有真正的缺点。
+
 
 import pandas as pd
 import numpy as np
@@ -26,16 +22,13 @@ import matplotlib.pyplot as plt
 import statsmodels.api as sm
 from statsmodels.multivariate.pca import PCA
 
-# The data can be obtained from the [World Bank web
-# site](http://data.worldbank.org/indicator/SP.DYN.TFRT.IN), but here we
-# work with a slightly cleaned-up version of the data:
+# 可以从[世界银行网站]（http://data.worldbank.org/indicator/SP.DYN.TFRT.IN）中获得数据，
+# 但是在这里我们使用的是经过稍微整理的数据：
 
 data = sm.datasets.fertility.load_pandas().data
 data.head()
 
-# Here we construct a DataFrame that contains only the numerical fertility
-# rate data and set the index to the country names.  We also drop all the
-# countries with any missing data.
+# 在这里，我们构造了一个仅包含数字生育率数据的 DataFrame，并将索引设置为国家/地区名称。我们还会删除所有缺少数据的国家。
 
 columns = list(map(str, range(1960, 2012)))
 data.set_index('Country Name', inplace=True)
@@ -43,20 +36,14 @@ dta = data[columns]
 dta = dta.dropna()
 dta.head()
 
-# There are two ways to use PCA to analyze a rectangular matrix: we can
-# treat the rows as the "objects" and the columns as the "variables", or
-# vice-versa.  Here we will treat the fertility measures as "variables" used
-# to measure the countries as "objects".  Thus the goal will be to reduce
-# the yearly fertility rate values to a small number of fertility rate
-# "profiles" or "basis functions" that capture most of the variation over
-# time in the different countries.
+# 有两种方法使用 PCA 分析矩形矩阵：我们可以将行视为 "objects"，将列视为 "variables"，反之亦然。
+# 在这里，我们将把生育率措施当作 "variables"，将国家作为 "objects"。 因此目标是将每年的生育率值
+# 降低到较小的生育率 "profiles" 或 "basis functions"，以反映不同国家随时间变化的大部分变化。
 
-# The mean trend is removed in PCA, but its worthwhile taking a look at
-# it.  It shows that fertility has dropped steadily over the time period
-# covered in this dataset.  Note that the mean is calculated using a country
-# as the unit of analysis, ignoring population size.  This is also true for
-# the PC analysis conducted below.  A more sophisticated analysis might
-# weight the countries, say by population in 1980.
+
+# 值得一看，PCA中消除了平均趋势。 它表明这个数据集涵盖的时间段内，生育率稳步下降。请注意，均值是
+# 使用国家/地区作为分析单位来计算的，而忽略了人口规模。 对于以下进行的 PCA 分析也是如此。 更复杂
+# 的分析可能会对这些国家加权，比如说 1980 年的人口。
 
 ax = dta.mean().plot(grid=False)
 ax.set_xlabel("Year", size=17)
