@@ -7,74 +7,54 @@
 # flake8: noqa
 # DO NOT EDIT
 
-# # Linear Mixed Effects Models
+# # 线性混合效应模型
 
 import numpy as np
 import statsmodels.api as sm
 import statsmodels.formula.api as smf
 
-# Comparing R lmer to statsmodels MixedLM
+# 比较 R 的 lmer 模型和 statsmodels 的 MixedLM 模型
 # =======================================
 #
-# The statsmodels imputation of linear mixed models (MixedLM) closely
-# follows the approach outlined in Lindstrom and Bates (JASA 1988).  This is
-# also the approach followed in the  R package LME4.  Other packages such as
-# Stata, SAS, etc. should also be consistent with this approach, as the
-# basic techniques in this area are mostly mature.
+# statsmodels 的线性混合模型（MixedLM）的插值紧密遵循 Lindstrom 和 Bates（JASA 1988）中概述的方法。 
+# 这也是 R 软件包 LME4 遵循的方法。 其他软件包如Stata，SAS等，也遵循此方法，因为该领域的基本技术已很成熟。
 #
-# Here we show how linear mixed models can be fit using the MixedLM
-# procedure in statsmodels.  Results from R (LME4) are included for
-# comparison.
-#
-# Here are our import statements:
+# 在这里，我们将展示如何使用 statsmodels 的 MixedLM 拟合线性混合模型的过程，并与 R（LME4）的结果进行比较。
+# 这是我们的导入申明:
 
-# ## Growth curves of pigs
+# ## 猪的生长曲线
 #
-# These are longitudinal data from a factorial experiment. The outcome
-# variable is the weight of each pig, and the only predictor variable we
-# will use here is "time".  First we fit a model that expresses the mean
-# weight as a linear function of time, with a random intercept for each pig.
-# The model is specified using formulas. Since the random effects structure
-# is not specified, the default random effects structure (a random intercept
-# for each group) is automatically used.
-
+# 这些是析因实验的纵向数据。 结果变量是每头猪的体重，这里我们将使用的唯一预测变量是“时间”。 
+# 首先，我们拟合一个模型，该模型将平均体重表示为时间的线性函数，每头猪都有随机截距。
+# 使用公式指定模型。 由于未指定随机效应结构，因此会自动使用默认的随机效应结构（每个组的随机一个截距）。
 data = sm.datasets.get_rdataset('dietox', 'geepack').data
 md = smf.mixedlm("Weight ~ Time", data, groups=data["Pig"])
 mdf = md.fit()
 print(mdf.summary())
 
-# Here is the same model fit in R using LMER:
+# 这是使用 R 的 LMER 拟合的相同模型:
 
-# Note that in the statsmodels summary of results, the fixed effects and
-# random effects parameter estimates are shown in a single table.  The
-# random effect for animal is labeled "Intercept RE" in the statsmodels
-# output above.  In the LME4 output, this effect is the pig intercept under
-# the random effects section.
+# 请注意，在statsmodels 的 summary 结果中，固定效应和随机效应参数估计值显示在一个单表中。 
+# 在 statsmodels 上面输出的动物随机效应标记为 "Intercept RE"。 在 LME4 输出中，这个效应
+# 是在随机效应下猪的截距。
 #
-# There has been a lot of debate about whether the standard errors for
-# random effect variance and covariance parameters are useful.  In LME4,
-# these standard errors are not displayed, because the authors of the
-# package believe they are not very informative.  While there is good reason
-# to question their utility, we elected to include the standard errors in
-# the summary table, but do not show the corresponding Wald confidence
-# intervals.
+# 关于随机效应方差和协方差参数的标准误差是否有用存在很多争论。 在LME4中，不会显示这些标准误差，
+# 因为该软件包的作者认为它们不是非常有用。 尽管有充分的理由质疑其效用，但我们选择在 summary 表中
+# 包括标准误差，但未显示相应的 Wald 置信区间。
 #
-# Next we fit a model with two random effects for each animal: a random
-# intercept, and a random slope (with respect to time).  This means that
-# each pig may have a different baseline weight, as well as growing at a
-# different rate. The formula specifies that "Time" is a covariate with a
-# random coefficient.  By default, formulas always include an intercept
-# (which could be suppressed here using "0 + Time" as the formula).
+# 接下来，我们为每个动物拟合一个具有两种随机效应的模型：随机截距和随机斜率（相对于时间）。这意味着
+# 每头猪可能具有不同的基线体重，并且以不同的速度生长。该公式指定“时间”是具有随机系数的协变量。默认情况下，
+# 公式始终包含一个截距（此处可以使用 "0 + Time" 作为公式将其抑制）。
 
 md = smf.mixedlm("Weight ~ Time", data, groups=data["Pig"], re_formula="~Time")
 mdf = md.fit()
 print(mdf.summary())
 
-# Here is the same model fit using LMER in R:
+# 这是使用 R 的 LMER 拟合的相同模型::
 
-# The random intercept and random slope are only weakly correlated $(0.294
-# / \sqrt{19.493 * 0.416} \approx 0.1)$.  So next we fit a model in which
-# the two random effects are constrained to be uncorrelated:
+# $(0.294 / \sqrt{19.493 * 0.416} \approx 0.1)$ 的随机截距和随机斜率仅是弱相关的
+# 因此，接下来我们拟合一个模型，其中两个随机效应是不相关：
+
 
 .294 / (19.493 * .416)**.5
 
@@ -85,59 +65,45 @@ free = sm.regression.mixed_linear_model.MixedLMParams.from_components(
 mdf = md.fit(free=free)
 print(mdf.summary())
 
-# The likelihood drops by 0.3 when we fix the correlation parameter to 0.
-# Comparing 2 x 0.3 = 0.6 to the chi^2 1 df reference distribution suggests
-# that the data are very consistent with a model in which this parameter is
-# equal to 0.
+# 当我们将相关性参数固定为 0 时，似然降低了 0.3。将 2 x 0.3 = 0.6 与 chi^2 1 df 参考分布进行比较表明，
+# 数据与参数等于 0 的模型非常一致。
 #
-# Here is the same model fit using LMER in R (note that here R is
-# reporting the REML criterion instead of the likelihood, where the REML
-# criterion is twice the log likelihood):
+# 
+# 这是使用 R 的 LMER 拟合的相同模型（请注意，此处 R 报告的是 REML 标准而不是似然，其中 REML标准 是对数似然的两倍）：Here is the same model fit using LMER in R (note that here R is
 
-# ## Sitka growth data
+
+# ## Sitka 生长数据
 #
-# This is one of the example data sets provided in the LMER R library.
-# The outcome variable is the size of the tree, and the covariate used here
-# is a time value.  The data are grouped by tree.
+#这是 R 库的 LMER 提供的示例数据集之一。 结果变量是树的大小，此处使用的协变量是时间值。数据按树分组。
 
 data = sm.datasets.get_rdataset("Sitka", "MASS").data
 endog = data["size"]
 data["Intercept"] = 1
 exog = data[["Intercept", "Time"]]
 
-# Here is the statsmodels LME fit for a basic model with a random
-# intercept.  We are passing the endog and exog data directly to the LME
-# init function as arrays.  Also note that endog_re is specified explicitly
-# in argument 4 as a random intercept (although this would also be the
-# default if it were not specified).
+# 这是 statsmodels 的 LME 拟合的一个随机截距基本模型。 我们通过 Endog 和 Exog 直接作为数组传递给 LME init 函数。
+# 还要注意，endog_re 明确指定了参数4作为一个随机截距（尽管这可能是默认值，而不是指定）。
 
 md = sm.MixedLM(endog, exog, groups=data["tree"], exog_re=exog["Intercept"])
 mdf = md.fit()
 print(mdf.summary())
 
-# Here is the same model fit in R using LMER:
+# 这是使用 R 的 LMER 拟合的相同模型:
 
-# We can now try to add a random slope.  We start with R this time.  From
-# the code and output below we see that the REML estimate of the variance of
-# the random slope is nearly zero.
+# 现在我们可以尝试添加一个随机斜率。这次我们从R开始。从下面的代码和输出中，我们看到随机斜率方差的 REML 估计几乎为零。
 
-# If we run this in statsmodels LME with defaults, we see that the
-# variance estimate is indeed very small, which leads to a warning about the
-# solution being on the boundary of the parameter space.  The regression
-# slopes agree very well with R, but the likelihood value is much higher
-# than that returned by R.
+# 如果我们使用 statsmodels 的 LME 的默认设置运行此命令，则会看到方差估计的确很小，这会导致有关解决方案
+# 在参数空间的边界上的警告。回归斜率与 R (拟合模型的斜率)非常吻合，但是似然值远高于 R 返回的似然值。
+
 
 exog_re = exog.copy()
 md = sm.MixedLM(endog, exog, data["tree"], exog_re)
 mdf = md.fit()
 print(mdf.summary())
 
-# We can further explore the random effects structure by constructing plots
-# of the profile likelihoods. We start with the random intercept, generating
-# a plot of the profile likelihood from 0.1 units below to 0.1 units above
-# the MLE. Since each optimization inside the profile likelihood generates a
-# warning (due to the random slope variance being close to zero), we turn
-# off the warnings here.
+# 我们可以通过绘制轮廓似然图来进一步探索随机效应结构。我们从随机截距开始，生成一个从 0.1个单位之下到0.1个单位之上的
+# MLE 的轮廓似然图。 因为配置文件内的每个优化都会产生警告（由于随机斜率方差接近于零），因此我们在此关闭警告。
+
 
 import warnings
 
@@ -145,9 +111,8 @@ with warnings.catch_warnings():
     warnings.filterwarnings("ignore")
     likev = mdf.profile_re(0, 're', dist_low=0.1, dist_high=0.1)
 
-# Here is a plot of the profile likelihood function.  We multiply the log-
-# likelihood difference by 2 to obtain the usual $\chi^2$ reference
-# distribution with 1 degree of freedom.
+# 这是一个轮廓似然图函数。我们将对数似然差乘以2，使它服从带有 1个自由度的 $\chi^2$ 参考分布。
+
 
 import matplotlib.pyplot as plt
 
@@ -156,10 +121,7 @@ plt.plot(likev[:, 0], 2 * likev[:, 1])
 plt.xlabel("Variance of random slope", size=17)
 plt.ylabel("-2 times profile log likelihood", size=17)
 
-# Here is a plot of the profile likelihood function. The profile
-# likelihood plot shows that the MLE of the random slope variance parameter
-# is a very small positive number, and that there is low uncertainty in this
-# estimate.
+# 这是一个轮廓似然图函数。轮廓似然图显示随机斜率方差参数的 MLE 模型是一个非常小的正数，并且此估计的不确定性较低。
 
 re = mdf.cov_re.iloc[1, 1]
 likev = mdf.profile_re(1, 're', dist_low=.5 * re, dist_high=0.8 * re)
