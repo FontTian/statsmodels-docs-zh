@@ -7,14 +7,11 @@
 # flake8: noqa
 # DO NOT EDIT
 
-# # State space modeling: Local Linear Trends
+# # 状态空间建模：局部线性趋势
 
-# This notebook describes how to extend the statsmodels statespace classes
-# to create and estimate a custom model. Here we develop a local linear
-# trend model.
+# 这个笔记描述了如何扩展 statsmodels 状态空间类以创建和估计自定义模型。在这里，我们开发了一个局部线性趋势模型。
 #
-# The Local Linear Trend model has the form (see Durbin and Koopman 2012,
-# Chapter 3.2 for all notation and details):
+# 局部线性趋势模型具有以下形式（有关注释和详细信息，请参见 Durbin 和 Koopman 2012，第3.2章）：
 #
 # $$
 # \begin{align}
@@ -25,7 +22,7 @@
 # \end{align}
 # $$
 #
-# It is easy to see that this can be cast into state space form as:
+# 很容易看出，可以将其转换为状态空间形式：
 #
 # $$
 # \begin{align}
@@ -37,9 +34,7 @@
 # \end{align}
 # $$
 #
-# Notice that much of the state space representation is composed of known
-# values; in fact the only parts in which parameters to be estimated appear
-# are in the variance / covariance matrices:
+# 注意，许多状态空间画像是由已知值组成的。 实际上，要估计参数的唯一部分出现在方差/协方差矩阵中：
 #
 # $$
 # \begin{align}
@@ -55,71 +50,39 @@ from scipy.stats import norm
 import statsmodels.api as sm
 import matplotlib.pyplot as plt
 
-# To take advantage of the existing infrastructure, including Kalman
-# filtering and maximum likelihood estimation, we create a new class which
-# extends from `statsmodels.tsa.statespace.MLEModel`. There are a number of
-# things that must be specified:
+# 为了利用包括卡尔曼滤波和最大似然估计在内的现有基础架构，我们创建了一个新的类，该类继承了 
+# `statsmodels.tsa.statespace.MLEModel` 类。必须指定许多内容：
+# 
 #
-# 1. **k_states**, **k_posdef**: These two parameters must be provided to
-# the base classes in initialization. The inform the statespace model about
-# the size of, respectively, the state vector, above $\begin{pmatrix} \mu_t
-# & \nu_t \end{pmatrix}'$, and   the state error vector, above
-# $\begin{pmatrix} \xi_t & \zeta_t \end{pmatrix}'$. Note that the dimension
-# of the endogenous vector does not have to be specified, since it can be
-# inferred from the `endog` array.
-# 2. **update**: The method `update`, with argument `params`, must be
-# specified (it is used when `fit()` is called to calculate the MLE). It
-# takes the parameters and fills them into the appropriate state space
-# matrices. For example, below, the `params` vector contains variance
-# parameters $\begin{pmatrix} \sigma_\varepsilon^2 & \sigma_\xi^2 &
-# \sigma_\zeta^2\end{pmatrix}$, and the `update` method must place them in
-# the observation and state covariance matrices. More generally, the
-# parameter vector might be mapped into many different places in all of the
-# statespace matrices.
-# 3. **statespace matrices**: by default, all state space matrices
-# (`obs_intercept, design, obs_cov, state_intercept, transition, selection,
-# state_cov`) are set to zeros. Values that are fixed (like the ones in the
-# design and transition matrices here) can be set in initialization, whereas
-# values that vary with the parameters should be set in the `update` method.
-# Note that it is easy to forget to set the selection matrix, which is often
-# just the identity matrix (as it is here), but not setting it will lead to
-# a very different model (one where there is not a stochastic component to
-# the transition equation).
-# 4. **start params**: start parameters must be set, even if it is just a
-# vector of zeros, although often good start parameters can be found from
-# the data. Maximum likelihood estimation by gradient methods (as employed
-# here) can be sensitive to the starting parameters, so it is important to
-# select good ones if possible. Here it does not matter too much (although
-# as variances, they should't be set zero).
-# 5. **initialization**: in addition to defined state space matrices, all
-# state space models must be initialized with the mean and variance for the
-# initial distribution of the state vector. If the distribution is known,
-# `initialize_known(initial_state, initial_state_cov)` can be called, or if
-# the model is stationary (e.g. an ARMA model), `initialize_stationary` can
-# be used. Otherwise, `initialize_approximate_diffuse` is a reasonable
-# generic initialization (exact diffuse initialization is not yet
-# available). Since the local linear trend model is not stationary (it is
-# composed of random walks) and since the distribution is not generally
-# known, we use `initialize_approximate_diffuse` below.
+# 1. ** k_states **，** k_posdef **：这两个参数必须在初始化时提供给基类​​。状态空间模型分别报告了在$\begin{pmatrix} \mu_t & \nu_t \end{pmatrix}'$ ，
+# 之上的状态向量和在 $\begin{pmatrix} \xi_t & \zeta_t \end{pmatrix}'$ 状态误差向量的大小。注意，不必指定内生向量的维数，因为它可以从 `endog` 数组中推断出来
 #
-# The above are the minimum necessary for a successful model. There are
-# also a number of things that do not have to be set, but which may be
-# helpful or important for some applications:
+# 2. ** update **：`update` 方法带有必须指定的 `params` 参数（通常调用 `fit()` 方法来计算 MLE ）。它采用参数并将其填充到适当的状态空间矩阵中。
+# 例如，下面的 `params` 向量包含方差参数$\begin{pmatrix} \sigma_\varepsilon^2 & \sigma_\xi^2 & \sigma_\zeta^2\end{pmatrix}$，以及`update`方法
+# 必须将它们放入观测和状态协方差矩阵中。一般来说，参数向量可以映射到所有状态空间矩阵中的许多不同位置。
 #
-# 1. **transform / untransform**: when `fit` is called, the optimizer in
-# the background will use gradient methods to select the parameters that
-# maximize the likelihood function. By default it uses unbounded
-# optimization, which means that it may select any parameter value. In many
-# cases, that is not the desired behavior; variances, for example, cannot be
-# negative. To get around this, the `transform` method takes the
-# unconstrained vector of parameters provided by the optimizer and returns a
-# constrained vector of parameters used in likelihood evaluation.
-# `untransform` provides the reverse operation.
-# 2. **param_names**: this internal method can be used to set names for
-# the estimated parameters so that e.g. the summary provides meaningful
-# names. If not present, parameters are named `param0`, `param1`, etc.
+# 3. **statespace matrices**：默认情况下，所有状态空间矩阵（obs_intercept，design，obs_cov，state_intercept，transition，selection，state_cov）均设置为零。
+# 可以在初始化时设置固定的值（如此处的设计矩阵和过渡矩阵的值），而随参数而变化的值应在 `update` 方法中设置。请注意，很容易忘记设置 selection 矩阵，
+# 该矩阵通常只是单位矩阵（如此处所示），但是如果不设置它，则会导致模型非常不同（一个没有随机成分的过渡方程）。
+#
+# 4. **start params**：start parameters 必须设置，尽管 start parameters 可以从数据中找到良好的初始参数，即使只是零的向量，也必须设置初始参数。通过梯度方法（此处采用）
+# 进行的极大似然估计可能对初始参数敏感，因此，如果可能的话，选择良好的参数非常重要。此处并没有太大关系（尽管作为方差，不应将其设置为零）
+#
+# **initialization**：除了定义的状态空间矩阵之外，所有状态空间模型还必须使用均值和方差来初始化，用于状态向量的初始分布。 
+# 如果已知分布，则可以调用 `initialize_known(initial_state, initial_state_cov)`，或者如果模型是固定的（例如ARMA模型），
+# 则可以使用 `initialize_stationary`。 否则，`initialize_approximate_diffuse` 是一个合理通用的初始化（明确扩散的初始化尚不可用）。
+# 由于局部线性趋势模型不是固定的（它由随机游走组成），并且由于分布通常是未知的，因此我们在下面使用 `initialize_approximate_diffuse`。
+#
+# 以上设置是成功建模的最低要求。 还有许多设置不是必须设置的，但对于某些应用程序可能有帮助或重要：
+#
+# 1.**transform / untransform**:：当调用`fit`时，后台的优化器将使用梯度方法来选择使似然函数最大化的参数。 默认情况下，它使用无界优化，
+# 这意味着它可以选择任何参数值。 在许多情况下，这不是理想的行为，例如，方差不能为负。 为了解决这个问题，`transform` 方法采用了优化器提供
+# 参数的无约束向量，并返回一个在似然评估中使用参数的约束向量。 `untransform` 提供相反的操作。
+#
+# 2.**param_names**：这个内置方法可用于设置估算参数的名称，例如 summary 提供了有意义的名称。 如果不存在，则参数可命名为 `param0`，`param1`等。
+
 """
-Univariate Local Linear Trend Model
+单变量局部线性趋势模型
 """
 
 
@@ -128,7 +91,7 @@ class LocalLinearTrend(sm.tsa.statespace.MLEModel):
         # Model order
         k_states = k_posdef = 2
 
-        # Initialize the statespace
+        # 初始化状态空间
         super(LocalLinearTrend, self).__init__(
             endog,
             k_states=k_states,
@@ -136,12 +99,12 @@ class LocalLinearTrend(sm.tsa.statespace.MLEModel):
             initialization='approximate_diffuse',
             loglikelihood_burn=k_states)
 
-        # Initialize the matrices
+        # 初始化矩阵
         self.ssm['design'] = np.array([1, 0])
         self.ssm['transition'] = np.array([[1, 1], [0, 1]])
         self.ssm['selection'] = np.eye(k_states)
 
-        # Cache some indices
+        # 缓存索引
         self._state_cov_idx = ('state_cov', ) + np.diag_indices(k_posdef)
 
     @property
@@ -161,22 +124,22 @@ class LocalLinearTrend(sm.tsa.statespace.MLEModel):
     def update(self, params, *args, **kwargs):
         params = super(LocalLinearTrend, self).update(params, *args, **kwargs)
 
-        # Observation covariance
+        # 观测协方差
         self.ssm['obs_cov', 0, 0] = params[0]
 
-        # State covariance
+        # 状态协方差
         self.ssm[self._state_cov_idx] = params[1:]
 
 
-# Using this simple model, we can estimate the parameters from a local
-# linear trend model. The following example is from Commandeur and Koopman
-# (2007), section 3.4., modeling motor vehicle fatalities in Finland.
+# 使用这个简单的模型，我们可以从局部线性趋势模型中估计参数。 下面的示例是来自 Commandeur 和 Koopman（2007）第3.4节，
+# 对芬兰的机动车死亡人数进行了建模。
+
 
 import requests
 from io import BytesIO
 from zipfile import ZipFile
 
-# Download the dataset
+# 加载数据集
 ck = requests.get(
     'http://staff.feweb.vu.nl/koopman/projects/ckbook/OxCodeAll.zip').content
 zipped = ZipFile(BytesIO(ck))
@@ -189,38 +152,33 @@ df = pd.read_table(
     engine='python',
     names=['date', 'nf', 'ff'])
 
-# Since we defined the local linear trend model as extending from
-# `MLEModel`, the `fit()` method is immediately available, just as in other
-# statsmodels maximum likelihood classes. Similarly, the returned results
-# class supports many of the same post-estimation results, like the
-# `summary` method.
+# 由于我们定义局部线性趋势模型是从 `MLEModel` 扩展而来，因此 `fit()` 方法可直接使用，就像在 statsmodels 中的其他极大似然类中一样。 
+# 同样，返回的结果类支持许多相同的 post-estimation（后估计）结果，例如 `summary` 方法。
 #
 
-# Load Dataset
+# 加载数据集
 df.index = pd.date_range(
     start='%d-01-01' % df.date[0], end='%d-01-01' % df.iloc[-1, 0], freq='AS')
 
-# Log transform
+# 对数转换
 df['lff'] = np.log(df['ff'])
 
-# Setup the model
+# 设置模型
 mod = LocalLinearTrend(df['lff'])
 
-# Fit it using MLE (recall that we are fitting the three variance
-# parameters)
+# 使用 MLE 拟合（记得我们拟合了三个方差参数）
 res = mod.fit(disp=False)
 print(res.summary())
 
-# Finally, we can do post-estimation prediction and forecasting. Notice
-# that the end period can be specified as a date.
+# 最后，我们可以做 post-estimation（后估计）预测和预测。注意，可以将结束时间指定为日期。
 
-# Perform prediction and forecasting
+# 执行预测和预测
 predict = res.get_prediction()
 forecast = res.get_forecast('2014')
 
 fig, ax = plt.subplots(figsize=(10, 4))
 
-# Plot the results
+# 绘制结果
 df['lff'].plot(ax=ax, style='k.', label='Observations')
 predict.predicted_mean.plot(ax=ax, label='One-step-ahead Prediction')
 predict_ci = predict.conf_int(alpha=0.05)
@@ -237,16 +195,16 @@ forecast_index = np.arange(len(predict_ci), len(predict_ci) + len(forecast_ci))
 ax.fill_between(
     forecast_index, forecast_ci.iloc[:, 0], forecast_ci.iloc[:, 1], alpha=0.1)
 
-# Cleanup the image
+# 简化图像
 ax.set_ylim((4, 8))
 legend = ax.legend(loc='lower left')
 
-# ### References
+# ### 参考文献
 #
 #     Commandeur, Jacques J. F., and Siem Jan Koopman. 2007.
-#     An Introduction to State Space Time Series Analysis.
+#     状态空间时间序列分析简介.
 #     Oxford ; New York: Oxford University Press.
 #
 #     Durbin, James, and Siem Jan Koopman. 2012.
-#     Time Series Analysis by State Space Methods: Second Edition.
+#     通过状态空间方法进行时间序列分析: Second Edition.
 #     Oxford University Press.
