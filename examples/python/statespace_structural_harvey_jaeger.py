@@ -9,25 +9,18 @@
 
 # # Detrending, Stylized Facts and the Business Cycle
 #
-# In an influential article, Harvey and Jaeger (1993) described the use of
-# unobserved components models (also known as "structural time series
-# models") to derive stylized facts of the business cycle.
+# 在有影响力的文章中，Harvey 和 Jaeger（1993）描述了使用未观测到的组件模型（也称为“结构时间序列模型”）来得出商业周期性的典型事实。
 #
-# Their paper begins:
-#
-#     "Establishing the 'stylized facts' associated with a set of time
-# series is widely considered a crucial step
-#     in macroeconomic research ... For such facts to be useful they
-# should (1) be consistent with the stochastic
-#     properties of the data and (2) present meaningful information."
-#
-# In particular, they make the argument that these goals are often better
-# met using the unobserved components approach rather than the popular
-# Hodrick-Prescott filter or Box-Jenkins ARIMA modeling techniques.
-#
-# statsmodels has the ability to perform all three types of analysis, and
-# below we follow the steps of their paper, using a slightly updated
-# dataset.
+# 他们的论文开始:
+# 
+#     “ 'stylized facts' 与一系列时间序列建立相关，被广泛认为是至关重要的一步。在宏观经济研究中，为了使此类事实有用，
+# 它们应（1）与随机变量保持一致数据的属性，以及（2）提供有意义的信息。”
+
+# 尤其是，他们提出这样的论点，通常使用未观测到的组件方法可以更好地实现这些目标，而不是使用流行的 Hodrick-Prescott 滤波器
+# 或 Box-Jenkins ARIMA 建模技术。
+
+# statsmodels 能够实现这三种类型的分析，下面我们将使用稍有更新的数据集按照其论文的步骤进行操作。
+
 
 import numpy as np
 import pandas as pd
@@ -36,10 +29,9 @@ import matplotlib.pyplot as plt
 
 from IPython.display import display, Latex
 
-# ## Unobserved Components
+# ## 未观测到的组件
 #
-# The unobserved components model available in statsmodels can be written
-# as:
+# 在 statsmodels 中未观察到的组件模型可供使用，并写成：
 #
 # $$
 # y_t = \underbrace{\mu_{t}}_{\text{trend}} +
@@ -49,16 +41,12 @@ from IPython.display import display, Latex
 # \underbrace{\varepsilon_t}_{\text{irregular}}
 # $$
 #
-# see Durbin and Koopman 2012, Chapter 3 for notation and additional
-# details. Notice that different specifications for the different individual
-# components can support a wide range of models. The specific models
-# considered in the paper and below are specializations of this general
-# equation.
+# 有关注释和其他详细信息，请参见 Durbin 和 Koopman 2012，第3章。 请注意，针对不同的单个组件的不同规格可以支持各种型号。
+# 论文认为特定模型，是下文专业的通用方程。
 #
-# ### Trend
+# ### 趋势性
 #
-# The trend component is a dynamic extension of a regression model that
-# includes an intercept and linear time-trend.
+# 趋势组件是包含截距和线性时间趋势的回归模型的动态扩展。
 #
 # $$
 # \begin{align}
@@ -69,21 +57,16 @@ from IPython.display import display, Latex
 # \end{align}
 # $$
 #
-# where the level is a generalization of the intercept term that can
-# dynamically vary across time, and the trend is a generalization of the
-# time-trend such that the slope can dynamically vary across time.
+# 其中水平是截距的一般化，可以随时间动态变化，趋势是一般化的时间趋势，使得斜率可以随时间动态变化。
 #
-# For both elements (level and trend), we can consider models in which:
+# 对于两个元素（水平和趋势），我们可以考虑以下模型：:
 #
-# - The element is included vs excluded (if the trend is included, there
-# must also be a level included).
-# - The element is deterministic vs stochastic (i.e. whether or not the
-# variance on the error term is confined to be zero or not)
+# - 元素包括还是不包括（如果包括趋势，则还必须包括水平）。
+# - 元素是确定性还是随机性（即误差项的方差是否限制为零）
 #
-# The only additional parameters to be estimated via MLE are the variances
-# of any included stochastic components.
+# 估计唯一附加的参数是通过 MLE 来估计，是任何包含的随机成分的方差。
 #
-# This leads to the following specifications:
+# 遵循以下规范:
 #
 # |                                                                      |
 # Level | Trend | Stochastic Level | Stochastic Trend |
@@ -102,37 +85,31 @@ from IPython.display import display, Latex
 # | Smooth trend <br /> (integrated random walk)                         |
 # ✓     | ✓     |                  | ✓                |
 #
-# ### Seasonal
+# ### 季节性
 #
-# The seasonal component is written as:
+# 季节性可以写成:
 #
 # <span>$$
 # \gamma_t = - \sum_{j=1}^{s-1} \gamma_{t+1-j} + \omega_t \qquad \omega_t
 # \sim N(0, \sigma_\omega^2)
 # $$</span>
 #
-# The periodicity (number of seasons) is `s`, and the defining character
-# is that (without the error term), the seasonal components sum to zero
-# across one complete cycle. The inclusion of an error term allows the
-# seasonal effects to vary over time.
+# 周期性（number of seasons）为 `s`，定义 character 为（无误差项）：在一个完整的周期中，季节性因子的总和为零。
+# 包含误差项可以使季节性影响随时间变化。
 #
-# The variants of this model are:
+# 此模型的变体是:
 #
-# - The periodicity `s`
-# - Whether or not to make the seasonal effects stochastic.
+# - 周期性 `s`
+# - 是否使季节性影响随机.
 #
-# If the seasonal effect is stochastic, then there is one additional
-# parameter to estimate via MLE (the variance of the error term).
+# 如果季节性影响是随机的，则可以通过 MLE（误差项的方差）估算一个附加参数。
 #
-# ### Cycle
+# ### 周期性
 #
-# The cyclical component is intended to capture cyclical effects at time
-# frames much longer than captured by the seasonal component. For example,
-# in economics the cyclical term is often intended to capture the business
-# cycle, and is then expected to have a period between "1.5 and 12 years"
-# (see Durbin and Koopman).
+# 周期性因子旨在捕获周期性影响，在时间范围内比季节性因子所捕获的更长。 例如，在经济学中，周期性通常是指旨在捕获的商业周期，
+# 并预测其周期为 “1.5至12年” （请参见 Durbin 和 Koopman ）。
 #
-# The cycle is written as:
+# 周期性可以写成:
 #
 # <span>$$
 # \begin{align}
@@ -143,42 +120,35 @@ from IPython.display import display, Latex
 # \end{align}
 # $$</span>
 #
-# The parameter $\lambda_c$ (the frequency of the cycle) is an additional
-# parameter to be estimated by MLE. If the seasonal effect is stochastic,
-# then there is one another parameter to estimate (the variance of the error
-# term - note that both of the error terms here share the same variance, but
-# are assumed to have independent draws).
+# 参数 $\lambda_c$ （周期性的频率）是 MLE 估计的附加参数。 如果季节性影响是随机的，则可以使用另一个参数进行估计
+# （误差项的方差-注意这两个误差项具有相同的方差，但我们假定误差项具有独立的）。
 #
 # ### Irregular
 #
-# The irregular component is assumed to be a white noise error term. Its
-# variance is a parameter to be estimated by MLE; i.e.
+# 假设不规则成分是白噪声误差项。 它的方差是 MLE 估计的参数； 即
 #
 # $$
 # \varepsilon_t \sim N(0, \sigma_\varepsilon^2)
 # $$
 #
-# In some cases, we may want to generalize the irregular component to
-# allow for autoregressive effects:
+# 在某些情况下，我们可能想对不规则成分进行泛化以考虑自回归效应：
 #
 # $$
 # \varepsilon_t = \rho(L) \varepsilon_{t-1} + \epsilon_t, \qquad
 # \epsilon_t \sim N(0, \sigma_\epsilon^2)
 # $$
 #
-# In this case, the autoregressive parameters would also be estimated via
-# MLE.
+# 在这种情况下，还将通过 MLE 来估计自回归参数。
 #
-# ### Regression effects
+# ### 回归效应
 #
-# We may want to allow for explanatory variables by including additional
-# terms
+# 我们可能想要通过附加项
 #
 # <span>$$
 # \sum_{j=1}^k \beta_j x_{jt}
 # $$</span>
 #
-# or for intervention effects by including
+# 来允许解释变量或为了干预效果通过
 #
 # <span>$$
 # \begin{align}
@@ -187,36 +157,32 @@ from IPython.display import display, Latex
 # \end{align}
 # $$</span>
 #
-# These additional parameters could be estimated via MLE or by including
-# them as components of the state space formulation.
+# 这些附加参数可以通过 MLE 来估算，也可以通过将其作为状态空间公式的组成部分来估算。
 #
 
-# ## Data
+# ## 数据
 #
-# Following Harvey and Jaeger, we will consider the following time series:
+# 继 Harvey 和 Jaeger 之后，我们认为以下时间序列是:
 #
-# - US real GNP, "output",
+# - 美国实际国民生产总值, "output",
 # ([GNPC96](https://research.stlouisfed.org/fred2/series/GNPC96))
-# - US GNP implicit price deflator, "prices",
+# - 美国国民生产总值的隐性物价平缓指数, "prices",
 # ([GNPDEF](https://research.stlouisfed.org/fred2/series/GNPDEF))
-# - US monetary base, "money",
+# - 美国货币基础, "money",
 # ([AMBSL](https://research.stlouisfed.org/fred2/series/AMBSL))
 #
-# The time frame in the original paper varied across series, but was
-# broadly 1954-1989. Below we use data from the period 1948-2008 for all
-# series. Although the unobserved components approach allows isolating a
-# seasonal component within the model, the series considered in the paper,
-# and here, are already seasonally adjusted.
+# 与原始论文中的时间范围 serises 有异，但大致是 1954-1989 年。 下面我们使用所有 series 是来自 1948-2008 年的数据。 
+# 尽管未观测到组件的方法允许在模型中剥离季节性成分，但是，在这里本文的 series 已经做了季节性调整。
+# 
 #
-# All data series considered here are taken from [Federal Reserve Economic
-# Data (FRED)](https://research.stlouisfed.org/fred2/). Conveniently, the
-# Python library [Pandas](http://pandas.pydata.org/) has the ability to
-# download data from FRED directly.
+# 这里研究的所有数据系列均来自[Federal Reserve Economic Data（FRED）]（https://research.stlouisfed.org/fred2/）。 
+# 更加便捷的是，Python 的 [Pandas] 库（http://pandas.pydata.org/）可以直接从 FRED 加载数据。
 
-# Datasets
+
+# 数据集
 from pandas_datareader.data import DataReader
 
-# Get the raw data
+# 获取原始数据
 start = '1948-01'
 end = '2008-01'
 us_gnp = DataReader('GNPC96', 'fred', start=start, end=end)
@@ -226,16 +192,15 @@ us_monetary_base = DataReader(
 recessions = DataReader(
     'USRECQ', 'fred', start=start, end=end).resample('QS').last().values[:, 0]
 
-# Construct the dataframe
+# 组合 DataFrame
 dta = pd.concat(
     map(np.log, (us_gnp, us_gnp_deflator, us_monetary_base)), axis=1)
 dta.columns = ['US GNP', 'US Prices', 'US monetary base']
 dates = dta.index._mpl_repr()
 
-# To get a sense of these three variables over the timeframe, we can plot
-# them:
+# 为了理解对时间范围内的这三个变量，绘图：
 
-# Plot the data
+# 数据绘图
 ax = dta.plot(figsize=(13, 3))
 ylim = ax.get_ylim()
 ax.xaxis.grid()
@@ -247,10 +212,9 @@ ax.fill_between(
     facecolor='k',
     alpha=0.1)
 
-# ## Model
+# ## 模型
 #
-# Since the data is already seasonally adjusted and there are no obvious
-# explanatory variables, the generic model considered is:
+# 由于数据已经做了季节性调整，并且没有明显的解释变量，因此考虑的通用模型为
 #
 # $$
 # y_t = \underbrace{\mu_{t}}_{\text{trend}} +
@@ -258,22 +222,18 @@ ax.fill_between(
 # \underbrace{\varepsilon_t}_{\text{irregular}}
 # $$
 #
-# The irregular will be assumed to be white noise, and the cycle will be
-# stochastic and damped. The final modeling choice is the specification to
-# use for the trend component. Harvey and Jaeger consider two models:
+# 不规则成分将被认为是白噪声，并且周期性将是随机的和衰减的。 最终的建模选择是使用趋势组件的规范。 Harvey 和 Jaeger 考虑了两种模型：
 #
-# 1. Local linear trend (the "unrestricted" model)
-# 2. Smooth trend (the "restricted" model, since we are forcing
-# $\sigma_\eta = 0$)
+# 1. 局部线性趋势 ( "unrestricted" 模型)
+# 2. 平滑趋势 ( "restricted" 模型, 因为我们面临 $\sigma_\eta = 0$ 的情况)
 #
-# Below, we construct `kwargs` dictionaries for each of these model types.
-# Notice that rather that there are two ways to specify the models. One way
-# is to specify components directly, as in the table above. The other way is
-# to use string names which map to various specifications.
+# 下面，我们为每种模型类型构造 `kwargs` 字典。 请注意，有两种方法可以指定模型。一种方法是直接指定组件，如上表所示。
+# 另一种方法是使用字符名称映射到各种规范。
 
-# Model specifications
 
-# Unrestricted model, using string specification
+# 模型规范
+
+# 不受限制模型，使用字符规范
 unrestricted_model = {
     'level': 'local linear trend',
     'cycle': True,
@@ -281,16 +241,15 @@ unrestricted_model = {
     'stochastic_cycle': True
 }
 
-# Unrestricted model, setting components directly
-# This is an equivalent, but less convenient, way to specify a
-# local linear trend model with a stochastic damped cycle:
+# 不受限制模型，直接设置组件
+# 这是一种等效的但不是很便捷的方法，用于指定一个带有随机阻尼周期的局部线性趋势模型
 # unrestricted_model = {
 #     'irregular': True, 'level': True, 'stochastic_level': True, 'trend':
 # True, 'stochastic_trend': True,
 #     'cycle': True, 'damped_cycle': True, 'stochastic_cycle': True
 # }
 
-# The restricted model forces a smooth trend
+# 受限制模型强加一个平滑趋势
 restricted_model = {
     'level': 'smooth trend',
     'cycle': True,
@@ -298,24 +257,21 @@ restricted_model = {
     'stochastic_cycle': True
 }
 
-# Restricted model, setting components directly
-# This is an equivalent, but less convenient, way to specify a
-# smooth trend model with a stochastic damped cycle. Notice
-# that the difference from the local linear trend model is that
-# `stochastic_level=False` here.
+# 受限制模型，直接设置组件
+# 这是一种等效的但不是很便捷的方法，用于指定一个带有随机阻尼周期的平滑趋势模型，注意与局部线性趋势模型的不同之处是 `stochastic_level=False` 。
 # unrestricted_model = {
 #     'irregular': True, 'level': True, 'stochastic_level': False,
 # 'trend': True, 'stochastic_trend': True,
 #     'cycle': True, 'damped_cycle': True, 'stochastic_cycle': True
 # }
 
-# We now fit the following models:
+# 现在我们拟合下列模型:
 #
-# 1. Output, unrestricted model
-# 2. Prices, unrestricted model
-# 3. Prices, restricted model
-# 4. Money, unrestricted model
-# 5. Money, restricted model
+# 1. Output, unrestricted model不受限制模型
+# 2. Prices, unrestricted model不受限制模型
+# 3. Prices, restricted model受限制模型
+# 4. Money, unrestricted model不受限制模型
+# 5. Money, restricted model受限制模型
 
 # Output
 output_mod = sm.tsa.UnobservedComponents(dta['US GNP'], **unrestricted_model)
@@ -339,33 +295,24 @@ money_restricted_mod = sm.tsa.UnobservedComponents(dta['US monetary base'],
                                                    **restricted_model)
 money_restricted_res = money_restricted_mod.fit(method='powell', disp=False)
 
-# Once we have fit these models, there are a variety of ways to display
-# the information. Looking at the model of US GNP, we can summarize the fit
-# of the model using the `summary` method on the fit object.
+# 一旦我们拟合了这些模型，就可以通过多种方式展示信息。 查看美国国民生产总值模型，我们可以使用 `summary` 方法对拟合对象进行模型拟合。
+
 
 print(output_res.summary())
 
-# For unobserved components models, and in particular when exploring
-# stylized facts in line with point (2) from the introduction, it is often
-# more instructive to plot the estimated unobserved components (e.g. the
-# level, trend, and cycle) themselves to see if they provide a meaningful
-# description of the data.
+# 对于未观测到组件模型，尤其是在引言中的第（2）点探索 stylized facts 时，更有用的方法通常是绘制估计未观测到的组件（例如水平，趋势和周期），
+# 来查看它们是否提供有意义的数据描述。
 #
-# The `plot_components` method of the fit object can be used to show plots
-# and confidence intervals of each of the estimated states, as well as a
-# plot of the observed data versus the one-step-ahead predictions of the
-# model to assess fit.
+# 拟合对象的 `plot_components` 方法可用于展示每个估计状态的曲线和置信区间，以及观测到的数据图与模型逐步预测进行比较，来评估拟合。
+
 
 fig = output_res.plot_components(
     legend_loc='lower right', figsize=(15, 9))
 
-# Finally, Harvey and Jaeger summarize the models in another way to
-# highlight the relative importances of the trend and cyclical components;
-# below we replicate their Table I. The values we find are broadly
-# consistent with, but different in the particulars from, the values from
-# their table.
-
-# Create Table I
+# 最后，Harvey 和 Jaeger 以另一种方式总结了模型，用以强调趋势性和周期性成分的相对重要性。 下面我们复制表 I。
+# 我们发现所有的值大致上与它们表中的值一致，但在细节上略有不同。
+# 
+# 创建表 I
 table_i = np.zeros((5, 6))
 
 start = dta.index[0]

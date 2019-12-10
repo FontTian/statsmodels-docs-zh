@@ -145,7 +145,7 @@ Q : `state_cov`       :math:`(k\_posdef \times k\_posdef \times nobs)`
 
 在后台,  `SARIMAX` 模型根据模型规范创建设计和过渡矩阵（有时还包括其他一些矩阵）。
 
-未观察到的组件
+未观测到的组件
 ^^^^^^^^^^^^^^^^^^^^^
 
  `UnobservedComponents` 类是状态空间模型的另一个示例。
