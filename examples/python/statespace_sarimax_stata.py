@@ -7,30 +7,23 @@
 # flake8: noqa
 # DO NOT EDIT
 
-# # SARIMAX: Introduction
+# # SARIMAX：简介
 
-# This notebook replicates examples from the Stata ARIMA time series
-# estimation and postestimation documentation.
+# 这个笔记复制了 Stata 的 ARIMA 时间序列估计和后估计文档中的示例。
 #
-# First, we replicate the four estimation examples
-# http://www.stata.com/manuals13/tsarima.pdf:
+# 首先，我们复制四个估计示例 http://www.stata.com/manuals13/tsarima.pdf:
 #
-# 1. ARIMA(1,1,1) model on the U.S. Wholesale Price Index (WPI) dataset.
-# 2. Variation of example 1 which adds an MA(4) term to the ARIMA(1,1,1)
-# specification to allow for an additive seasonal effect.
-# 3. ARIMA(2,1,0) x (1,1,0,12) model of monthly airline data. This example
-# allows a multiplicative seasonal effect.
-# 4. ARMA(1,1) model with exogenous regressors; describes consumption as
-# an autoregressive process on which also the money supply is assumed to be
-# an explanatory variable.
+# 1.美国批发价格指数（WPI）数据集上的 ARIMA(1,1,1) 模型。
+# 2.示例1的变体，在 ARIMA(1,1,1)）规范中添加了 MA(4)项，以实现加性的季节性影响。
+# 3.每月航空公司数据的 ARIMA(2,1,0) x (1,1,0,12) 模型。 这个例子允许一个乘法季节性影响。
+# 4.具有外生回归变量的 ARMA(1,1) 模型； 将消费描述为自回归过程，在此过程中，货币供应量是被假定为一个解释变量。
+# 
 #
-# Second, we demonstrate postestimation capabilities to replicate
-# http://www.stata.com/manuals13/tsarimapostestimation.pdf. The model from
-# example 4 is used to demonstrate:
+# 其次，我们从 http://www.stata.com/manuals13/tsarimapostestimation.pdf 复制来演示后估计性能。 以示例 4 中的模型作为演示：
 #
-# 1. One-step-ahead in-sample prediction
-# 2. n-step-ahead out-of-sample forecasting
-# 3. n-step-ahead in-sample dynamic prediction
+# 1.提前 one-step 样本内预测
+# 2.提前 n-step 样本外预测
+# 3.提前 n-step 样本内动态预测
 
 import numpy as np
 import pandas as pd
@@ -41,45 +34,39 @@ from datetime import datetime
 import requests
 from io import BytesIO
 
-# ### ARIMA Example 1: Arima
+# ### ARIMA 示例 1: Arima
 #
-# As can be seen in the graphs from Example 2, the Wholesale price index
-# (WPI) is growing over time (i.e. is not stationary). Therefore an ARMA
-# model is not a good specification. In this first example, we consider a
-# model where the original time series is assumed to be integrated of order
-# 1, so that the difference is assumed to be stationary, and fit a model
-# with one autoregressive lag and one moving average lag, as well as an
-# intercept term.
+# 
+# 从示例 2 的图表中可以看出，批发价格指数 (WPI) 随时间增长（即不平稳）。 因此，ARMA 模型不是一个很好的规范。 
+# 在第一个示例中，我们认为一个模型，其中，在该模型中原始时间序列被假定为阶次积分
 #
-# The postulated data process is then:
+# 1 因此假设差异是固定的，并拟合具有一个自回归滞后和一个移动平均滞后并有一个截距项的模型。
+#
+# 然后假定的数据处理:
 #
 # $$
 # \Delta y_t = c + \phi_1 \Delta y_{t-1} + \theta_1 \epsilon_{t-1} +
 # \epsilon_{t}
 # $$
 #
-# where $c$ is the intercept of the ARMA model, $\Delta$ is the first-
-# difference operator, and we assume $\epsilon_{t} \sim N(0, \sigma^2)$.
-# This can be rewritten to emphasize lag polynomials as (this will be useful
-# in example 2, below):
+# 其中 $c$ 是 ARMA 模型的截距，$\Delta$ 是一阶差分运算符，我们假定 $\epsilon_{t} \sim N(0, \sigma^2)$。
+# 可以将其重写为强调滞后多项式（在下面的示例2中将很有用）
 #
 # $$
 # (1 - \phi_1 L ) \Delta y_t = c + (1 + \theta_1 L) \epsilon_{t}
 # $$
 #
-# where $L$ is the lag operator.
+# 其中 $L$ 是滞后运算符。
 #
-# Notice that one difference between the Stata output and the output below
-# is that Stata estimates the following model:
+# 请注意，存在一个差异 —— Stata 输出的模型与下方输出的 Stata估计模型：
 #
 # $$
 # (\Delta y_t - \beta_0) = \phi_1 ( \Delta y_{t-1} - \beta_0) + \theta_1
 # \epsilon_{t-1} + \epsilon_{t}
 # $$
 #
-# where $\beta_0$ is the mean of the process $y_t$. This model is
-# equivalent to the one estimated in the statsmodels SARIMAX class, but the
-# interpretation is different. To see the equivalence, note that:
+# 其中 $\beta_0$ 是程序 $y_t$ 的平均值。该模型等效于 statsmodels SARIMAX 类中估计的模型，但是解释不同。
+# 要查看等效项，请注意：
 #
 # $$
 # (\Delta y_t - \beta_0) = \phi_1 ( \Delta y_{t-1} - \beta_0) + \theta_1
@@ -88,115 +75,97 @@ from io import BytesIO
 # \epsilon_{t-1} + \epsilon_{t}
 # $$
 #
-# so that $c = (1 - \phi_1) \beta_0$.
+# 因此 $c = (1 - \phi_1) \beta_0$.
 
-# Dataset
+# 数据集
 wpi1 = requests.get('https://www.stata-press.com/data/r12/wpi1.dta').content
 data = pd.read_stata(BytesIO(wpi1))
 data.index = data.t
 
-# Fit the model
+# 拟合模型
 mod = sm.tsa.statespace.SARIMAX(data['wpi'], trend='c', order=(1, 1, 1))
 res = mod.fit(disp=False)
 print(res.summary())
 
-# Thus the maximum likelihood estimates imply that for the process above,
-# we have:
+# 因此，对于上述过程极大似然估计意味着，我们有:
 #
 # $$
 # \Delta y_t = 0.1050 + 0.8740 \Delta y_{t-1} - 0.4206 \epsilon_{t-1} +
 # \epsilon_{t}
 # $$
 #
-# where $\epsilon_{t} \sim N(0, 0.5226)$. Finally, recall that $c = (1 -
-# \phi_1) \beta_0$, and here $c = 0.1050$ and $\phi_1 = 0.8740$. To compare
-# with the output from Stata, we could calculate the mean:
+# 其中 $\epsilon_{t} \sim N(0, 0.5226)$. Finally, 最后，回想一下 $c = (1 - \phi_1) \beta_0$, 
+# 在这里 $c = 0.1050$ 且 $\phi_1 = 0.8740$ 。 为了与Stata的输出进行比较，我们可以计算出平均值：
 #
 # $$\beta_0 = \frac{c}{1 - \phi_1} = \frac{0.1050}{1 - 0.8740} = 0.83$$
 #
-# **Note**: these values are slightly different from the values in the
-# Stata documentation because the optimizer in statsmodels has found
-# parameters here that yield a higher likelihood. Nonetheless, they are very
-# close.
+# **注意**：这些值与 Stata 文档中的值略有不同，因为 statsmodels 的优化器在此处慧生成一个更高似然的参数。尽管如此，它们非常接近。
 
-# ### ARIMA Example 2: Arima with additive seasonal effects
-#
-# This model is an extension of that from example 1. Here the data is
-# assumed to follow the process:
+
+
+# ### ARIMA 示例 2: 附带季节性影响的 Arima 模型 
 #
 # $$
 # \Delta y_t = c + \phi_1 \Delta y_{t-1} + \theta_1 \epsilon_{t-1} +
 # \theta_4 \epsilon_{t-4} + \epsilon_{t}
 # $$
 #
-# The new part of this model is that there is allowed to be a annual
-# seasonal effect (it is annual even though the periodicity is 4 because the
-# dataset is quarterly). The second difference is that this model uses the
-# log of the data rather than the level.
+# 该模型的新部分是允许有年度季节性影响（即使周期性为4，因为数据集是季度性的，所以它也是年度的）。 第二个区别是该模型使用数据日志而不是水平。
+# 
 #
-# Before estimating the dataset, graphs showing:
+# 在估计数据集之前，图形显示：
 #
-# 1. The time series (in logs)
-# 2. The first difference of the time series (in logs)
-# 3. The autocorrelation function
-# 4. The partial autocorrelation function.
+# 1.时间序列（以日志为单位）
+# 2.时间序列的第一个差异（以日志为单位）
+# 3.自相关函数
+# 4.偏自相关函数
 #
-# From the first two graphs, we note that the original time series does
-# not appear to be stationary, whereas the first-difference does. This
-# supports either estimating an ARMA model on the first-difference of the
-# data, or estimating an ARIMA model with 1 order of integration (recall
-# that we are taking the latter approach). The last two graphs support the
-# use of an ARMA(1,1,1) model.
+# 从前两个图表中，我们注意到原始时间序列似乎不是平稳的，而一阶差异却是平稳的。要么根据数据的一阶差异估计一个 ARMA 模型，
+# 要么估计一个带有一阶积分的 ARIMA 模型（回想一下，我们采用的是后一种方法）。最后两个图支持使用 ARMA(1,1,1) 模型。
 
-# Dataset
+
+# 数据集
 data = pd.read_stata(BytesIO(wpi1))
 data.index = data.t
 data['ln_wpi'] = np.log(data['wpi'])
 data['D.ln_wpi'] = data['ln_wpi'].diff()
 
-# Graph data
+# 图形数据
 fig, axes = plt.subplots(1, 2, figsize=(15, 4))
 
-# Levels
+# 水平
 axes[0].plot(data.index._mpl_repr(), data['wpi'], '-')
 axes[0].set(title='US Wholesale Price Index')
 
-# Log difference
+# 日志差异
 axes[1].plot(data.index._mpl_repr(), data['D.ln_wpi'], '-')
 axes[1].hlines(0, data.index[0], data.index[-1], 'r')
 axes[1].set(title='US Wholesale Price Index - difference of logs')
 
-# Graph data
+# 图形数据
 fig, axes = plt.subplots(1, 2, figsize=(15, 4))
 
 fig = sm.graphics.tsa.plot_acf(data.iloc[1:]['D.ln_wpi'], lags=40, ax=axes[0])
 fig = sm.graphics.tsa.plot_pacf(data.iloc[1:]['D.ln_wpi'], lags=40, ax=axes[1])
 
-# To understand how to specify this model in statsmodels, first recall
-# that from example 1 we used the following code to specify the ARIMA(1,1,1)
-# model:
+# 为了了解如何在 statsmodels 中指定此模型，首先回想起示例 1，我们使用以下代码来指定 ARIMA(1,1,1) 模型：
 #
 # ```python
 # mod = sm.tsa.statespace.SARIMAX(data['wpi'], trend='c', order=(1,1,1))
 # ```
 #
-# The `order` argument is a tuple of the form `(AR specification,
-# Integration order, MA specification)`. The integration order must be an
-# integer (for example, here we assumed one order of integration, so it was
-# specified as 1. In a pure ARMA model where the underlying data is already
-# stationary, it would be 0).
+# “ order”参数是元组的形式“（AR 规范，整合阶，MA 规范）”。 整合阶必须是整数（例如，在这里我们假设一阶整合，
+# 因此将其指定为1。在基础数据已经固定的纯ARMA模型中，它将为0）。
 #
-# For the AR specification and MA specification components, there are two
-# possibilities. The first is to specify the **maximum degree** of the
-# corresponding lag polynomial, in which case the component is an integer.
-# For example, if we wanted to specify an ARIMA(1,1,4) process, we would
-# use:
+#
+# 对于 AR 规范和 MA 规范组件，有两种可能性。首先是指定相应滞后多项式的 **maximum degree** ，在这种情况下，该组件是整数。
+# 例如，如果我们想指定一个 ARIMA(1,1,4) ，我们将使用：
 #
 # ```python
 # mod = sm.tsa.statespace.SARIMAX(data['wpi'], trend='c', order=(1,1,4))
 # ```
 #
-# and the corresponding data process would be:
+# 相应的数据处理将是:
 #
 # $$
 # y_t = c + \phi_1 y_{t-1} + \theta_1 \epsilon_{t-1} + \theta_2
@@ -204,23 +173,19 @@ fig = sm.graphics.tsa.plot_pacf(data.iloc[1:]['D.ln_wpi'], lags=40, ax=axes[1])
 # \epsilon_{t}
 # $$
 #
-# or
+# 或者
 #
 # $$
 # (1 - \phi_1 L)\Delta y_t = c + (1 + \theta_1 L + \theta_2 L^2 + \theta_3
 # L^3 + \theta_4 L^4) \epsilon_{t}
 # $$
 #
-# When the specification parameter is given as a maximum degree of the lag
-# polynomial, it implies that all polynomial terms up to that degree are
-# included. Notice that this is *not* the model we want to use, because it
-# would include terms for $\epsilon_{t-2}$ and $\epsilon_{t-3}$, which we
-# do not want here.
+# 当指定参数作为滞后多项式的最高阶次给出时，则意味着提高到所有多项式包含阶次。 请注意，这不是我们要使用的模型，
+# 因为它包含 $\epsilon_{t-2}$ 和 $\epsilon_{t-3}$ 项，在这里我们不希望使用。
 #
-# What we want is a polynomial that has terms for the 1st and 4th degrees,
-# but leaves out the 2nd and 3rd terms. To do that, we need to provide a
-# tuple for the specification parameter, where the tuple describes **the lag
-# polynomial itself**. In particular, here we would want to use:
+# 我们想要的是一个多项式，带有第 1 和第 4 阶次项，而没有第2 和第 3 阶次项。为此，我们需要为规范参数提供一个元组，
+# 其中元组描述 **the lag polynomial itself**。 特别是，在这里我们要使用：
+# 
 #
 # ```python
 # ar = 1          # this is the maximum degree specification
@@ -229,7 +194,7 @@ fig = sm.graphics.tsa.plot_pacf(data.iloc[1:]['D.ln_wpi'], lags=40, ax=axes[1])
 # order=(ar,1,ma)))
 # ```
 #
-# This gives the following form for the process of the data:
+# 这给出以下程式来做数据处理:
 #
 # $$
 # \Delta y_t = c + \phi_1 \Delta y_{t-1} + \theta_1 \epsilon_{t-1} +
@@ -238,70 +203,58 @@ fig = sm.graphics.tsa.plot_pacf(data.iloc[1:]['D.ln_wpi'], lags=40, ax=axes[1])
 # \epsilon_{t}
 # $$
 #
-# which is what we want.
+# 这是我们想要的.
 
-# Fit the model
+# 拟合模型
 mod = sm.tsa.statespace.SARIMAX(data['ln_wpi'], trend='c', order=(1, 1, 1))
 res = mod.fit(disp=False)
 print(res.summary())
 
-# ### ARIMA Example 3: Airline Model
+# ### ARIMA 示例 3: Airline Model
 #
-# In the previous example, we included a seasonal effect in an *additive*
-# way, meaning that we added a term allowing the process to depend on the
-# 4th MA lag. It may be instead that we want to model a seasonal effect in a
-# multiplicative way. We often write the model then as an ARIMA $(p,d,q)
-# \times (P,D,Q)_s$, where the lowercase letters indicate the specification
-# for the non-seasonal component, and the uppercase letters indicate the
-# specification for the seasonal component; $s$ is the periodicity of the
-# seasons (e.g. it is often 4 for quarterly data or 12 for monthly data).
-# The data process can be written generically as:
+# 在前面的示例中，我们以“加法”方式包括了季节性影响，这意味着我们添加一项允许进程依赖第 4 MA 滞后。
+# 取而代之的是，我们希望以“乘法”方式对季节效应进行建模。我们通常将模型写成 ARIMA $(p,d,q)\times (P,D,Q)_s$，
+# 其中小写字母表示非季节性成分的规范，大写字母表示季节性成分的规范； $s$ 是季节的周期性（例如，季度数据通常为4，月度数据通常为12）。
+# 数据处理可以一般写为
 #
 # $$
 # \phi_p (L) \tilde \phi_P (L^s) \Delta^d \Delta_s^D y_t = A(t) + \theta_q
 # (L) \tilde \theta_Q (L^s) \epsilon_t
 # $$
 #
-# where:
+# 其中:
 #
-# - $\phi_p (L)$ is the non-seasonal autoregressive lag polynomial
-# - $\tilde \phi_P (L^s)$ is the seasonal autoregressive lag polynomial
-# - $\Delta^d \Delta_s^D y_t$ is the time series, differenced $d$ times,
-# and seasonally differenced $D$ times.
-# - $A(t)$ is the trend polynomial (including the intercept)
-# - $\theta_q (L)$ is the non-seasonal moving average lag polynomial
-# - $\tilde \theta_Q (L^s)$ is the seasonal moving average lag polynomial
+# - $\phi_p (L)$ 是非季节性自回归滞后多项式
+# - $\tilde \phi_P (L^s)$ 是季节性自回归滞后多项式
+# - $\Delta^d \Delta_s^D y_t$ 是时间序列, 相差 $d$ 次,而季节性相差 $D$ 次.
+# - $A(t)$ 是趋势性多项式 (包含截距)
+# - $\theta_q (L)$ 是非季节性移动平均滞后多项式
+# - $\tilde \theta_Q (L^s)$ 是季节性移动平均滞后多项式
 #
-# sometimes we rewrite this as:
+# 有时我们可以改写为:
 #
 # $$
 # \phi_p (L) \tilde \phi_P (L^s) y_t^* = A(t) + \theta_q (L) \tilde
 # \theta_Q (L^s) \epsilon_t
 # $$
 #
-# where $y_t^* = \Delta^d \Delta_s^D y_t$. This emphasizes that just as in
-# the simple case, after we take differences (here both non-seasonal and
-# seasonal) to make the data stationary, the resulting model is just an ARMA
-# model.
+# 其中 $y_t^* = \Delta^d \Delta_s^D y_t$. 这强调了在简单的情况下，我们采用差异（这里是非季节性和季节性）来使数据稳定之后，
+# 所得到的模型是一个 ARMA 模型。
 #
-# As an example, consider the airline model ARIMA $(2,1,0) \times
-# (1,1,0)_{12}$, with an intercept. The data process can be written in the
-# form above as:
+# 例如，考虑带有截距的航空公司模型 ARIMA $(2,1,0) \times(1,1,0)_{12}$。数据处理可以按上面的程式写成：
 #
 # $$
 # (1 - \phi_1 L - \phi_2 L^2) (1 - \tilde \phi_1 L^{12}) \Delta
 # \Delta_{12} y_t = c + \epsilon_t
 # $$
 #
-# Here, we have:
+# 在这里有:
 #
 # - $\phi_p (L) = (1 - \phi_1 L - \phi_2 L^2)$
 # - $\tilde \phi_P (L^s) = (1 - \phi_1 L^12)$
-# - $d = 1, D = 1, s=12$ indicating that $y_t^*$ is derived from $y_t$ by
-# taking first-differences and then taking 12-th differences.
-# - $A(t) = c$ is the *constant* trend polynomial (i.e. just an intercept)
-# - $\theta_q (L) = \tilde \theta_Q (L^s) = 1$ (i.e. there is no moving
-# average effect)
+# - $d = 1, D = 1, s=12$ 表示 $y_t^*$ 是从第 1 阶差异到第 12 阶差异派生的
+# - $A(t) = c$ 是 *恒定* 趋势性多项式（即一个截距）
+# - $\theta_q (L) = \tilde \theta_Q (L^s) = 1$ (即没有移动平均效应）
 #
 # It may still be confusing to see the two lag polynomials in front of the
 # time-series variable, but notice that we can multiply the lag polynomials
