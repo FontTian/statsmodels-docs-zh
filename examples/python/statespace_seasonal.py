@@ -7,44 +7,34 @@
 # flake8: noqa
 # DO NOT EDIT
 
-# # Seasonality in time series data
+# # 时间序列数据的季节性
 #
-# Consider the problem of modeling time series data with multiple seasonal
-# components with different periodicities.  Let us take the time series
-# $y_t$ and decompose it explicitly to have a level component and two
-# seasonal components.
+# 考虑对多个具有不同周期性的季节性成分的时间序列数据进行建模的问题。让我们以时间序列 $y_t$ 进行分解，使其具有一个水平成分和两个季节性成分。
 #
 # $$
 # y_t = \mu_t + \gamma^{(1)}_t + \gamma^{(2)}_t
 # $$
 #
-# where $\mu_t$ represents the trend or level, $\gamma^{(1)}_t$ represents
-# a seasonal component with a relatively short period, and $\gamma^{(2)}_t$
-# represents another seasonal component of longer period. We will have a
-# fixed intercept term for our level and consider both $\gamma^{(2)}_t$ and
-# $\gamma^{(2)}_t$ to be stochastic so that the seasonal patterns can vary
-# over time.
+# 其中 $\mu_t$ 表示趋势或水平，$\gamma^{(1)}_t$ 表示周期相对较短的季节性成分，而 $\gamma^{(2)}_t$ 表示较长时间的另一个季节性成分。
+# 我们将为水平设置一个固定的截距项，并考虑 $\gamma^{(2)}_t$ 和 $\gamma^{(2)}_t$ 都是随机的，因此季节性模式会随时间变化。
+# 
 #
-# In this notebook, we will generate synthetic data conforming to this
-# model and showcase modeling of the seasonal terms in a few different ways
-# under the unobserved components modeling framework.
+# 在这个笔记中，我们将生成符合这个模型的综合数据，并在未观察到的组件建模框架下以几种不同的方式展示季节性条件的建模。
+
 
 import numpy as np
 import pandas as pd
 import statsmodels.api as sm
 import matplotlib.pyplot as plt
 
-# ### Synthetic data creation
+# ### 创建合成数据
 #
-# We will create data with multiple seasonal patterns by following
-# equations (3.7) and (3.8) in Durbin and Koopman (2012).  We will simulate
-# 300 periods and two seasonal terms parameterized in the frequency domain
-# having periods 10 and 100, respectively, and 3 and 2 number of harmonics,
-# respectively.  Further, the variances of their stochastic parts are 4 and
-# 9, respectively.
+# 我们将按照 Durbin 和 Koopman（2012）中的方程（3.7）和（3.8）创建具有多个季节性模式的数据。 我们将模拟 300 个周期和
+# 在频域中参数化的两个季节性项，分别具有周期 10 和 100，以及谐波数 3 和 2。 另外，它们的随机部分的方差分别是 4 和 9。
 
 
-# First we'll simulate the synthetic data
+
+# 首先，我们将模拟合成数据
 def simulate_seasonal_term(periodicity,
                            total_cycles,
                            noise_std=1.,
@@ -110,14 +100,10 @@ h4, = plt.plot(df['level'])
 plt.legend(['total', '10(3)', '100(2)', 'level'])
 plt.show()
 
-# ### Unobserved components (frequency domain modeling)
+# ### 未观测到的组件 (频域模型)
 #
-# The next method is an unobserved components model, where the trend is
-# modeled as a fixed intercept and the seasonal components are modeled using
-# trigonometric functions with primary periodicities of 10 and 100,
-# respectively, and number of harmonics 3 and 2, respectively.  Note that
-# this is the correct, generating model. The process for the time series can
-# be written as:
+# 下一种方法是未观测到的组件模型，其中将趋势性建模为固定截距，并使用具有一次周期分别为 10 和 100，谐波次数分别为 3 和 2 的三角函数
+# 对季节性成分进行建模。请注意，这是正确的生成模型。时间序列的过程可以写成
 #
 # $$
 # \begin{align}
@@ -139,9 +125,8 @@ plt.show()
 # $$
 # $$
 #
-# where $\epsilon_t$ is white noise, $\omega^{(1)}_{j,t}$ are i.i.d. $N(0,
-# \sigma^2_1)$, and  $\omega^{(2)}_{j,t}$ are i.i.d. $N(0, \sigma^2_2)$,
-# where $\sigma_1 = 2.$
+# 其中 $\epsilon_t$ 是白噪声， $\omega^{(1)}_{j,t}$ 是 i.i.d. $N(0, \sigma^2_1)$, 
+# 而  $\omega^{(2)}_{j,t}$ 是 i.i.d. $N(0, \sigma^2_2)$,其中 $\sigma_1 = 2.$
 
 model = sm.tsa.UnobservedComponents(
     series.values,
@@ -155,7 +140,7 @@ model = sm.tsa.UnobservedComponents(
     }])
 res_f = model.fit(disp=False)
 print(res_f.summary())
-# The first state variable holds our estimate of the intercept
+# 第一个状态变量保存我们对截距的估计
 print("fixed intercept estimated as {0:.3f}".format(
     res_f.smoother_results.smoothed_state[0, -1:][0]))
 
@@ -164,21 +149,14 @@ plt.show()
 
 model.ssm.transition[:, :, 0]
 
-# Observe that the fitted variances are pretty close to the true variances
-# of 4 and 9.  Further, the individual seasonal components look pretty close
-# to the true seasonal components.  The smoothed level term is kind of close
-# to the true level of 10.  Finally, our diagnostics look solid; the test
-# statistics are small enough to fail to reject our three tests.
+# 观测到拟合的方差与真实方差 4 和 9 非常接近。此外，各个季节性成分看上去与真实的季节成分非常接近。平滑水平接近于真实水平 10 。
+# 检验统计值是如此的小，无法拒绝我们的三个检验。
 
-# ### Unobserved components (mixed time and frequency domain modeling)
+
+# ### 未观测到的组件（时域和频域混合建模）
 #
-# The second method is an unobserved components model, where the trend is
-# modeled as a fixed intercept and the seasonal components are modeled using
-# 10 constants summing to 0 and trigonometric functions with a primary
-# periodicities of 100 with 2 harmonics total.  Note that this is not the
-# generating model, as it presupposes that there are more state errors for
-# the shorter seasonal component than in reality. The process for the time
-# series can be written as:
+# 第二种方法是未观测到的组件模型，其中将趋势建模为固定截距，使用 10 个常数之和为 0 和主周期为100，总谐波为2 的三角函数对季节性成分进行建模
+# 请注意，这不是生成模型，因为它假定较短的季节性分量比实际存在更多的状态误差。时间序列的过程可以写成
 #
 # $$
 # \begin{align}
@@ -194,8 +172,7 @@ model.ssm.transition[:, :, 0]
 # \end{align}
 # $$
 #
-# where $\epsilon_t$ is white noise, $\omega^{(1)}_{t}$ are i.i.d. $N(0,
-# \sigma^2_1)$, and  $\omega^{(2)}_{j,t}$ are i.i.d. $N(0, \sigma^2_2)$.
+# 其中 $\epsilon_t$ 是白噪声, $\omega^{(1)}_{t}$ 是 i.i.d. $N(0, \sigma^2_1)$, 且 $\omega^{(2)}_{j,t}$ 是 i.i.d. $N(0, \sigma^2_2)$。
 
 model = sm.tsa.UnobservedComponents(
     series,
@@ -207,32 +184,23 @@ model = sm.tsa.UnobservedComponents(
     }])
 res_tf = model.fit(disp=False)
 print(res_tf.summary())
-# The first state variable holds our estimate of the intercept
+# 第一个状态变量保存我们对截距的估计
 print("fixed intercept estimated as {0:.3f}".format(
     res_tf.smoother_results.smoothed_state[0, -1:][0]))
 
 res_tf.plot_components()
 plt.show()
 
-# The plotted components look good.  However, the estimated variance of
-# the second seasonal term is inflated from reality.  Additionally, we
-# reject the Ljung-Box statistic, indicating we may have remaining
-# autocorrelation after accounting for our components.
+# 绘制的组件看起来不错。然而，第二个季节性的估计方差比真实的更加膨大。此外，我们拒绝了 Ljung-Box 统计量，
+# 这表明在考虑了我们的组成成分之后，可能仍然存在自相关的问题。
 
-# ### Unobserved components (lazy frequency domain modeling)
+
+# ### 未观测到的组件 (懒惰频域建模)
 #
-# The third method is an unobserved components model with a fixed
-# intercept and one seasonal component, which is modeled using trigonometric
-# functions with primary periodicity 100 and 50 harmonics. Note that this
-# is not the generating model, as it presupposes that there are more
-# harmonics then in reality.  Because the variances are tied together, we
-# are not able to drive the estimated covariance of the non-existent
-# harmonics to 0.  What is lazy about this model specification is that we
-# have not bothered to specify the two different seasonal components and
-# instead chosen to model them using a single component with enough
-# harmonics to cover both.  We will not be able to capture any differences
-# in variances between the two true components.  The process for the time
-# series can be written as:
+# 第三种方法是具有固定截距和一个季节性成分的未观测到的组件模型，该模型是使用具有 100 和 50 谐波的三角函数来建模。 
+# 请注意，这不是生成模型，因为它假定实际上存在更多的谐波。由于方差联系在一起，因此我们无法将不存在的谐波的估计协方差驱动设置为0。
+# 此模型规范的懒惰是，我们不必费心指定两个不同的季节性成分，而是选择建模它们使用具有足够谐波的单个分量来覆盖两者。 我们将无法捕获
+# 两个真实成分之间方差的任何差异。时间序列进程可以写成：
 #
 # $$
 # \begin{align}
@@ -247,8 +215,7 @@ plt.show()
 # \end{align}
 # $$
 #
-# where $\epsilon_t$ is white noise, $\omega^{(1)}_{t}$ are i.i.d. $N(0,
-# \sigma^2_1)$.
+# 其中 $\epsilon_t$ 是白噪声, $\omega^{(1)}_{t}$ 是 i.i.d. $N(0, \sigma^2_1)$.
 
 model = sm.tsa.UnobservedComponents(
     series, level='fixed intercept', freq_seasonal=[{
@@ -256,22 +223,18 @@ model = sm.tsa.UnobservedComponents(
     }])
 res_lf = model.fit(disp=False)
 print(res_lf.summary())
-# The first state variable holds our estimate of the intercept
+# 第一个状态变量保存我们对截距的估计
 print("fixed intercept estimated as {0:.3f}".format(
     res_lf.smoother_results.smoothed_state[0, -1:][0]))
 
 res_lf.plot_components()
 plt.show()
 
-# Note that one of our diagnostic tests would be rejected at the .05
-# level.
+#请注意，我们的诊断检验之一将在 0.05 水平下被拒绝。
 
-# ### Unobserved components (lazy time domain seasonal modeling)
+# ### 未观测到的组件(懒惰时域季节性建模)
 #
-# The fourth method is an unobserved components model with a fixed
-# intercept and a single seasonal component modeled using a time-domain
-# seasonal model of 100 constants. The process for the time series can be
-# written as:
+# 第四种方法是具有固定截距和使用 100 个常数的时域季节性模型建模的单个季节性成分的未观测到的组件模型。时间序列的过程可以写成：
 #
 # $$
 # \begin{align}
@@ -282,40 +245,34 @@ plt.show()
 # \end{align}
 # $$
 #
-# where $\epsilon_t$ is white noise, $\omega^{(1)}_{t}$ are i.i.d. $N(0,
-# \sigma^2_1)$.
+# 其中 $\epsilon_t$ 是白噪声, $\omega^{(1)}_{t}$ 是 i.i.d. $N(0, \sigma^2_1)$.
 
 model = sm.tsa.UnobservedComponents(
     series, level='fixed intercept', seasonal=100)
 res_lt = model.fit(disp=False)
 print(res_lt.summary())
-# The first state variable holds our estimate of the intercept
+# 第一个状态变量保存我们对截距的估计
 print("fixed intercept estimated as {0:.3f}".format(
     res_lt.smoother_results.smoothed_state[0, -1:][0]))
 
 res_lt.plot_components()
 plt.show()
 
-# The seasonal component itself looks good--it is the primary signal.  The
-# estimated variance of the seasonal term is very high ($>10^5$), leading to
-# a lot of uncertainty in our one-step-ahead predictions and slow
-# responsiveness to new data, as evidenced by large errors in one-step ahead
-# predictions and observations. Finally, all three of our diagnostic tests
-# were rejected.
+# 季节性成分本身看起来不错——这是主信号。 季节性的估计方差非常高（$> 10 ^ 5 $），导致我们的提前 one-step 预测存在很大不确定性，
+# 并且对新数据的响应速度较慢，这一点可通过提前 one-step 预测和观测的较大误差来证明。最终，我们的所有三个诊断检验均被拒绝。
 
-# ### Comparison of filtered estimates
-#
-# The plots below show that explicitly modeling the individual components
-# results in the filtered state being close to the true state within roughly
-# half a period.  The lazy models took longer (almost a full period) to do
-# the same on the combined true state.
 
-# Assign better names for our seasonal terms
+# ### 滤波估算值比较
+# 
+# 下图显示了在滤波状态下在大约半个周期内对各个成分进行建模会接近真实状态。懒惰模型花费了更长的时间（几乎是整个周期）来对组合的真实状态执行相同的操作。
+
+
+# 为季节性指定更好的名称
 true_seasonal_10_3 = terms[0]
 true_seasonal_100_2 = terms[1]
 true_sum = true_seasonal_10_3 + true_seasonal_100_2
 
-time_s = np.s_[:50]  # After this they basically agree
+time_s = np.s_[:50]  # 在此之后，他们基本上同意
 fig1 = plt.figure()
 ax1 = fig1.add_subplot(111)
 h1, = ax1.plot(
@@ -336,7 +293,7 @@ plt.legend(
 plt.title('Seasonal 10(3) component')
 plt.show()
 
-time_s = np.s_[:50]  # After this they basically agree
+time_s = np.s_[:50]  # 在此之后，他们基本上同意
 fig2 = plt.figure()
 ax2 = fig2.add_subplot(111)
 h21, = ax2.plot(
@@ -392,20 +349,13 @@ plt.legend(
 plt.title('Seasonal components combined')
 plt.show()
 
-# ##### Conclusions
+# ##### 结论
 #
-# In this notebook, we simulated a time series with two seasonal
-# components of different periods.  We modeled them using structural time
-# series models with (a) two frequency domain components of correct periods
-# and numbers of harmonics, (b) time domain seasonal component for the
-# shorter term and a frequency domain term with correct period and number of
-# harmonics, (c) a single frequency domain term with the longer period and
-# full number of harmonics, and (d) a single time domain term with the
-# longer period.  We saw a variety of diagnostic results, with only the
-# correct generating model, (a), failing to reject any of the tests.  Thus,
-# more flexible seasonal modeling allowing for multiple components with
-# specifiable harmonics can be a useful tool for time series modeling.
-# Finally, we can represent seasonal components with fewer total states in
-# this way, allowing for the user to attempt to make the bias-variance
-# trade-off themselves instead of being forced to choose "lazy" models, which
-# use a large number of states and incur additional variance as a result.
+# 在这个笔记中，我们模拟了一个具有两个不同时期的季节性成分的时间序列。我们使用结构时间序列模型对它们进行建模，其中：
+#   （a）具有正确周期和谐波数量的两个频域成分；
+#   （b）具有正确周期和谐波数量的频域项和更短周期的两个频域成分；
+#   （c）具有较长周期和全部谐波的单个频域项；
+#   （d）具有较长周期的单个时域项。
+# 我们看到了各种各样的诊断结果，只有正确的生成模型（a）才能拒绝任何检验。因此，更灵活的季节性建模可允许使用多个具有特定谐波的成分，
+# 这对于时间序列建模是有用的工具。最后，我们可以用这种方式表示总状态较少的季节性成分，从而允许用户尝试自己进行偏差方差的权衡，而不是
+# 被迫选择 "lazy" 模型——使用大量状态并导致额外差异作为结果。

@@ -162,15 +162,11 @@ dta['std_emp'] = (
 # 所需的新参数和限制来容纳它-请参见下面的附录A。
 
 
-# ## Parameter estimation
+# ## 参数估计
 #
-# Multivariate models can have a relatively large number of parameters,
-# and it may be difficult to escape from local minima to find the maximized
-# likelihood. In an attempt to mitigate this problem, I perform an initial
-# maximization step (from the model-defined starting parameters) using the
-# modified Powell method available in Scipy (see the minimize documentation
-# for more information). The resulting parameters are then used as starting
-# parameters in the standard LBFGS optimization method.
+# 多元模型可以具有相对更多的参数，并且在求极大似然值的时候可能难以摆脱局部最小的问题。为了减轻这种问题，我们使用 Scipy 中可用的 Powell 转换方法
+# （从模型定义的初始参数）来得到最大化的初始步长（有关更多信息，请参见最小化文档）。 然后，将所得参数用作标准 LBFGS 优化方法中的初始参数。
+
 
 # 获取 endogenous 数据
 endog = dta.loc['1979-02-01':, 'std_indprod':'std_emp']
@@ -201,34 +197,30 @@ print(res.summary(separate_params=False))
 
 # ### 估计因子
 #
-# While it can be useful to plot the unobserved factors, it is less useful
-# here than one might think for two reasons:
+# 虽然绘制未观测到的因子可能很有用，但由于以下两个原因，它在这里的作用不如人们想像的那样：
 #
-# 1. The sign-related identification issue described above.
-# 2. Since the data was differenced, the estimated factor explains the
-# variation in the differenced data, not the original data.
+# 1. 上面提到的标识相关的识别问题。
+# 2. 由于数据存在差异，因此估计因子可以解释差异数据而不是原始数据的变化。
 #
-# It is for these reasons that the coincident index is created (see
-# below).
+# 出于这些原因，创建重合指数（请参见下文）
 #
-# With these reservations, the unobserved factor is plotted below, along
-# with the NBER indicators for US recessions. It appears that the factor is
-# successful at picking up some degree of business cycle activity.
+# 有了这些疑惑，对于美国经济衰退的NBER指标的未观测到的因素绘图如下。 看来该因素能够成功完成一定程度的商业周期活动。
+
 
 fig, ax = plt.subplots(figsize=(13, 3))
 
-# Plot the factor
+# 绘制因子
 dates = endog.index._mpl_repr()
 ax.plot(dates, res.factors.filtered[0], label='Factor')
 ax.legend()
 
-# Retrieve and also plot the NBER recession indicators
+# 检索并绘制NBER衰退指标
 rec = DataReader('USREC', 'fred', start=start, end=end)
 ylim = ax.get_ylim()
 ax.fill_between(
     dates[:-3], ylim[0], ylim[1], rec.values[:-4, 0], facecolor='k', alpha=0.1)
 
-# ## Post-estimation
+# ## 后估计
 #
 # Although here we will be able to interpret the results of the model by
 # constructing the coincident index, there is a useful and generic approach
