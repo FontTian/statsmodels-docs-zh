@@ -148,7 +148,7 @@ fig, axes = plt.subplots(1, 2, figsize=(15, 4))
 fig = sm.graphics.tsa.plot_acf(data.iloc[1:]['D.ln_wpi'], lags=40, ax=axes[0])
 fig = sm.graphics.tsa.plot_pacf(data.iloc[1:]['D.ln_wpi'], lags=40, ax=axes[1])
 
-# 为了了解如何在 statsmodels 中指定此模型，首先回想起示例 1，我们使用以下代码来指定 ARIMA(1,1,1) 模型：
+# 为了了解如何在 statsmodels 中指定此模型，首先回想示例 1，我们使用以下代码来指定 ARIMA(1,1,1) 模型：
 #
 # ```python
 # mod = sm.tsa.statespace.SARIMAX(data['wpi'], trend='c', order=(1,1,1))
