@@ -7,7 +7,7 @@
 # flake8: noqa
 # DO NOT EDIT
 
-# # Detrending, Stylized Facts and the Business Cycle
+# # 去趋势化， 典型事实与商业周期
 #
 # 在有影响力的文章中，Harvey 和 Jaeger（1993）描述了使用未观测到的组件模型（也称为“结构时间序列模型”）来得出商业周期性的典型事实。
 #
