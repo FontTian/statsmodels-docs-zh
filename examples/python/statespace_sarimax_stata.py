@@ -14,7 +14,7 @@
 # 首先，我们复制四个估计示例 http://www.stata.com/manuals13/tsarima.pdf:
 #
 # 1.美国批发价格指数（WPI）数据集上的 ARIMA(1,1,1) 模型。
-# 2.示例1的变体，在 ARIMA(1,1,1)）规范中添加了 MA(4)项，以实现加性的季节性影响。
+# 2.示例1的变体，在 ARIMA(1,1,1)）规范中添加了 MA(4)项，以实现附加季节性影响。
 # 3.每月航空公司数据的 ARIMA(2,1,0) x (1,1,0,12) 模型。 这个例子允许一个乘法季节性影响。
 # 4.具有外生回归变量的 ARMA(1,1) 模型； 将消费描述为自回归过程，在此过程中，货币供应量是被假定为一个解释变量。
 # 
@@ -95,7 +95,7 @@ print(res.summary())
 # $$
 #
 # 其中 $\epsilon_{t} \sim N(0, 0.5226)$. Finally, 最后，回想一下 $c = (1 - \phi_1) \beta_0$, 
-# 在这里 $c = 0.1050$ 且 $\phi_1 = 0.8740$ 。 为了与Stata的输出进行比较，我们可以计算出平均值：
+# 在这里 $c = 0.1050$ 且 $\phi_1 = 0.8740$ 。 为了与 Stata 的输出进行比较，我们可以计算出平均值：
 #
 # $$\beta_0 = \frac{c}{1 - \phi_1} = \frac{0.1050}{1 - 0.8740} = 0.83$$
 #
@@ -103,7 +103,7 @@ print(res.summary())
 
 
 
-# ### ARIMA 示例 2: 附带季节性影响的 Arima 模型 
+# ### ARIMA 示例 2: 附加季节性影响的 ARIMA 模型 
 #
 # $$
 # \Delta y_t = c + \phi_1 \Delta y_{t-1} + \theta_1 \epsilon_{t-1} +
@@ -256,16 +256,14 @@ print(res.summary())
 # - $A(t) = c$ 是 *恒定* 趋势性多项式（即一个截距）
 # - $\theta_q (L) = \tilde \theta_Q (L^s) = 1$ (即没有移动平均效应）
 #
-# It may still be confusing to see the two lag polynomials in front of the
-# time-series variable, but notice that we can multiply the lag polynomials
-# together to get the following model:
+# 在时间序列变量的前面看到两个滞后多项式可能仍然令人困惑，但是请注意，我们可以将滞后多项式相乘以得到以下模型：
 #
 # $$
 # (1 - \phi_1 L - \phi_2 L^2 - \tilde \phi_1 L^{12} + \phi_1 \tilde \phi_1
 # L^{13} + \phi_2 \tilde \phi_1 L^{14} ) y_t^* = c + \epsilon_t
 # $$
 #
-# which can be rewritten as:
+# 可以重写为:
 #
 # $$
 # y_t^* = c + \phi_1 y_{t-1}^* + \phi_2 y_{t-2}^* + \tilde \phi_1
@@ -273,33 +271,27 @@ print(res.summary())
 # y_{t-14}^* + \epsilon_t
 # $$
 #
-# This is similar to the additively seasonal model from example 2, but the
-# coefficients in front of the autoregressive lags are actually combinations
-# of the underlying seasonal and non-seasonal parameters.
+# 这类似于示例 2 中的附加季节性的模型，但是在自回归滞后项前面的系数实际上是基于季节性和非季节性参数的组合
 #
-# Specifying the model in statsmodels is done simply by adding the
-# `seasonal_order` argument, which accepts a tuple of the form `(Seasonal AR
-# specification, Seasonal Integration order, Seasonal MA, Seasonal
-# periodicity)`. The seasonal AR and MA specifications, as before, can be
-# expressed as a maximum polynomial degree or as the lag polynomial itself.
-# Seasonal periodicity is an integer.
+# 
+# 在 statsmodels 中指定模型只需添加 `seasonal_order` 参数即可，该参数可使用元祖 '（季节性 AR 规范，季节性整合阶，季节性 MA，季节周期性）'。 
+# 如前所述，季节性 AR 和 MA 规范可以表示为最大多项式或滞后多项式。 季节周期性是整数。
 #
-# For the airline model ARIMA $(2,1,0) \times (1,1,0)_{12}$ with an
-# intercept, the command is:
+# 对于带有截距的航空公司模型 ARIMA $(2,1,0) \times (1,1,0)_{12}$ 的代码是:
 #
 # ```python
 # mod = sm.tsa.statespace.SARIMAX(data['lnair'], order=(2,1,0),
 # seasonal_order=(1,1,0,12))
 # ```
 
-# Dataset
+# 数据集
 air2 = requests.get('https://www.stata-press.com/data/r12/air2.dta').content
 data = pd.read_stata(BytesIO(air2))
 data.index = pd.date_range(
     start=datetime(data.time[0], 1, 1), periods=len(data), freq='MS')
 data['lnair'] = np.log(data['air'])
 
-# Fit the model
+# 拟合模型
 mod = sm.tsa.statespace.SARIMAX(
     data['lnair'],
     order=(2, 1, 0),
@@ -308,28 +300,20 @@ mod = sm.tsa.statespace.SARIMAX(
 res = mod.fit(disp=False)
 print(res.summary())
 
-# Notice that here we used an additional argument
-# `simple_differencing=True`. This controls how the order of integration is
-# handled in ARIMA models. If `simple_differencing=True`, then the time
-# series provided as `endog` is literally differenced and an ARMA model is
-# fit to the resulting new time series. This implies that a number of
-# initial periods are lost to the differencing process, however it may be
-# necessary either to compare results to other packages (e.g. Stata's
-# `arima` always uses  simple differencing) or if the seasonal periodicity
-# is large.
+# 注意，在这里我们使用另外一个参数 `simple_differencing = True`。 这个参数控制在ARIMA 模型中整合阶是如何处理的。 
+# 如果 `simple_differencing = True`，那么以 `endog` 提供的时间序列在字面上会有所不同，并且拟合 ARMA 模型将生成新的时间序列。 
+# 这意味着差分程序会损失许多开始的时期，然而仍需要将结果与其他软件包进行比较（例如，Stata 的`arima`，通常使用简单的差分），
+# 或者季节周期性较大。
+# 
 #
-# The default is `simple_differencing=False`, in which case the
-# integration component is implemented as part of the state space
-# formulation, and all of the original data can be used in estimation.
+# 参数默认值为 `simple_differencing=False`，在这种情况下，集成组件将以状态空间公式的一部分来实现，并且所有原始数据都可以用于估计。
 
-# ### ARIMA Example 4: ARMAX (Friedman)
+
+# ### ARIMA 示例 4: ARMAX (Friedman)
 #
-# This model demonstrates the use of explanatory variables (the X part of
-# ARMAX). When exogenous regressors are included, the SARIMAX module uses
-# the concept of "regression with SARIMA errors" (see
-# http://robjhyndman.com/hyndsight/arimax/ for details of regression with
-# ARIMA errors versus alternative specifications), so that the model is
-# specified as:
+# 该模型演示了解释变量的使用（ARMAX 的 X 部分）。 当包含外生回归变量时，SARIMAX 模块使用“带有 SARIMA 误差的回归”的概念
+# （有关带有 ARIMA 误差的回归与另类规范的详细信息，请参见http://robjhyndman.com/hyndsight/arimax/），因此该模型可指定为：
+# 
 #
 # $$
 # y_t = \beta_t x_t + u_t \\
@@ -337,127 +321,102 @@ print(res.summary())
 #             \theta_q (L) \tilde \theta_Q (L^s) \epsilon_t
 # $$
 #
-# Notice that the first equation is just a linear regression, and the
-# second equation just describes the process followed by the error component
-# as SARIMA (as was described in example 3). One reason for this
-# specification is that the estimated parameters have their natural
-# interpretations.
+# 注意，第一个方程只是线性回归，第二个方程将进程描述为 SARIMA 的误差成分（如示例 3 中所述）。规范的原因之一是估计的参数具有其固有的解释。
 #
-# This specification nests many simpler specifications. For example,
-# regression with AR(2) errors is:
+# 这个规范嵌套了许多更简单的规范。 例如，带有 AR(2) 的回归是:
 #
 # $$
 # y_t = \beta_t x_t + u_t \\
 # (1 - \phi_1 L - \phi_2 L^2) u_t = A(t) + \epsilon_t
 # $$
 #
-# The model considered in this example is regression with ARMA(1,1)
-# errors. The process is then written:
+# 在这个实例中，可以把模型看成为带有 ARMA(1,1) 误差的回归，程序可以写成
 #
 # $$
 # \text{consump}_t = \beta_0 + \beta_1 \text{m2}_t + u_t \\
 # (1 - \phi_1 L) u_t = (1 - \theta_1 L) \epsilon_t
 # $$
 #
-# Notice that $\beta_0$ is, as described in example 1 above, *not* the
-# same thing as an intercept specified by `trend='c'`. Whereas in the
-# examples above we estimated the intercept of the model via the trend
-# polynomial, here, we demonstrate how to estimate $\beta_0$ itself by
-# adding a constant to the exogenous dataset. In the output, the $beta_0$ is
-# called `const`, whereas above the intercept $c$ was called `intercept` in
-# the output.
+# 请注意，如上面的示例 1 中所述，$\beta_0$  与 `trend='c'' 指定的截距不是同一件事。 尽管在上面的示例中，我们通过趋势性多项式估计模型的截距，
+# 但在这里，我们演示了如何通过给外生数据集增加一个常量来估计 $beta_0$ 本身。 输出的结果，其中 $beta_0$ 可看成是 `const`，而上面的截距 $c$ 
+# 可看成是 `intercept`。
 
-# Dataset
+# 数据集
 friedman2 = requests.get(
     'https://www.stata-press.com/data/r12/friedman2.dta').content
 data = pd.read_stata(BytesIO(friedman2))
 data.index = data.time
 
-# Variables
+# 内生、外生变量
 endog = data.loc['1959':'1981', 'consump']
 exog = sm.add_constant(data.loc['1959':'1981', 'm2'])
 
-# Fit the model
+# 拟合模型
 mod = sm.tsa.statespace.SARIMAX(endog, exog, order=(1, 0, 1))
 res = mod.fit(disp=False)
 print(res.summary())
 
-# ### ARIMA Postestimation: Example 1 - Dynamic Forecasting
+# ### ARIMA 后估计: 示例 1 - 动态预测
 #
-# Here we describe some of the post-estimation capabilities of
-# statsmodels' SARIMAX.
+# 下面描述了 statsmodels 的 SARIMAX 模型的一些后估计功能。
 #
-# First, using the model from example, we estimate the parameters using
-# data that *excludes the last few observations* (this is a little
-# artificial as an example, but it allows considering performance of out-of-
-# sample forecasting and facilitates comparison to Stata's documentation).
+# 首先，使用示例中的模型，我们使用*不包括最后几个观察值*的数据来估计参数（这是一个人工的示例，但可以研究样本外预测的性能，
+# 并有助于与 Stata 文档进行比较 ）。
 
-# Dataset
+# 数据集
 raw = pd.read_stata(BytesIO(friedman2))
 raw.index = raw.time
 data = raw.loc[:'1981']
 
-# Variables
+# 内生、外生变量
 endog = data.loc['1959':, 'consump']
 exog = sm.add_constant(data.loc['1959':, 'm2'])
 nobs = endog.shape[0]
 
-# Fit the model
+# 拟合模型
 mod = sm.tsa.statespace.SARIMAX(
     endog.loc[:'1978-01-01'], exog=exog.loc[:'1978-01-01'], order=(1, 0, 1))
 fit_res = mod.fit(disp=False)
 print(fit_res.summary())
 
-# Next, we want to get results for the full dataset but using the
-# estimated parameters (on a subset of the data).
+# 接下来，我们要获取整个数据集的结果，但要使用估计的参数（在数据的子集上）。
 
 mod = sm.tsa.statespace.SARIMAX(endog, exog=exog, order=(1, 0, 1))
 res = mod.filter(fit_res.params)
 
-# The `predict` command is first applied here to get in-sample
-# predictions. We use the `full_results=True` argument to allow us to
-# calculate confidence intervals (the default output of `predict` is just
-# the predicted values).
+# 首先，在此处运用 `predict` 命令以获取样本内预测。使用 `full_results = True` 参数来计算置信区间（`predict` 的默认输出只是预测值）。
 #
-# With no other arguments, `predict` returns the one-step-ahead in-sample
-# predictions for the entire sample.
+# 没有其他参数，`predict` 将返回整个样本的提前 one-step 样本内预测值。
 
-# In-sample one-step-ahead predictions
+# 提前 one-step 样本内预测
 predict = res.get_prediction()
 predict_ci = predict.conf_int()
 
-# We can also get *dynamic predictions*. One-step-ahead prediction uses
-# the true values of the endogenous values at each step to predict the next
-# in-sample value. Dynamic predictions use one-step-ahead prediction up to
-# some point in the dataset (specified by the `dynamic` argument); after
-# that, the previous *predicted* endogenous values are used in place of the
-# true endogenous values for each new predicted element.
+# 我们还可以获得 *动态预测*。 提前 one-step 预测使用每个步骤中的内生变量真实值来预测下一个样本内值。动态预测使用一步到位预测直到数据集中的某个点
+# （由 `dynamic` 参数来指定）；之后，将使用先前的 *predicted* 内生变量值代替每个新预测部分的真实内生变量值。
+# 
 #
-# The `dynamic` argument is specified to be an *offset* relative to the
-# `start` argument. If `start` is not specified, it is assumed to be `0`.
+# `dynamic` 参数用于指定 `start` 参数的相对偏移。 如果 `start` 参数未指定，则假定为 `0`。
 #
-# Here we perform dynamic prediction starting in the first quarter of
-# 1978.
+# 在这里，我们从1978年第一季度开始进行动态预测.
 
-# Dynamic predictions
+# 动态预测
 predict_dy = res.get_prediction(dynamic='1978-01-01')
 predict_dy_ci = predict_dy.conf_int()
 
-# We can graph the one-step-ahead and dynamic predictions (and the
-# corresponding confidence intervals) to see their relative performance.
-# Notice that up to the point where dynamic prediction begins (1978:Q1), the
-# two are the same.
+# 我们可以绘制提前 one-step 预测和动态预测（以及相应的置信区间），来查看他们的相关性。 请注意，直到开始进行动态预测（1978：Q1）为止，两者都是相同的。
 
-# Graph
+
+# 绘图
 fig, ax = plt.subplots(figsize=(9, 4))
 npre = 4
 ax.set(
     title='Personal consumption', xlabel='Date', ylabel='Billions of dollars')
 
-# Plot data points
+# 绘制数据点
 data.loc['1977-07-01':, 'consump'].plot(ax=ax, style='o', label='Observed')
 
-# Plot predictions
+# 绘制预测结果
 predict.predicted_mean.loc['1977-07-01':].plot(
     ax=ax, style='r--', label='One-step-ahead forecast')
 ci = predict_ci.loc['1977-07-01':]
@@ -469,17 +428,16 @@ ax.fill_between(ci.index, ci.iloc[:, 0], ci.iloc[:, 1], color='g', alpha=0.1)
 
 legend = ax.legend(loc='lower right')
 
-# Finally, graph the prediction *error*. It is obvious that, as one would
-# suspect, one-step-ahead prediction is considerably better.
+# 最后绘制预测 *误差* ，显然，正如我们怀疑的那样，提前 one-step 预测相对更好
 
-# Prediction error
+# 预测误差
 
-# Graph
+# 绘图
 fig, ax = plt.subplots(figsize=(9, 4))
 npre = 4
 ax.set(title='Forecast error', xlabel='Date', ylabel='Forecast - Actual')
 
-# In-sample one-step-ahead predictions and 95% confidence intervals
+# 提前 one-step 样本内预测和 95% 置信区间
 predict_error = predict.predicted_mean - endog
 predict_error.loc['1977-10-01':].plot(ax=ax, label='One-step-ahead forecast')
 ci = predict_ci.loc['1977-10-01':].copy()
@@ -487,7 +445,7 @@ ci.iloc[:, 0] -= endog.loc['1977-10-01':]
 ci.iloc[:, 1] -= endog.loc['1977-10-01':]
 ax.fill_between(ci.index, ci.iloc[:, 0], ci.iloc[:, 1], alpha=0.1)
 
-# Dynamic predictions and 95% confidence intervals
+# 动态预测和 95% 置信区间
 predict_dy_error = predict_dy.predicted_mean - endog
 predict_dy_error.loc['1977-10-01':].plot(
     ax=ax, style='r', label='Dynamic forecast (1978)')
