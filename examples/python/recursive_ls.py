@@ -44,7 +44,6 @@ exog = sm.add_constant(
 
 # 首先，构建并生成模型，并输出 summary。 尽管 `RLS` 模型以递归方式计算回归参数，所以估计量与数据点一样多，
 # 汇总表仅显示整个样本估计的回归参数。 除了来自递归初始化的细微影响外，这些估计值等同于OLS估计值。
-# 
 
 
 mod = sm.RecursiveLS(endog, exog)

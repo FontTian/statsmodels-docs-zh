@@ -141,7 +141,7 @@ for p in range(6):
 # 上面我们选择了 ARMA(1,1) 模型的规范，我们做了样本内预测和样本外预测。
 
 
-# Statespace
+# 状态空间
 mod = sm.tsa.statespace.SARIMAX(dta_miss, order=(1, 0, 1))
 res = mod.fit(disp=False)
 print(res.summary())
