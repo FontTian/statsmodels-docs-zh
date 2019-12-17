@@ -204,7 +204,7 @@ print(res.summary(separate_params=False))
 #
 # 出于这些原因，创建重合指数（请参见下文）
 #
-# 有了这些疑惑，对于美国经济衰退的NBER指标的未观测到的因素绘图如下。 看来该因素能够成功完成一定程度的商业周期活动。
+# 有了这些疑惑，对于美国经济衰退的 NBER 指标的未观测到的因素绘图如下。 看来该因素能够成功完成一定程度的商业周期活动。
 
 
 fig, ax = plt.subplots(figsize=(13, 3))
@@ -214,7 +214,7 @@ dates = endog.index._mpl_repr()
 ax.plot(dates, res.factors.filtered[0], label='Factor')
 ax.legend()
 
-# 检索并绘制NBER衰退指标
+# 检索并绘制 NBER 衰退指标
 rec = DataReader('USREC', 'fred', start=start, end=end)
 ylim = ax.get_ylim()
 ax.fill_between(
@@ -222,39 +222,26 @@ ax.fill_between(
 
 # ## 后估计
 #
-# Although here we will be able to interpret the results of the model by
-# constructing the coincident index, there is a useful and generic approach
-# for getting a sense for what is being captured by the estimated factor. By
-# taking the estimated factors as given, regressing them (and a constant)
-# each (one at a time) on each of the observed variables, and recording the
-# coefficients of determination ($R^2$ values), we can get a sense of the
-# variables for which each factor explains a substantial portion of the
-# variance and the variables for which it does not.
+# 尽管在这里我们可以通过构造重合指数来解释模型的结果，但是还是有一种有用且通用方法来了解被估计因子捕获的内容。
+# 通过给出给定的估计因子，将它们（和一个常数）对每个观察变量（一次一个）进行回归，并记录确定系数（ $R^2$ 值），
+# 我们可以得出每个因子都可以解释方差的很大一部分的变量，而每个因子都不能解释。
+# 
 #
-# In models with more variables and more factors, this can sometimes lend
-# interpretation to the factors (for example sometimes one factor will load
-# primarily on real variables and another on nominal variables).
+# 在具有更多变量和更多因素的模型中，有时可以对因子进行解释（例如，有时一个因子将负载主要的到实际变量上，而另一个因子将负载到名义变量上）。
 #
-# In this model, with only four endogenous variables and one factor, it is
-# easy to digest a simple table of the $R^2$ values, but in larger models it
-# is not. For this reason, a bar plot is often employed; from the plot we
-# can easily see that the factor explains most of the variation in
-# industrial production index and a large portion of the variation in sales
-# and employment, it is less helpful in explaining income.
+# 在此模型中，只有四个内生变量和一个因子，很容易理解 $R^2$ 值的简单表，但在较大的模型中则不然。因此，通常使用条形图。
+# 从图中可以很容易地看出，该因子解释了工业生产指数的大部分变化，而销售和就业方面的变化却很大，而对解释收入的帮助则较小。
+
 
 res.plot_coefficients_of_determination(figsize=(8, 2))
 
-# ## Coincident Index
+# ## 重合指数
 #
-# As described above, the goal of this model was to create an
-# interpretable series which could be used to understand the current status
-# of the macroeconomy. This is what the coincident index is designed to do.
-# It is constructed below. For readers interested in an explanation of the
-# construction, see Kim and Nelson (1999) or Stock and Watson (1991).
+# 如上所述，这个模型的目标是创建一个可解释的序列，该序列可用于了解宏观经济的当前状态。这就是设计重合指数的目的。
+# 重合指数结构如下，对结构解释感兴趣的读者，请参见 Kim 和 Nelson（1999）或 Stock 和 Watson（1991）。
 #
-# In essence, what is done is to reconstruct the mean of the (differenced)
-# factor. We will compare it to the coincident index on published by the
-# Federal Reserve Bank of Philadelphia (USPHCI on FRED).
+# 本质上，要做的是重构（差分）因子的均值。 我们将其与费城联邦储备银行（FRED上的USPHCI）发布的同步指数进行比较。
+
 
 usphci = DataReader(
     'USPHCI', 'fred', start='1979-01-01', end='2014-12-01')['USPHCI']
@@ -264,7 +251,7 @@ dusphci = usphci.diff()[1:].values
 
 
 def compute_coincident_index(mod, res):
-    # Estimate W(1)
+    # 估计 W(1)
     spec = res.specification
     design = mod.ssm['design']
     transition = mod.ssm['transition']
@@ -276,54 +263,53 @@ def compute_coincident_index(mod, res):
         np.dot(np.eye(k_states) - np.dot(ss_kalman_gain, design), transition)
     ).dot(ss_kalman_gain)[0]
 
-    # Compute the factor mean vector
+    # 计算因子均值向量
     factor_mean = np.dot(
         W1, dta.loc['1972-02-01':, 'dln_indprod':'dln_emp'].mean())
 
-    # Normalize the factors
+    # 因子标准化
     factor = res.factors.filtered[0]
     factor *= np.std(usphci.diff()[1:]) / np.std(factor)
 
-    # Compute the coincident index
+    # 计算重合指数
     coincident_index = np.zeros(mod.nobs + 1)
-    # The initial value is arbitrary; here it is set to
-    # facilitate comparison
+
+    # 初始值是任意的； 这是为了便于比较
     coincident_index[0] = usphci.iloc[0] * factor_mean / dusphci.mean()
     for t in range(0, mod.nobs):
         coincident_index[t + 1] = coincident_index[t] + factor[t] + factor_mean
 
-    # Attach dates
+    # 附上日期
     coincident_index = pd.Series(coincident_index, index=dta.index).iloc[1:]
 
-    # Normalize to use the same base year as USPHCI
+    # 使用相同的基准年的标准化，如 USPHCI
     coincident_index *= (
         usphci.loc['1992-07-01'] / coincident_index.loc['1992-07-01'])
 
     return coincident_index
 
 
-# Below we plot the calculated coincident index along with the US
-# recessions and the comparison coincident index USPHCI.
+# 下面我们绘制关于美国经济衰退的计算重合指数和比较重合指数 USPHCI。
 
 fig, ax = plt.subplots(figsize=(13, 3))
 
-# Compute the index
+# 计算指数
 coincident_index = compute_coincident_index(mod, res)
 
-# Plot the factor
+# 绘制因子
 dates = endog.index._mpl_repr()
 ax.plot(dates, coincident_index, label='Coincident index')
 ax.plot(usphci.index._mpl_repr(), usphci, label='USPHCI')
 ax.legend(loc='lower right')
 
-# Retrieve and also plot the NBER recession indicators
+# 检索并绘制 NBER 衰退指标
 ylim = ax.get_ylim()
 ax.fill_between(
     dates[:-3], ylim[0], ylim[1], rec.values[:-4, 0], facecolor='k', alpha=0.1)
 
-# ## Appendix 1: Extending the dynamic factor model
+# ## 附录1：扩展动态因子模型
 #
-# Recall that the previous specification was described by:
+# 回想一下以前的规范描述如下:
 #
 # $$
 # \begin{align}
@@ -335,8 +321,7 @@ ax.fill_between(
 # \end{align}
 # $$
 #
-# Written in state space form, the previous specification of the model had
-# the following observation equation:
+# 以状态空间形式编写的，模型以前的规范具有以下观测方程:
 #
 # $$
 # \begin{bmatrix}
@@ -364,7 +349,7 @@ ax.fill_between(
 # \end{bmatrix}
 # $$
 #
-# and transition equation:
+# 和转换方程:
 #
 # $$
 # \begin{bmatrix}
@@ -412,14 +397,10 @@ ax.fill_between(
 # \end{bmatrix}
 # $$
 #
-# the `DynamicFactor` model handles setting up the state space
-# representation and, in the `DynamicFactor.update` method, it fills in the
-# fitted parameter values into the appropriate locations.
+# `DynamicFactor`模型负责设置状态空间的表示，并在 `DynamicFactor.update` 方法中将拟合的参数值填充到适当的位置。
 
-# The extended specification is the same as in the previous example,
-# except that we also want to allow employment to depend on lagged values of
-# the factor. This creates a change to the $y_{\text{emp},t}$ equation. Now
-# we have:
+
+# 扩展的规范与前面的示例相同，除此，我们还希望允许就业依赖于因子的滞后值。这将更改 $y_{\text{emp},t}$ 等式。 现在我们有：
 #
 # $$
 # \begin{align}
@@ -434,8 +415,7 @@ ax.fill_between(
 # \end{align}
 # $$
 #
-# Now, the corresponding observation equation should look like the
-# following:
+# 现在，相应的观测方程如下所示：
 #
 # $$
 # \begin{bmatrix}
@@ -466,8 +446,7 @@ ax.fill_between(
 # \end{bmatrix}
 # $$
 #
-# Notice that we have introduced two new state variables, $f_{t-2}$ and
-# $f_{t-3}$, which means we need to update the  transition equation:
+# 注意，我们引入了两个新的状态变量 $f_{t-2}$ 和 $f_{t-3}$，这意味着我们需要更新转换方程:
 #
 # $$
 # \begin{bmatrix}
@@ -521,13 +500,9 @@ ax.fill_between(
 # \end{bmatrix}
 # $$
 #
-# This model cannot be handled out-of-the-box by the `DynamicFactor`
-# class, but it can be handled by creating a subclass when alters the state
-# space representation in the appropriate way.
+# 这个模型不能直接使用 `DynamicFactor` 类，但可以通过用适当的方式来更改状态空间表示时创建一个子类来处理。
 
-# First, notice that if we had set `factor_order = 4`, we would almost
-# have what we wanted. In that case, the last line of the observation
-# equation would be:
+# 首先，请注意，如果我们设置 `factor_order = 4`，我们将几乎可以得到我们想要的。 在这种情况下，观测方程的最后一行是：
 #
 # $$
 # \begin{bmatrix}
@@ -547,7 +522,7 @@ ax.fill_between(
 # $$
 #
 #
-# and the first line of the transition equation would be:
+# 转换方程的第一行是:
 #
 # $$
 # \begin{bmatrix}
@@ -570,42 +545,33 @@ ax.fill_between(
 # \end{bmatrix}
 # $$
 #
-# Relative to what we want, we have the following differences:
+# 相对于我们想要的，还有以下差异:
 #
-# 1. In the above situation, the $\lambda_{\text{emp}, j}$ are forced to
-# be zero for $j > 0$, and we want them to be estimated as parameters.
-# 2. We only want the factor to transition according to an AR(2), but
-# under the above situation it is an AR(4).
+# 1. 对于上述情况，$\lambda_{\text{emp}, j}$ 通过 $j > 0$ 被强制为零, 我们希望将他们作为参数进行估计
+# 2. 我们只希望因子根据 AR(2) 进行转换，但是在上述情况下，它是 AR(4)。
 #
-# Our strategy will be to subclass `DynamicFactor`, and let it do most of
-# the work (setting up the state space representation, etc.) where it
-# assumes that `factor_order = 4`. The only things we will actually do in
-# the subclass will be to fix those two issues.
+# 我们的策略是将 `DynamicFactor` 子类化，并在假设 `factor_order = 4` 的情况下完成大部分工作（设置状态空间表示等）。
+# 实际上将在子类中做的唯一事情就是修复这两个问题。
 #
-# First, here is the full code of the subclass; it is discussed below. It
-# is important to note at the outset that none of the methods defined below
-# could have been omitted. In fact, the methods `__init__`, `start_params`,
-# `param_names`, `transform_params`, `untransform_params`, and `update` form
-# the core of all state space models in statsmodels, not just the
-# `DynamicFactor` class.
+# 首先，这是子类化的完整代码；下面要讨论的是， 首先要注意，以下定义的任何方法都不能省略。实际上，以下方法 
+# __init__，start_params，param_names，transform_params，untransform_params 和 update 构成 statsmodels 中所有状态空间模型的核心，
+# 而不仅仅是 DynamicFactor 类。
 
 from statsmodels.tsa.statespace import tools
 
 
 class ExtendedDFM(sm.tsa.DynamicFactor):
     def __init__(self, endog, **kwargs):
-        # Setup the model as if we had a factor order of 4
+        # 如果因子为 4 阶，设置模型为
         super(ExtendedDFM, self).__init__(
             endog, k_factors=1, factor_order=4, error_order=2, **kwargs)
 
-        # Note: `self.parameters` is an ordered dict with the
-        # keys corresponding to parameter types, and the values
-        # the number of parameters of that type.
-        # Add the new parameters
+        # 注意: `self.parameters` 一个有序字典，其键对应参数类型，其值则是对应该类型的参数数量。
+       
+        # 增加新参数
         self.parameters['new_loadings'] = 3
 
-        # Cache a slice for the location of the 4 factor AR
-        # parameters (a_1, ..., a_4) in the full parameter vector
+        # 在完整的参数向量中，为 4 个因子 AR 参数 (a_1, ..., a_4)的位置缓存切片 
         offset = (self.parameters['factor_loadings'] + self.parameters['exog']
                   + self.parameters['error_cov'])
         self._params_factor_ar = np.s_[offset:offset + 2]
@@ -613,143 +579,109 @@ class ExtendedDFM(sm.tsa.DynamicFactor):
 
     @property
     def start_params(self):
-        # Add three new loading parameters to the end of the parameter
-        # vector, initialized to zeros (for simplicity; they could
-        # be initialized any way you like)
+        # 在参数向量的末尾添加三个新的负载参数，并初始化为零（为简单起见；您可以按照自己喜欢的任何方式对其进行初始化）      
         return np.r_[super(ExtendedDFM, self).start_params, 0, 0, 0]
 
     @property
     def param_names(self):
-        # Add the corresponding names for the new loading parameters
-        #  (the name can be anything you like)
+        # 为新的负载参数添加相应的名称（名称可以是您喜欢的任何名称）
         return super(ExtendedDFM, self).param_names + [
             'loading.L%d.f1.%s' % (i, self.endog_names[3])
             for i in range(1, 4)
         ]
 
     def transform_params(self, unconstrained):
-        # Perform the typical DFM transformation (w/o the new parameters)
+        # 执行典型的 DFM 转换（不添加新参数）
         constrained = super(ExtendedDFM,
                             self).transform_params(unconstrained[:-3])
 
-        # Redo the factor AR constraint, since we only want an AR(2),
-        # and the previous constraint was for an AR(4)
+        # 重做因子 AR 约束，因为我们只想要一个 AR(2)，而先前的约束是针对 AR(4) 的
         ar_params = unconstrained[self._params_factor_ar]
         constrained[self._params_factor_ar] = (
             tools.constrain_stationary_univariate(ar_params))
 
-        # Return all the parameters
+        # 返回所有参数
         return np.r_[constrained, unconstrained[-3:]]
 
     def untransform_params(self, constrained):
-        # Perform the typical DFM untransformation (w/o the new parameters)
+        # 执行典型的 DFM 逆转换（不添加新参数）
         unconstrained = super(ExtendedDFM,
                               self).untransform_params(constrained[:-3])
 
-        # Redo the factor AR unconstrained, since we only want an AR(2),
-        # and the previous unconstrained was for an AR(4)
+        # 重做不受约束的因子 AR，因为我们只想要一个 AR(2)，而先前不受约束的是针对 AR(4)
         ar_params = constrained[self._params_factor_ar]
         unconstrained[self._params_factor_ar] = (
             tools.unconstrain_stationary_univariate(ar_params))
 
-        # Return all the parameters
+        # 返回所有参数
         return np.r_[unconstrained, constrained[-3:]]
 
     def update(self, params, transformed=True, complex_step=False):
-        # Peform the transformation, if required
+        # 转换执行，如有需要
         if not transformed:
             params = self.transform_params(params)
         params[self._params_factor_zero] = 0
 
-        # Now perform the usual DFM update, but exclude our new parameters
+        # 现在执行常规的 DFM 更新，但排除我们的新参数
         super(ExtendedDFM, self).update(
             params[:-3], transformed=True, complex_step=complex_step)
 
-        # Finally, set our new parameters in the design matrix
+        # 最后，在设计矩阵中设置新参数
         self.ssm['design', 3, 1:4] = params[-3:]
 
 
-# So what did we just do?
+# 那我们刚才做了什么？
 #
 # #### `__init__`
 #
-# The important step here was specifying the base dynamic factor model
-# which we were operating with. In particular, as described above, we
-# initialize with `factor_order=4`, even though we will only end up with an
-# AR(2) model for the factor. We also performed some general setup-related
-# tasks.
+# 此处的重要步骤是指定要使用的基本动态因子模型。特别是，如上所述，尽管我们最终仅使用因子的 AR(2)模型，但我们还是以 `factor_order=4` 进行了初始化。 我们还执行了一些与设置有关的常规任务。
 #
 # #### `start_params`
 #
-# `start_params` are used as initial values in the optimizer. Since we are
-# adding three new parameters, we need to pass those in. If we had not done
-# this, the optimizer would use the default starting values, which would be
-# three elements short.
+# `start_params` 在优化器中用作初始值。由于我们要添加三个新参数，因此我们需要将这些参数传递进来。如果不这样做，那么优化器将使用默认的起始值，该值将短三个元素。
 #
 # #### `param_names`
 #
-# `param_names` are used in a variety of places, but especially in the
-# results class. Below we get a full result summary, which is only possible
-# when all the parameters have associated names.
+# `param_names` 在很多地方都可以使用，尤其是在结果类中。下面我们将获得完整结果的 summary，只有当所有参数都有关联的名称时才有可能。
 #
-# #### `transform_params` and `untransform_params`
+# #### `transform_params` 和 `untransform_params`
 #
-# The optimizer selects possibly parameter values in an unconstrained way.
-# That's not usually desired (since variances cannot be negative, for
-# example), and `transform_params` is used to transform the unconstrained
-# values used by the optimizer to constrained values appropriate to the
-# model. Variances terms are typically squared (to force them to be
-# positive), and AR lag coefficients are often constrained to lead to a
-# stationary model. `untransform_params` is used for the reverse operation
-# (and is important because starting parameters are usually specified in
-# terms of values appropriate to the model, and we need to convert them to
-# parameters appropriate to the optimizer before we can begin the
-# optimization routine).
+# 优化器可以不受限制地选择参数值——这通常不是我们所希望的看到的（例如，因为方差不能为负），并且使用 `transform_params` 将优化器使用的非约束值转换为适合模型的约束值。
+# 方差项通常是平方的（以使其为正），并且 AR 滞后系数通常受到约束来导致一个平稳模型。`untransform_params` 用于反向操作
+# （这很重要，因为起始参数通常是根据适合模型的值指定的，因此在开始优化例程之前，我们需要将其转换为适合优化器的参数）。
 #
-# Even though we do not need to transform or untransform our new parameters
-# (the loadings can in theory take on any values), we still need to modify
-# this function for two reasons:
+# 即使我们不需要转换或逆转换新参数（理论上负载可以取任何值），我们仍然需要出于以下两个原因来修改此函数：
 #
-# 1. The version in the `DynamicFactor` class is expecting 3 fewer
-# parameters than we have now. At a minimum, we need to handle the three new
-# parameters.
-# 2. The version in the `DynamicFactor` class constrains the factor lag
-# coefficients to be stationary as though it was an AR(4) model. Since we
-# actually have an AR(2) model, we need to re-do the constraint. We also set
-# the last two autoregressive coefficients to be zero here.
+# 1. `DynamicFactor` 类希望参数比现在少3个。至少，我们需要处理三个新参数。
+
+# 2. `DynamicFactor` 类将因子滞后系数约束为平稳的，就好像它是 AR(4) 模型一样。因为我们实际上有一个 AR(2) 模型，所以我们需要重新做约束。在此，我们还将最后两个自回归系数设置为零。
 #
 # #### `update`
 #
-# The most important reason we need to specify a new `update` method is
-# because we have three new parameters that we need to place into the state
-# space formulation. In particular we let the parent `DynamicFactor.update`
-# class handle placing all the parameters except the three new ones in to
-# the state space representation, and then we put the last three in
-# manually.
+# 我们需要指定一个新的 `update` 方法的最重要原因是因为我们需要将三个新参数放入状态空间公式中。尤其是我们让父类 `DynamicFactor.update` 类
+# 用于处理除三个新参数以外的所有参数放入状态空间表示中，然后手动将最后三个参数放入。
 
-# Create the model
+
+# 创建模型
 extended_mod = ExtendedDFM(endog)
 initial_extended_res = extended_mod.fit(maxiter=1000, disp=False)
 extended_res = extended_mod.fit(
     initial_extended_res.params, method='nm', maxiter=1000)
 print(extended_res.summary(separate_params=False))
 
-# Although this model increases the likelihood, it is not preferred by the
-# AIC and BIC measures which penalize the additional three parameters.
+# 尽管此模型增加似然，但是 AIC 和 BIC 措施不利于惩罚附加的三个参数，因此它不是首选方法。
 #
-# Furthermore, the qualitative results are unchanged, as we can see from
-# the updated $R^2$ chart and the new coincident index, both of which are
-# practically identical to the previous results.
+# 此外，定性结果没有变化，正如我们从更新的 $R^2$ 图表和新的重合指数看到的那样，这两者实际上与以前的结果几乎相同。
 
 extended_res.plot_coefficients_of_determination(figsize=(8, 2))
 
 fig, ax = plt.subplots(figsize=(13, 3))
 
-# Compute the index
+# 计算指数
 extended_coincident_index = compute_coincident_index(extended_mod,
                                                      extended_res)
 
-# Plot the factor
+# 绘制因子
 dates = endog.index._mpl_repr()
 ax.plot(dates, coincident_index, '-', linewidth=1, label='Basic model')
 ax.plot(
@@ -762,7 +694,7 @@ ax.plot(usphci.index._mpl_repr(), usphci, label='USPHCI')
 ax.legend(loc='lower right')
 ax.set(title='Coincident indices, comparison')
 
-# Retrieve and also plot the NBER recession indicators
+# 检索并绘制 NBER 衰退指标
 ylim = ax.get_ylim()
 ax.fill_between(
     dates[:-3], ylim[0], ylim[1], rec.values[:-4, 0], facecolor='k', alpha=0.1)

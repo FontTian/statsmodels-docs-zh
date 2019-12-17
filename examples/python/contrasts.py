@@ -12,7 +12,7 @@
 import numpy as np
 import statsmodels.api as sm
 
-# 本文档主要基于UCLA的出色资源
+# 本文档主要基于 UCLA 的出色资源
 # http://www.ats.ucla.edu/stat/r/library/contrast_coding.htm
 
 # K个类别或级别的分类变量通常以K-1个哑变量组进入回归。这相当于水平均值的线性假设。也就是说，
