@@ -10,14 +10,14 @@
 背景
 ----------
 
-模块最初由乔纳森·泰勒（Jonathan Taylor）编写的scipy.stats。一直以来，它是scipy的一部分，但后来被删除了。
-在Google Summer of Code 2009期间，我们对其statsmodels进行了更正、测试、改进和发布，并将其作为新程序包发布。
-从那时起，statsmodels开发团队就继续添加新模型，绘图工具和统计方法。
+模块最初由乔纳森·泰勒（Jonathan Taylor）编写的 scipy.stats。一直以来，它是 scipy 的一部分，但后来被删除了。
+在 Google Summer of Code 2009 期间，我们对其 statsmodels 进行了更正、测试、改进和发布，并将其作为新程序包发布。
+从那时起，statsmodels 开发团队就继续添加新模型，绘图工具和统计方法。
 
 测试
 -------
 
-大多数结果已通过至少一个其他统计软件包：R，Stata或SAS进行了验证。初始重写和持续开发的指导原则是必须验证所有数字。
+大多数结果已通过至少一个其他统计软件包：R，Stata 或 SAS 进行了验证。初始重写和持续开发的指导原则是必须验证所有数字。
 一些统计方法已通过蒙特卡洛研究进行了检验。尽管我们努力遵循这种测试驱动的方法，但不能保证代码没有错误，并且始终有效。
 某些辅助功能仍未充分测试，某些边缘情况可能未正确考虑，并且许多统计模型都固有有数字问题的可能性。
 我们特别感谢您提供的有关此类问题的帮助和报告，以便我们可以不断改进现有模型。
@@ -47,7 +47,7 @@ statsmodels and its dependencies.
 经济支持
 -----------------
 
-我们感谢为statsmodels的提供经济支持：
+我们感谢为 statsmodels 提供的经济支持：
 
 * Google `www.google.com <https://www.google.com/>`_ : Google Summer of Code
   (GSOC) 2009-2017.
@@ -59,10 +59,8 @@ statsmodels and its dependencies.
 and `python.org <https://www.python.org/>`_ for making our downloads available
 on PyPi.
 
-We also thank our continuous integration providers,
-`Travis CI <https://travis-ci.org/>`_ and `AppVeyor <https://ci.appveyor.com>`_ for
-unit testing, and `Codecov <https://codecov.io>`_ and `Coveralls <https://coveralls.io>`_ for
-code coverage.
+我们还要感谢我们的持续整合提供商,`Travis CI <https://travis-ci.org/>`_ 和 `AppVeyor <https://ci.appveyor.com>`_ 为单元测试，
+以及 `Codecov <https://codecov.io>`_ 和 `Coveralls <https://coveralls.io>`_ 为代码覆盖率
 
 商标品牌
 -----------
@@ -96,8 +94,7 @@ code coverage.
 
 .. note::
 
-   The light brand marks are light grey on transparent, and so are difficult to see on this
-   page. They are intended for use on a dark background.
+   浅色商标标记在透明上为浅灰色，因此在此页面上很难看到。它们想要使用在深色背景上。
 
 
 +----------------+---------------------+

@@ -1,15 +1,15 @@
 API 参考
 =============
-主要的statsmodels API分为以下模型:
+主要的 statsmodels API 分为以下模型:
 
 * ``statsmodels.api``: 横截面模型和方法。使用规范地导入 ``import statsmodels.api as sm``.
 * ``statsmodels.tsa.api``: 时间序列模型和方法。使用规范地导入 ``import statsmodels.tsa.api as tsa``.
-* ``statsmodels.formula.api``: 一个方便的界面用于使用公式字符串和DataFrames指定模型。
-该API直接公开 ``from_formula`` 支持公式API的模型的类方法。规范地使用  ``import statsmodels.formula.api as smf``
+* ``statsmodels.formula.api``: 一个方便的界面用于使用公式字符串和 DataFrames 来指定模型。
+该 API 直接公开 ``from_formula`` 支持公式 API 模型的类方法。规范地使用  ``import statsmodels.formula.api as smf``
 
 .. autosummary::
-API专注于模型和最常用的统计测试以及工具。 `Import Paths and Structure`_ 介绍了两个API模块的设计，
-以及从API导入与直接从定义模型的模块直接导入有何不同。有关模型的使用，统计信息和工具的完整列表，请参见 :ref:`user-guide:User Guide` 中的详细主题页面。
+API 专注于模型和最常用的统计测试以及工具。 `Import Paths and Structure`_ 介绍了两个 API 模块的设计，
+以及从 API 导入与直接从定义模型的模块直接导入有何不同。有关模型的使用，统计信息和工具的完整列表，请参见 :ref:`user-guide:User Guide` 中的详细主题页面。
 
 ``statsmodels.api``
 -------------------
@@ -260,7 +260,7 @@ X12/X13 接口
 导入 `statsmodels.api` 将加载 statsmodels 大部分公共接口.
 这使大多数函数和类在一个或两个级别内方便地可用，而不会使 "sm" 名称空间过于拥挤。
 
-要查看可用的函数和类，可以键入以下内容 (或使用IPython，Spyder，IDLE等的名称空间探索功能.):
+要查看可用的函数和类，可以键入以下内容 (或使用 IPython，Spyder，IDLE 等的名称空间探索功能.):
 
 .. code-block:: python
 
@@ -287,10 +287,10 @@ X12/X13 接口
 注意
 ^^^^^
 
-The `api` 模块可能不包括statsmodels的所有公共功能。如果您发现应该添加到api的内容，
-请在github上提交问题或将其报告给邮件列表。
+The `api` 模块可能不包括 statsmodels 的所有公共功能。如果您发现应该添加到 api 的内容，
+请在 github 上提交问题或将其报告给邮件列表。
 
-statsmodels的子包包括 `api.py` 模块，这些模块主要用于收集这些子包所需的导入。
+statsmodels 的子包包括 `api.py` 模块，这些模块主要用于收集这些子包所需的导入。
 例如，将 `subpackage/api.py`
 文件导入到 statsmodels.api 中 ::
 
